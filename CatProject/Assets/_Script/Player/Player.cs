@@ -4,10 +4,7 @@ public class Player : MonoBehaviour
 {
     enum MoveState { Idle, Walk, Run }
     enum Key { W = 0, S, A, D }
-
-    //키코드 설정
-    private bool[] dirKey = new bool[4];
-
+    
     //JoyStick
     public JoyStickScript joyStickSc;
 
@@ -19,7 +16,6 @@ public class Player : MonoBehaviour
     //Animation 관련
     private MoveState PlayerMoveState;
     private Animator anim;
-    private byte dirBlendValue;
 
     // Use this for initialization
     void Start()
@@ -30,13 +26,20 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        MoveInput();
+        InputKeyboard();
         InputJoyStick();
-    }
 
+        InputAttack();
+    }
+    
     private void FixedUpdate()
     {
         Move(directionVector);
+        SetDirCharacter(directionVector);
+    }
+ 
+    private void LateUpdate()
+    {
         SetMoveAnimator();
     }
 
@@ -47,9 +50,19 @@ public class Player : MonoBehaviour
     {
         //대각선 일정수치 설정
         dir = dir.normalized;
-        transform.rotation = Quaternion.LookRotation(Vector3.forward, -dir);
         transform.position += dir * speed * Time.deltaTime;
     }
+
+    /// <summary>
+    /// 캐릭터 방향 설정
+    /// </summary>
+    /// <param name="dir"></param>
+    private void SetDirCharacter(Vector2 dir)
+    {
+        if (dir.Equals(Vector2.zero))
+            return;
+        transform.rotation = Quaternion.LookRotation(Vector3.forward, -dir);
+    }   
     
     /// <summary>
     /// 애니매이션 셋팅 
@@ -67,47 +80,13 @@ public class Player : MonoBehaviour
     /// <summary>
     /// 키보드 키 입력 관련 함수
     /// </summary>
-    private void MoveInput()
+    private void InputKeyboard()
     {
-        //이렇게 되면 성능이 좋지않을듯 매프레임마다 초기화 됨
-        //DirKey[(int)Key.W] = Input.GetKey(KeyCode.W) ? true : false;
-
-        if (Input.GetKeyDown(KeyCode.W))
-        {
-            dirKey[(int)Key.W] = true;
-            dirBlendValue = (byte)Key.W;
-        }
-        else if (Input.GetKeyUp(KeyCode.W))
-            dirKey[(int)Key.W] = false;
-
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            dirKey[(int)Key.S] = true;
-            dirBlendValue = (byte)Key.S;
-        }
-        else if (Input.GetKeyUp(KeyCode.S))
-            dirKey[(int)Key.S] = false;
-
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            dirKey[(int)Key.A] = true;
-            dirBlendValue = (byte)Key.A;
-        }
-        else if (Input.GetKeyUp(KeyCode.A))
-            dirKey[(int)Key.A] = false;
-
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            dirKey[(int)Key.D] = true;
-            dirBlendValue = (byte)Key.D;
-        }
-        else if (Input.GetKeyUp(KeyCode.D))
-            dirKey[(int)Key.D] = false;
-
-        var w = dirKey[(int)Key.W] ? 1 : 0;
-        var s = dirKey[(int)Key.S] ? -1 : 0;
-        var a = dirKey[(int)Key.A] ? -1 : 0;
-        var d = dirKey[(int)Key.D] ? 1 : 0;
+        //이렇게 되면 성능차이가 심하려나 ? 매프레임마다 초기화 됨
+        var w = Input.GetKey(KeyCode.W) ? 1 : 0;
+        var s = Input.GetKey(KeyCode.S) ? -1 : 0;
+        var a = Input.GetKey(KeyCode.A) ? -1 : 0;
+        var d = Input.GetKey(KeyCode.D) ? 1 : 0;
         
         directionVector = new Vector2(a + d, w + s);
     }
@@ -120,7 +99,44 @@ public class Player : MonoBehaviour
         if (!joyStickSc.GetStickDirection().Equals(Vector2.zero))
             directionVector = joyStickSc.GetStickDirection();
     }
+
+    /// <summary>
+    /// 공격
+    /// </summary>
+    private void InputAttack()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+            anim.SetTrigger("Attack");
+    }
 }
 
 
+/*
+ private byte dirBlendValue;
+
+if (Input.GetKeyDown(KeyCode.W))
+    dirKey[(int)Key.W] = true;
+else if (Input.GetKeyUp(KeyCode.W))
+    dirKey[(int)Key.W] = false;
+
+if (Input.GetKeyDown(KeyCode.S))
+    dirKey[(int)Key.S] = true;
+else if (Input.GetKeyUp(KeyCode.S))
+    dirKey[(int)Key.S] = false;
+
+if (Input.GetKeyDown(KeyCode.A))
+    dirKey[(int)Key.A] = true;
+else if (Input.GetKeyUp(KeyCode.A))
+    dirKey[(int)Key.A] = false;
+
+if (Input.GetKeyDown(KeyCode.D))
+    dirKey[(int)Key.D] = true;
+else if (Input.GetKeyUp(KeyCode.D))
+    dirKey[(int)Key.D] = false;
+
+var w = dirKey[(int)Key.W] ? 1 : 0;
+var s = dirKey[(int)Key.S] ? -1 : 0;
+var a = dirKey[(int)Key.A] ? -1 : 0;
+var d = dirKey[(int)Key.D] ? 1 : 0;
+*/
 
