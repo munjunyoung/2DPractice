@@ -15,30 +15,9 @@ public class SkillUI : MonoBehaviour {
         skillLineAnim = skillLinePanel.GetComponent<Animator>();
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
     public void ClickSkillMenuButton()
     {
         onClick = onClick ? false : true;
         skillLineAnim.SetBool("onClick", onClick);
     }
-
-    public void ClickSkill1Button()
-    {
-
-    }
-
-    public void ClickSkill2Button()
-    {
-
-    }
-
-    public void ClickSkill3Button()
-    {
-
-    }
-    
 }

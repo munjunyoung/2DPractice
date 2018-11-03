@@ -28,7 +28,6 @@ public class Player : MonoBehaviour
     {
         InputKeyboard();
         InputJoyStick();
-
         InputAttack();
     }
     
