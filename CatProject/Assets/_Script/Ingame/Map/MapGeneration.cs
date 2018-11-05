@@ -4,20 +4,24 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-
 public class MapGeneration : MonoBehaviour
 {
-
     public int width;
     public int height;
 
-    public string seed;
+    private string seed;
     public bool useRandomSeed;
 
     [Range(0, 100)]
     public int randomFillPercent;
 
     int[,] map;
+
+    [Header("UI GameObject")]
+    public List<GameObject> tileList = new List<GameObject>();
+    public List<GameObject> wallList = new List<GameObject>();
+    public List<GameObject> bushLis = new List<GameObject>();
+        
     // Use this for initialization
     void Start()
     {
@@ -27,10 +31,8 @@ public class MapGeneration : MonoBehaviour
     private void Update()
     {
         //  Debug.Log(new System.Random(Time.time.ToString().GetHashCode()).Next(0,100));
-        if (Input.GetMouseButtonDown(0))
-        {
-            GenerateMap();
-        }
+       // if (Input.GetMouseButtonDown(0))
+       //     GenerateMap();
     }
 
     void GenerateMap()
@@ -42,8 +44,13 @@ public class MapGeneration : MonoBehaviour
         {
             SmoothMap();
         }
+
+        DrawMap();
     }
 
+    /// <summary>
+    ///
+    /// </summary>
     void SmoothMap()
     {
         for (int x = 0; x < width; x++)
@@ -60,6 +67,12 @@ public class MapGeneration : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// wallCount
+    /// </summary>
+    /// <param name="gridX"></param>
+    /// <param name="gridY"></param>
+    /// <returns></returns>
     int GetSurroundingWallCount(int gridX, int gridY)
     {
         int wallCount = 0;
@@ -110,18 +123,17 @@ public class MapGeneration : MonoBehaviour
     /// <summary>
     /// 0,1로 생성된 맵을 통해서 gizmos함수를 통하여 색상별 큐브 생성
     /// </summary>
-    void OnDrawGizmos()
+    void DrawMap()
     {
-        Debug.Log("test");
         if (map != null)
         {
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
-                    Gizmos.color = (map[x, y] == 1) ? Color.black : Color.white;
-                    Vector3 pos = new Vector3(-width / 2 + x + .5f, -height / 2 + y + .5f, 0);
-                    Gizmos.DrawCube(pos, Vector3.one);
+                    GameObject tmpSpriteObject = (map[x, y] == 1) ? Instantiate(wallList[0]) : Instantiate(tileList[0]);
+                    tmpSpriteObject.transform.SetParent(this.transform);
+                    tmpSpriteObject.transform.position = new Vector2(x*.15f, y*.15f);
                 }
             }
         }
