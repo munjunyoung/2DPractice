@@ -844,11 +844,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea77e458d4332454cb6dc608eea8183d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skillLinePanel: {fileID: 1405910299}
-  skillList:
-  - {fileID: 2007814944}
-  - {fileID: 600553443}
-  - {fileID: 730446623}
 --- !u!1 &1405910298
 GameObject:
   m_ObjectHideFlags: 0
@@ -1032,6 +1027,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1908608352}
+  - component: {fileID: 1908608353}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1052,6 +1048,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1908608353
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1908608351}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23a0e88b8a470fc41bb6e1ac0a76c8e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  width: 128
+  height: 80
+  seed: 
+  useRandomSeed: 1
+  randomFillPercent: 31
 --- !u!1 &2007814943
 GameObject:
   m_ObjectHideFlags: 0
@@ -1338,5 +1350,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f22b58f9b0ba1cb45b18216973566e81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  joyStickSc: {fileID: 1691570149}
   speed: 1.27
+  directionVector: {x: 0, y: 0, z: 0}

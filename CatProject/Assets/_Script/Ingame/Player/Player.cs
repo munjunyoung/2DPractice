@@ -5,13 +5,11 @@ public class Player : MonoBehaviour
     enum MoveState { Idle, Walk, Run }
     enum Key { W = 0, S, A, D }
     
-    //JoyStick
-    public JoyStickScript joyStickSc;
-
     //이동 관련
     [Range(0, 5f)]
     public float speed;
-    private Vector3 directionVector = Vector3.zero;
+    [HideInInspector]
+    public Vector3 directionVector = Vector3.zero;
     
     //Animation 관련
     private MoveState PlayerMoveState;
@@ -26,15 +24,13 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        InputKeyboard();
-        InputJoyStick();
-        InputAttack();
+        //InputKeyboard();
+        //Attack();
     }
     
     private void FixedUpdate()
     {
         Move(directionVector);
-        SetDirCharacter(directionVector);
     }
  
     private void LateUpdate()
@@ -43,39 +39,39 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// 이동 관련 함수
+    /// 플레이어 캐릭터 이동 
     /// </summary>
     private void Move(Vector3 dir)
     {
-        //대각선 일정수치 설정
+        //대각선 일정수치 
         dir = dir.normalized;
         transform.position += dir * speed * Time.deltaTime;
+       
+        //이동을 멈춘후에도 캐릭터의 방향을 유지시키기 위한 설정
+        if (!dir.Equals(Vector3.zero))
+            transform.rotation = Quaternion.LookRotation(Vector3.forward, -dir);
     }
-
-    /// <summary>
-    /// 캐릭터 방향 설정
-    /// </summary>
-    /// <param name="dir"></param>
-    private void SetDirCharacter(Vector2 dir)
-    {
-        if (dir.Equals(Vector2.zero))
-            return;
-        transform.rotation = Quaternion.LookRotation(Vector3.forward, -dir);
-    }   
     
     /// <summary>
-    /// 애니매이션 셋팅 
-    /// dirBlendValue - 방향 param 설정
+    /// 이동관련 애니매이션 설정
     /// playerMoveState - 상태 param 설정 
     /// </summary>
     private void SetMoveAnimator()
     {
-        //anim.SetFloat("Dir", dirBlendValue);
         // Animation Setting State Float param  0 : idle 1 : walk
         PlayerMoveState = directionVector.Equals(Vector2.zero) ? MoveState.Idle : MoveState.Walk;
         anim.SetInteger("State", (int)PlayerMoveState);
     }
 
+    /// <summary>
+    /// 공격
+    /// </summary>
+    public void Attack()
+    {
+        anim.SetTrigger("Attack");
+    }
+
+    #region input Keyboard set
     /// <summary>
     /// 키보드 키 입력 관련 함수
     /// </summary>
@@ -89,24 +85,13 @@ public class Player : MonoBehaviour
         
         directionVector = new Vector2(a + d, w + s);
     }
-
-    /// <summary>
-    /// 조이스틱 입력
-    /// </summary>
-    private void InputJoyStick()
-    {
-        if (!joyStickSc.GetStickDirection().Equals(Vector2.zero))
-            directionVector = joyStickSc.GetStickDirection();
-    }
-
-    /// <summary>
-    /// 공격
-    /// </summary>
+    
     private void InputAttack()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-            anim.SetTrigger("Attack");
+        if(Input.GetKeyDown(KeyCode.Space))
+            Attack();
     }
+    #endregion
 }
 
 

@@ -5,12 +5,13 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 public class JoyStickScript : MonoBehaviour, IDragHandler, IPointerDownHandler, IPointerUpHandler
 {
-    [Header("UI Reference")]
+    [Header("JoyStick UI Reference")]
     public RectTransform bgImg;
     public RectTransform joyStickImg;
 
     private Vector2 inputVector;
-    
+    public Vector2 DirValue { get { return inputVector; } }
+
     /// <summary>
     /// Drag 
     /// </summary>
@@ -50,14 +51,5 @@ public class JoyStickScript : MonoBehaviour, IDragHandler, IPointerDownHandler, 
         joyStickImg.GetComponent<Image>().color = new Color32(255, 255, 255, 255);
         inputVector = Vector2.zero;
         joyStickImg.anchoredPosition = Vector2.zero;
-    }
-
-    /// <summary>
-    /// 조이스틱 방향벡터 값 
-    /// </summary>
-    /// <returns></returns>
-    public Vector2 GetStickDirection()
-    {
-        return inputVector;
     }
 }
