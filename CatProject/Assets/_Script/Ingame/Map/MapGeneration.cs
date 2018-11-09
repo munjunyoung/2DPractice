@@ -56,6 +56,7 @@ public class MapGeneration : MonoBehaviour
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
+
             {
                 int neighbourWallTiles = GetSurroundingWallCount(x, y);
 
