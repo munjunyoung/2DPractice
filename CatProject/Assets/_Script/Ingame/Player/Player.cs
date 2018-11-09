@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
     public float speed;
     [HideInInspector]
     public Vector3 directionVector = Vector3.zero;
+    private Rigidbody2D rb2D;
     
     //Animation 관련
     private MoveState PlayerMoveState;
@@ -20,6 +21,7 @@ public class Player : MonoBehaviour
     {
         PlayerMoveState = MoveState.Idle;
         anim = GetComponent<Animator>();
+        rb2D = GetComponent<Rigidbody2D>();
     }
 
     private void Update()
@@ -45,8 +47,10 @@ public class Player : MonoBehaviour
     {
         //대각선 일정수치 
         dir = dir.normalized;
+        //rb2D.MovePosition(rb2D.position + dir * speed * Time.deltaTime);
+        //transform.Translate(dir * speed * Time.deltaTime);
         transform.position += dir * speed * Time.deltaTime;
-       
+
         //이동을 멈춘후에도 캐릭터의 방향을 유지시키기 위한 설정
         if (!dir.Equals(Vector3.zero))
             transform.rotation = Quaternion.LookRotation(Vector3.forward, -dir);
@@ -59,6 +63,7 @@ public class Player : MonoBehaviour
     private void SetMoveAnimator()
     {
         // Animation Setting State Float param  0 : idle 1 : walk
+        
         PlayerMoveState = directionVector.Equals(Vector2.zero) ? MoveState.Idle : MoveState.Walk;
         anim.SetInteger("State", (int)PlayerMoveState);
     }
