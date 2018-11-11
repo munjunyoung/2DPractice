@@ -56,7 +56,7 @@ public class MapGenerator2 : MonoBehaviour {
     void DrawMap()
     {
         /*
-        //LB
+        //테두리
         if (x == 0 && y == 0)
             map[x, y] = 20;
         //RB
