@@ -44,6 +44,9 @@ TagManager:
   - name: Floor
     uniqueID: 748513025
     locked: 0
+  - name: Road
+    uniqueID: 2177671213
+    locked: 0
   - name: Obstacle
     uniqueID: 1601502383
     locked: 0

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class BoardManager : MonoBehaviour
 {
+    enum Dir { Set=0, LeftBottom, Bottom, RightBottom, Left, Center, Right, LeftTop, Top, RightTop }
+    
     [Header("Board Size")]
     public int boardRows;
     public int boardColumns;
@@ -13,33 +15,39 @@ public class BoardManager : MonoBehaviour
     public int maxRoomSize;
 
     [Header("Tile Object")]
-    public GameObject floorTile;
-    public GameObject corridorTile;
+    //Random
+    public List<GameObject> waterTile;
+    //Random
+    public List<GameObject> floorTile;
+    // Width : 0~2 center : 3  Height : 4~5;
+    public List<GameObject> corridorTile;
+    //  Direction
     public List<GameObject> wallTile;
 
-    private GameObject[,] boardPositionFloor;
 
-    // 1 - floor, 2 - corridor, 3 - wall
+    private List<DungeonRoom> dungeonRoomList = new List<DungeonRoom>();
+
+    //0 - backGround(Water), 1 - floor, 2 - corridor, 3 - wall
     private TileData[,] map;
-
-    private List<GameObject> roomList = new List<GameObject>();
 
     private void Start()
     {
         map = new TileData[boardRows, boardColumns];
 
-        SubDungeon rootSubDungeon = new SubDungeon(new Rect(0, 0, boardRows, boardColumns));
-        CreateBSP(rootSubDungeon);
-        rootSubDungeon.CreateRoom();
-
-        boardPositionFloor = new GameObject[boardRows, boardColumns];
-        SetCorridors(rootSubDungeon);
-        SetRoom(rootSubDungeon);
+        Space rootSpace = new Space(new Rect(0, 0, boardRows, boardColumns));
+        CreateBSP(rootSpace);
+        rootSpace.CreateRoom();
+        
+        SetCorridors(rootSpace);
+        SetRoom(rootSpace);
 
         DrawMap();
     }
 
 
+    /// <summary>
+    /// Map list에 저장된 데이터를 통하여 sprite 생성 0 : blank, 1 : floor, 2: corridor, 3: wall
+    /// </summary>
     void DrawMap()
     {
         for (int i = 0; i < boardRows - 1; i++)
@@ -48,16 +56,15 @@ public class BoardManager : MonoBehaviour
             {
                 if (map[i, j] != null)
                 {
+                    
                     switch (map[i, j].tileNum)
                     {
-                        case 0:
-                            break;
                         case 1:
-                            GameObject floor = Instantiate(floorTile, new Vector3(i, j, 0f), Quaternion.identity) as GameObject;
+                            GameObject floor = Instantiate(floorTile[map[i,j].dir], new Vector3(i, j, 0f), Quaternion.identity) as GameObject;
                             floor.transform.SetParent(transform);
                             break;
                         case 2:
-                            GameObject corridor = Instantiate(corridorTile, new Vector3(i, j, 0f), Quaternion.identity) as GameObject;
+                            GameObject corridor = Instantiate(corridorTile[map[i,j].dir], new Vector3(i, j, 0f), Quaternion.identity) as GameObject;
                             corridor.transform.SetParent(transform);
                             break;
                         case 3:
@@ -68,6 +75,11 @@ public class BoardManager : MonoBehaviour
                             break;
                     }
                 }
+                else
+                {
+                    GameObject instance = Instantiate(waterTile[0], new Vector3(i, j, 0f), Quaternion.identity) as GameObject;
+                    instance.transform.SetParent(transform);
+                }
             }
         }
     }
@@ -75,28 +87,28 @@ public class BoardManager : MonoBehaviour
     /// <summary>
     /// 공간분할 재귀
     /// </summary>
-    /// <param name="_subDungeon"></param>
-    public void CreateBSP(SubDungeon _subDungeon)
+    /// <param name="_Space"></param>
+    public void CreateBSP(Space _Space)
     {
-        Debug.Log("Splitting Sub-Dungeon : " + _subDungeon.debugId + " : " + _subDungeon.rect);
+        Debug.Log("Splitting Space : " + _Space.debugId + " : " + _Space.rect);
 
-        if (_subDungeon.CheckLeaf())
+        if (_Space.CheckLeaf())
         {
             //rect높이, 가로 길이가 maxroomsize보다 클경우, 
-            if (_subDungeon.rect.width > maxRoomSize
-              || _subDungeon.rect.height > maxRoomSize
+            if (_Space.rect.width > maxRoomSize
+              || _Space.rect.height > maxRoomSize
               || Random.Range(0.0f, 1.0f) > 0.25f)
             {
                 //Split 실행 split실행후 다시 bsp체크
-                if (_subDungeon.Split(minRoomSize))
+                if (_Space.Split(minRoomSize))
                 {
-                    Debug.Log("Splitted Sub-dungeon : " + _subDungeon.debugId + " in "
-                      + _subDungeon.left.debugId + ": " + _subDungeon.left.rect + ", "
-                      + _subDungeon.right.debugId + ": " + _subDungeon.right.rect);
+                    Debug.Log("Splitted Space : " + _Space.debugId + " in "
+                      + _Space.left.debugId + ": " + _Space.left.rect + ", "
+                      + _Space.right.debugId + ": " + _Space.right.rect);
 
                     //재귀
-                    CreateBSP(_subDungeon.left);
-                    CreateBSP(_subDungeon.right);
+                    CreateBSP(_Space.left);
+                    CreateBSP(_Space.right);
                 }
             }
         }
@@ -105,69 +117,89 @@ public class BoardManager : MonoBehaviour
     /// <summary>
     /// Tile생성
     /// </summary>
-    /// <param name="_subDungeon"></param>
-    public void SetRoom(SubDungeon _subDungeon)
+    /// <param name="_Space"></param>
+    public void SetRoom(Space _Space)
     {
-        if (_subDungeon == null)
+        if (_Space == null)
             return;
 
-        if (_subDungeon.CheckLeaf())
+        if (_Space.CheckLeaf())
         {
-            for (int i = (int)_subDungeon.room.x-1; i <= _subDungeon.room.xMax; i++)
+            for (int i = (int)_Space.room.x; i < _Space.room.xMax; i++)
             {
-                for (int j = (int)_subDungeon.room.y-1; j <= _subDungeon.room.yMax; j++)
+                for (int j = (int)_Space.room.y; j < _Space.room.yMax; j++)
                 {
-                    if (i == _subDungeon.room.x-1 && j == _subDungeon.room.y-1)
-                        map[i, j] = new TileData(3, 1);
-                    else if (i == _subDungeon.room.x-1 && j == _subDungeon.room.yMax)
-                        map[i, j] = new TileData(3, 7);
-                    else if (i == _subDungeon.room.xMax && j == _subDungeon.room.y-1)
-                        map[i, j] = new TileData(3, 3);
-                    else if (i == _subDungeon.room.xMax && j == _subDungeon.room.yMax)
-                        map[i, j] = new TileData(3, 9);
-                    else if (i == _subDungeon.room.x-1) 
-                        map[i, j] = new TileData(3, 4);
-                    else if (j == _subDungeon.room.y-1) 
-                        map[i, j] = new TileData(3, 2);
-                    else if (i == _subDungeon.room.xMax)
-                        map[i, j] = new TileData(3, 6);
-                    else if (j == _subDungeon.room.yMax)
-                        map[i, j] = new TileData(3, 8);
-                    else
-                        map[i, j] = new TileData(1, 0);
+                    map[i, j] = new TileData(1, Random.Range(0, floorTile.Count));
                 }
             }
+
+            SetOutLine(3, (int)_Space.room.x, (int)_Space.room.y, (int)_Space.room.xMax, (int)_Space.room.yMax);
         }
         else
         {
-            SetRoom(_subDungeon.left);
-            SetRoom(_subDungeon.right);
+            SetRoom(_Space.left);
+            SetRoom(_Space.right);
         }
     }
+
 
     /// <summary>
     /// 통로 그리는 함수
     /// </summary>
-    /// <param name="_subDungeon"></param>
-    private void SetCorridors(SubDungeon _subDungeon)
+    /// <param name="_Space"></param>
+    private void SetCorridors(Space _Space)
     {
-        if (_subDungeon == null)
+        if (_Space == null)
             return;
 
-        SetCorridors(_subDungeon.left);
-        SetCorridors(_subDungeon.right);
+        SetCorridors(_Space.left);
+        SetCorridors(_Space.right);
 
-        foreach (Rect cor in _subDungeon.corridors)
+        foreach (Rect cor in _Space.corridors)
         {
             for (int i = (int)cor.x; i < cor.xMax; i++)
             {
                 for (int j = (int)cor.y; j < cor.yMax; j++)
                 {
-                        //GameObject instance = Instantiate(corridorTile, new Vector3(i, j, 0f), Quaternion.identity);
-                        //instance.transform.SetParent(transform);
-                        //boardPositionFloor[i, j] = instance;
-                        
-                        map[i, j] = new TileData(2, 0);
+                    map[i, j] = cor.width > cor.height ? new TileData(2, Random.Range(0, 2)) : new TileData(2, Random.Range(4, 5));
+                }
+            }
+           
+        }
+    }
+
+    /// <summary>
+    /// Wall 생성(주변 맵이나 도로의 rect값을 파라미터로 보내어 처리
+    /// </summary>
+    /// <param name="wallTileNum"></param>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="xMax"></param>
+    /// <param name="yMax"></param>
+    private void SetOutLine(int wallTileNum, int x, int y, int xMax, int yMax)
+    {
+        for (int i = x-1; i <= xMax; i++)
+        {
+            for (int j = y-1; j <= yMax; j++)
+            {
+                if (map[i, j]==null)
+                {
+                    if (i == x - 1 && j == y - 1)
+                        map[i, j] = new TileData(wallTileNum, (int)Dir.LeftBottom);
+                    else if (i == x - 1 && j == yMax)
+                        map[i, j] = new TileData(wallTileNum, (int)Dir.LeftTop);
+                    else if (i == xMax && j == y - 1)
+                        map[i, j] = new TileData(wallTileNum, (int)Dir.RightBottom);
+                    else if (i == xMax && j == yMax)
+                        map[i, j] = new TileData(wallTileNum, (int)Dir.RightTop);
+                    else if (i == x - 1)
+                        map[i, j] = new TileData(wallTileNum, (int)Dir.Left);
+                    else if (j == y - 1)
+                        map[i, j] = new TileData(wallTileNum, (int)Dir.Bottom);
+                    else if (i == xMax)
+                        map[i, j] = new TileData(wallTileNum, (int)Dir.Right);
+                    else if (j == yMax)
+                        map[i, j] = new TileData(wallTileNum, (int)Dir.Top);
                 }
             }
         }
@@ -177,20 +209,19 @@ public class BoardManager : MonoBehaviour
 /// <summary>
 /// 던전클래스
 /// </summary>
-public class SubDungeon
+public class Space
 {
     //해당 객체의 설정 공간
-    public SubDungeon left, right;
+    public Space left, right;
     public Rect rect;
 
     public Rect room = new Rect(-1, -1, 0, 0);
-    //복도
     public List<Rect> corridors = new List<Rect>();
 
     public int debugId;
     private static int debugCounter = 0;
 
-    public SubDungeon(Rect _rect)
+    public Space(Rect _rect)
     {
         rect = _rect;
         debugId = debugCounter;
@@ -213,14 +244,14 @@ public class SubDungeon
     /// <returns></returns>
     public bool Split(int _minRoomSize)
     {
-        //leaf가 이미 존재하고 있는 경우 
+        //leaf가 한개라도 존재하고 있는 경우 
         if (!CheckLeaf())
             return false;
 
         // split했을 경우 최소 방사이즈보다 작을 경우 leaf를 생성할 필요가 없으므로 return
         if (Mathf.Min(rect.height, rect.width) / 2 < _minRoomSize)
         {
-            Debug.Log("Sub-Dungeon : " + debugId + " will be a leaf");
+            Debug.Log("Space : " + debugId + " will be a leaf");
             return false;
         }
 
@@ -240,15 +271,15 @@ public class SubDungeon
         {
             int split = Random.Range(_minRoomSize, (int)(rect.width - _minRoomSize));
 
-            left = new SubDungeon(new Rect(rect.x, rect.y, rect.width, split));
-            right = new SubDungeon(new Rect(rect.x, rect.y + split, rect.width, rect.height - split));
+            left = new Space(new Rect(rect.x, rect.y, rect.width, split));
+            right = new Space(new Rect(rect.x, rect.y + split, rect.width, rect.height - split));
         }
         else
         {
             int split = Random.Range(_minRoomSize, (int)(rect.height - _minRoomSize));
 
-            left = new SubDungeon(new Rect(rect.x, rect.y, split, rect.height));
-            right = new SubDungeon(new Rect(rect.x + split, rect.y, rect.width - split, rect.height));
+            left = new Space(new Rect(rect.x, rect.y, split, rect.height));
+            right = new Space(new Rect(rect.x + split, rect.y, rect.width - split, rect.height));
         }
 
         return true;
@@ -259,32 +290,35 @@ public class SubDungeon
     /// </summary>
     public void CreateRoom()
     {
-        //leaf 존재할경우 
-        if (left != null)
-            left.CreateRoom();
-        if (right != null)
-            right.CreateRoom();
-        //통로 생성
-        if (left != null && right != null)
-            CreateCorridorBetween(left, right);
-
+        if (!CheckLeaf())
+        {
+            //leaf 존재할경우 
+            if (left != null)
+                left.CreateRoom();
+            if (right != null)
+                right.CreateRoom();
+            //통로 생성
+            if (left != null && right != null)
+                CreateCorridorBetween(left, right);
+        }
         //leaf가 없을경우에는 그 범위안에서 room생성 
-        if (CheckLeaf())
+        else
         {
             //방사이즈 설정 (생성한 방을 감쌀 타일을 생성하기 위해 -2)
-            int roomWidth = (int)Random.Range(rect.width / 2, rect.width - 2);
-            int roomHeight = (int)Random.Range(rect.height / 2, rect.height - 2);
+            int roomWidth = (int)Random.Range(rect.width * 0.5f, rect.width - 2);
+            int roomHeight = (int)Random.Range(rect.height * 0.5f, rect.height - 2);
             //방위치 설정
-            int roomX = (int)Random.Range(1, rect.width - roomWidth - 1);
-            int roomY = (int)Random.Range(1, rect.height - roomHeight - 1);
+            int roomX = (int)Random.Range(1, rect.width - roomWidth - 2);
+            int roomY = (int)Random.Range(1, rect.height - roomHeight - 2);
             //World 좌표로 위치 설정, 사이즈 설정
             room = new Rect(rect.x + roomX, rect.y + roomY, roomWidth, roomHeight);
-            Debug.Log("Create Room : " + room + " in sub-dungeon : " + debugId + " " + rect);
+            Debug.Log("Create Room : " + room + " in Space : " + debugId + " " + rect);
         }
     }
 
     /// <summary>
     /// 생성된 방의 rect 값을 가져오는 함수 
+    /// 해당 방에 leaf가 존재할 경우 leaf에서 가져옴 (양쪽에 있어도 왼쪽을 우선으로 가져옴)
     /// </summary>
     /// <returns></returns>
     public Rect GetRoom()
@@ -298,7 +332,6 @@ public class SubDungeon
             if (leftTmpRoom.x != -1)
                 return leftTmpRoom;
         }
-
         if (right != null)
         {
             Rect rightTmpRoom = right.GetRoom();
@@ -315,7 +348,7 @@ public class SubDungeon
     /// </summary>
     /// <param name="_left"></param>
     /// <param name="_right"></param>
-    public void CreateCorridorBetween(SubDungeon _left, SubDungeon _right)
+    public void CreateCorridorBetween(Space _left, Space _right)
     {
         Rect leftRoom = _left.GetRoom();
         Rect rightRoom = _right.GetRoom();
@@ -324,9 +357,9 @@ public class SubDungeon
 
         // 각각의 방에서 연결점이 될 포인트를 랜덤으로 설정
         Vector2 leftRoomPoint = new Vector2((int)Random.Range(leftRoom.x + 1, leftRoom.xMax - 1)
-                                      , (int)Random.Range(leftRoom.y + 1, leftRoom.yMax - 1));
+                                          , (int)Random.Range(leftRoom.y + 1, leftRoom.yMax - 1));
         Vector2 rightRoomPoint = new Vector2((int)Random.Range(rightRoom.x + 1, rightRoom.xMax - 1)
-                                       , (int)Random.Range(rightRoom.y + 1, rightRoom.yMax - 1));
+                                           , (int)Random.Range(rightRoom.y + 1, rightRoom.yMax - 1));
         
         //각각 포인트 차이를 설정
         int corridorWidth = (int)(rightRoomPoint.x - leftRoomPoint.x);
@@ -335,26 +368,50 @@ public class SubDungeon
         Debug.Log("LeftPoint : " + leftRoomPoint + ", RightPoint : " + rightRoomPoint + ", w : " + corridorWidth + ", h : " + corridorHeight);
 
         //가로 길 
-        if (corridorWidth >= 0)
+        if (corridorWidth > 0)
             corridors.Add(new Rect(leftRoomPoint.x, leftRoomPoint.y, corridorWidth, 1));
-        else
+        else if(corridorWidth < 0)
             corridors.Add(new Rect(rightRoomPoint.x, rightRoomPoint.y, Mathf.Abs(corridorWidth), 1));
         //세로
-        if (corridorHeight >= 0)
+        if (corridorHeight > 0)
             corridors.Add(new Rect(rightRoomPoint.x, leftRoomPoint.y, 1, corridorHeight));
-        else
+        else if(corridorHeight <0)
             corridors.Add(new Rect(rightRoomPoint.x, rightRoomPoint.y, 1, Mathf.Abs(corridorHeight)));
 
-        Debug.Log("Corridors !");
+        Debug.Log("Corridors 생성!");
         foreach (Rect cor in corridors)
             Debug.Log("Corridor : " + cor);
     }
 }
 
+/// <summary>
+/// 종류를 변경하고 싶어서 생성
+/// </summary>
+class DungeonRoom
+{
+    public int tileType;
+    public Rect rect;
+
+    DungeonRoom(int _tileType, Rect _rect)
+    {
+        tileType = _tileType;
+        rect = _rect;
+    }
+}
+
+/// <summary>
+/// Map으로 저장할 tileData
+/// </summary>
 class TileData
 {
     public int tileNum;
     public int dir;
+
+    public TileData()
+    {
+        tileNum = 0;
+        dir = 0;
+    }
 
     public TileData(int num, int d)
     {

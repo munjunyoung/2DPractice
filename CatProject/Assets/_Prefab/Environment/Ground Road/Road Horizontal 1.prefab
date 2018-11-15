@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4646789072035336}
   - component: {fileID: 212574161770284240}
   m_Layer: 0
-  m_Name: Rod Horizontal 1
+  m_Name: Road Horizontal 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
