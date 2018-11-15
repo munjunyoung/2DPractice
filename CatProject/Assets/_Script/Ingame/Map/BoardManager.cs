@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+enum Dir { Set = 0, LeftBottom, Bottom, RightBottom, Left, Center, Right, LeftTop, Top, RightTop }
+enum DungeonType { Red = 0, Blue, Green }
+
 public class BoardManager : MonoBehaviour
 {
-    enum Dir { Set=0, LeftBottom, Bottom, RightBottom, Left, Center, Right, LeftTop, Top, RightTop }
+    
     
     [Header("Board Size")]
     public int boardRows;
@@ -23,10 +26,7 @@ public class BoardManager : MonoBehaviour
     public List<GameObject> corridorTile;
     //  Direction
     public List<GameObject> wallTile;
-
-
-    private List<DungeonRoom> dungeonRoomList = new List<DungeonRoom>();
-
+    
     //0 - backGround(Water), 1 - floor, 2 - corridor, 3 - wall
     private TileData[,] map;
 
@@ -72,6 +72,12 @@ public class BoardManager : MonoBehaviour
                             instance.transform.SetParent(transform);
                             break;
                         default:
+                            break;
+                        case 11:
+                            break;
+                        case 12:
+                            break;
+                        case 13:
                             break;
                     }
                 }
@@ -313,6 +319,8 @@ public class Space
             //World 좌표로 위치 설정, 사이즈 설정
             room = new Rect(rect.x + roomX, rect.y + roomY, roomWidth, roomHeight);
             Debug.Log("Create Room : " + room + " in Space : " + debugId + " " + rect);
+
+            BoardManager.dungeonRoomList.Add(new DungeonRoom(Random.Range(0,2),room));
         }
     }
 
@@ -342,6 +350,7 @@ public class Space
         //아무것도 아닐경우 
         return new Rect(-1, -1, 0, 0);
     }
+
 
     /// <summary>
     /// 통로 생성
@@ -385,14 +394,16 @@ public class Space
 }
 
 /// <summary>
-/// 종류를 변경하고 싶어서 생성
+/// 종류를 변경하고 싶어서 생성 roomtype에 따라서 tile이 변경되고 tile안에서도 종류별로 다를테고 wall의 종류도 다를테지
 /// </summary>
-class DungeonRoom
+public class DungeonRoom
 {
-    public int tileType;
     public Rect rect;
+    public int roomType;
+    public int tileType;
+    public int wallType;
 
-    DungeonRoom(int _tileType, Rect _rect)
+    public DungeonRoom(int _tileType, Rect _rect)
     {
         tileType = _tileType;
         rect = _rect;
