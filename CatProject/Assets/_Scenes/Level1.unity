@@ -951,10 +951,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbe30b0fdfc1e9a49b7447a75d5c569d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boardRows: 50
-  boardColumns: 50
-  minRoomSize: 10
-  maxRoomSize: 15
+  boardRows: 40
+  boardColumns: 40
+  minRoomSize: 8
+  maxRoomSize: 12
   waterTile:
   - {fileID: 1862120369512088, guid: 06712100546de4344a4d6a371251e1ff, type: 2}
   floorTile:

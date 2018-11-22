@@ -4,6 +4,9 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Cellular Automata
+/// </summary>
 public class MapGeneration : MonoBehaviour
 {
     public int width;
