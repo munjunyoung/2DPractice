@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
-
+using System;
+using System.Collections.Generic;
 public class Player : MonoBehaviour
 {
     enum MoveState { Idle, Walk, Run }
@@ -15,7 +16,7 @@ public class Player : MonoBehaviour
     //Animation 관련
     private MoveState PlayerMoveState;
     private Animator anim;
-
+    
     // Use this for initialization
     void Start()
     {
@@ -98,6 +99,7 @@ public class Player : MonoBehaviour
     }
     #endregion
 }
+
 
 
 /*
