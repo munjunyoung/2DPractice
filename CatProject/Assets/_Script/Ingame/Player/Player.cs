@@ -7,7 +7,7 @@ public class Player : MonoBehaviour
     enum Key { W = 0, S, A, D }
     
     //이동 관련
-    [Range(0, 5f)]
+    [Range(0, 10f)]
     public float speed;
     [HideInInspector]
     public Vector3 directionVector = Vector3.zero;

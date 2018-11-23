@@ -145,9 +145,9 @@ MonoBehaviour:
   useRandomSeed: 1
   randomFillPercent: 45
   tileList:
-  - {fileID: 1614955059885448, guid: 8e73115b0a6518249a8376cf7ad1973e, type: 2}
+  - {fileID: 0}
   wallList:
-  - {fileID: 1600818844552502, guid: 5b5bfe264fab902438db21ac83003126, type: 2}
+  - {fileID: 0}
   bushLis: []
 --- !u!4 &428786555
 Transform:
@@ -314,7 +314,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &600553442
 GameObject:
@@ -782,7 +782,7 @@ RectTransform:
   - {fileID: 621275193}
   - {fileID: 648266854}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -951,35 +951,58 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbe30b0fdfc1e9a49b7447a75d5c569d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boardRows: 40
-  boardColumns: 40
+  boardRows: 80
+  boardColumns: 80
   minRoomSize: 8
   maxRoomSize: 12
-  waterTile:
-  - {fileID: 1862120369512088, guid: 06712100546de4344a4d6a371251e1ff, type: 2}
-  floorTile:
-  - {fileID: 1658343104443948, guid: 959cb6838e1892f42a1b61372fe3385a, type: 2}
-  - {fileID: 1888066690416544, guid: 5ff9889292ecd404ea873bd4a10ccf42, type: 2}
-  - {fileID: 1816161081798488, guid: 3c55e4b9588f6e5478991911124b0398, type: 2}
-  corridorTile:
-  - {fileID: 1834556435868144, guid: 67b7b48ce90e70e41b32fdff83de5331, type: 2}
-  - {fileID: 1601116728520534, guid: 893285b56edb1874ea0030b5757871bf, type: 2}
-  - {fileID: 1971735506186526, guid: b584c112658c85a4d8827e8c1e1aecf8, type: 2}
-  - {fileID: 1908809441038016, guid: 255d88b0c0e9ff349aa2ec3de50bb74e, type: 2}
-  - {fileID: 1389738804882276, guid: 6cf7af81d39770c40b67be160caffe99, type: 2}
-  - {fileID: 1302818528144988, guid: edbcb029a4f94d341a659cabc3755b43, type: 2}
-  wallTile:
-  - {fileID: 1768302031974258, guid: 44943bc3c61a81b408568d83adf26ce6, type: 2}
-  - {fileID: 1500712533868318, guid: 848c59123160e4b4b954bef13f00e950, type: 2}
-  - {fileID: 1768302031974258, guid: 44943bc3c61a81b408568d83adf26ce6, type: 2}
-  - {fileID: 1458957920182196, guid: 794a8d43a3ff5f243a25315de97d318d, type: 2}
-  - {fileID: 1255515025383264, guid: a8f9e2fdae283ea409dcee4db6da9c07, type: 2}
-  - {fileID: 1768302031974258, guid: 44943bc3c61a81b408568d83adf26ce6, type: 2}
-  - {fileID: 1339519618928668, guid: d5d7ee3ab2a1bca4abf0d61173716dc6, type: 2}
-  - {fileID: 1500712533868318, guid: 848c59123160e4b4b954bef13f00e950, type: 2}
-  - {fileID: 1768302031974258, guid: 44943bc3c61a81b408568d83adf26ce6, type: 2}
-  - {fileID: 1458957920182196, guid: 794a8d43a3ff5f243a25315de97d318d, type: 2}
-  tileRefernce: []
+  tileRefernce:
+  - backGroundSprite:
+    - {fileID: 1862120369512088, guid: 06712100546de4344a4d6a371251e1ff, type: 2}
+    floorSprite:
+    - {fileID: 1658343104443948, guid: 959cb6838e1892f42a1b61372fe3385a, type: 2}
+    - {fileID: 1888066690416544, guid: 5ff9889292ecd404ea873bd4a10ccf42, type: 2}
+    - {fileID: 1816161081798488, guid: 3c55e4b9588f6e5478991911124b0398, type: 2}
+    corridorSprite:
+    - {fileID: 1834556435868144, guid: 67b7b48ce90e70e41b32fdff83de5331, type: 2}
+    - {fileID: 1601116728520534, guid: 893285b56edb1874ea0030b5757871bf, type: 2}
+    - {fileID: 1971735506186526, guid: b584c112658c85a4d8827e8c1e1aecf8, type: 2}
+    - {fileID: 1908809441038016, guid: 255d88b0c0e9ff349aa2ec3de50bb74e, type: 2}
+    - {fileID: 1389738804882276, guid: 6cf7af81d39770c40b67be160caffe99, type: 2}
+    - {fileID: 1302818528144988, guid: edbcb029a4f94d341a659cabc3755b43, type: 2}
+    wallSprite:
+    - {fileID: 1768302031974258, guid: 44943bc3c61a81b408568d83adf26ce6, type: 2}
+    - {fileID: 1500712533868318, guid: 848c59123160e4b4b954bef13f00e950, type: 2}
+    - {fileID: 1768302031974258, guid: 44943bc3c61a81b408568d83adf26ce6, type: 2}
+    - {fileID: 1458957920182196, guid: 794a8d43a3ff5f243a25315de97d318d, type: 2}
+    - {fileID: 1255515025383264, guid: a8f9e2fdae283ea409dcee4db6da9c07, type: 2}
+    - {fileID: 1768302031974258, guid: 44943bc3c61a81b408568d83adf26ce6, type: 2}
+    - {fileID: 1339519618928668, guid: d5d7ee3ab2a1bca4abf0d61173716dc6, type: 2}
+    - {fileID: 1500712533868318, guid: 848c59123160e4b4b954bef13f00e950, type: 2}
+    - {fileID: 1768302031974258, guid: 44943bc3c61a81b408568d83adf26ce6, type: 2}
+    - {fileID: 1458957920182196, guid: 794a8d43a3ff5f243a25315de97d318d, type: 2}
+  - backGroundSprite:
+    - {fileID: 1369017452554580, guid: 386ccc89a503feb42b97c950f820f464, type: 2}
+    - {fileID: 1551579938747004, guid: 9f29f8d405f2a394796cbe3811ed1f42, type: 2}
+    floorSprite:
+    - {fileID: 1244904098276330, guid: 3b3f6fa4bc5741648846d924844dc9ee, type: 2}
+    corridorSprite:
+    - {fileID: 1269217222224852, guid: 0cedd803500272e4092f205de8468994, type: 2}
+    - {fileID: 1269217222224852, guid: 0cedd803500272e4092f205de8468994, type: 2}
+    - {fileID: 1269217222224852, guid: 0cedd803500272e4092f205de8468994, type: 2}
+    - {fileID: 1269217222224852, guid: 0cedd803500272e4092f205de8468994, type: 2}
+    - {fileID: 1269217222224852, guid: 0cedd803500272e4092f205de8468994, type: 2}
+    - {fileID: 1269217222224852, guid: 0cedd803500272e4092f205de8468994, type: 2}
+    wallSprite:
+    - {fileID: 1244904098276330, guid: 3b3f6fa4bc5741648846d924844dc9ee, type: 2}
+    - {fileID: 1294097480694060, guid: 7f3acc3f5c5886f469917e25c016c576, type: 2}
+    - {fileID: 1417737994963190, guid: 17bb0afbda7ee44449d37f78e58b73f7, type: 2}
+    - {fileID: 1349323122227516, guid: 551d0ef564992604cb84238ba5b74b1d, type: 2}
+    - {fileID: 1854965291764904, guid: 59032f6b74313da40a84129f2f709319, type: 2}
+    - {fileID: 1244904098276330, guid: 3b3f6fa4bc5741648846d924844dc9ee, type: 2}
+    - {fileID: 1087880266590180, guid: 21e99fe96a160754c9dd060b403563d6, type: 2}
+    - {fileID: 1993429964735302, guid: 320841c7d58a0e244808182acec1611e, type: 2}
+    - {fileID: 1000779925044246, guid: 14e2f9a1cd9b9aa4c8ab6ab0ea36412e, type: 2}
+    - {fileID: 1767550887065836, guid: a10000a45f6790443a7d7db2a90296bd, type: 2}
 --- !u!4 &1202703319
 Transform:
   m_ObjectHideFlags: 0
@@ -1161,7 +1184,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2007814943
 GameObject:
@@ -1438,7 +1461,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2086183620
 MonoBehaviour:
@@ -1451,7 +1474,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f22b58f9b0ba1cb45b18216973566e81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
+  speed: 10
   directionVector: {x: 0, y: 0, z: 0}
 --- !u!50 &2086183621
 Rigidbody2D:

@@ -4,7 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 
 enum Dir { Set = 0, LeftBottom, Bottom, RightBottom, Left, Center, Right, LeftTop, Top, RightTop }
-enum DungeonType { Red = 0, Blue, Green }
+enum DungeonType { Green = 0, Blue, Gray }
+enum TileType { BackGround = 0, Floor, Corridor, Wall }
 
 /// <summary>
 /// BSP
@@ -21,15 +22,6 @@ public class BoardManager : MonoBehaviour
     [Range(2, 64)]
     public int maxRoomSize;
 
-    //Random
-    public List<GameObject> waterTile;
-    //Random
-    public List<GameObject> floorTile;
-    // Width : 0~2 center : 3  Height : 4~5;
-    public List<GameObject> corridorTile;
-    //  Direction
-    public List<GameObject> wallTile;
-
     //0 - backGround(Water), 1 - floor, 2 - corridor, 3 - wall
     public TileData[,] map;
     [Header("Tile Reference Object")]
@@ -40,11 +32,15 @@ public class BoardManager : MonoBehaviour
         map = new TileData[boardRows, boardColumns];
 
         Space rootSpace = new Space(new Rect(0, 0, boardRows, boardColumns));
+
         CreateBSP(rootSpace);
         rootSpace.CreateRoom();
 
-        SetCorridors(rootSpace);
         SetRoom(rootSpace);
+        SetCorridors(rootSpace);
+        SetRoomOutLine(rootSpace);
+        SetBackGround(rootSpace);
+
 
         DrawMap();
     }
@@ -89,20 +85,23 @@ public class BoardManager : MonoBehaviour
             {
                 if (map[i, j] != null)
                 {
-
                     switch (map[i, j].tileType)
                     {
+                        case 0:
+                            GameObject bg = Instantiate(tileRefernce[map[i, j].roomType].backGroundSprite[map[i, j].tileDir], new Vector3(i, j, 0f), Quaternion.identity) as GameObject;
+                            bg.transform.SetParent(transform);
+                            break;
                         case 1:
-                            GameObject floor = Instantiate(floorTile[map[i, j].tileDir], new Vector3(i, j, 0f), Quaternion.identity) as GameObject;
+                            GameObject floor = Instantiate(tileRefernce[map[i, j].roomType].floorSprite[map[i, j].tileDir], new Vector3(i, j, 0f), Quaternion.identity) as GameObject;
                             floor.transform.SetParent(transform);
                             break;
                         case 2:
-                            GameObject corridor = Instantiate(corridorTile[map[i, j].tileDir], new Vector3(i, j, 0f), Quaternion.identity) as GameObject;
+                            GameObject corridor = Instantiate(tileRefernce[map[i, j].roomType].corridorSprite[map[i, j].tileDir], new Vector3(i, j, 0f), Quaternion.identity) as GameObject;
                             corridor.transform.SetParent(transform);
                             break;
                         case 3:
-                            GameObject instance = Instantiate(wallTile[map[i, j].tileDir], new Vector3(i, j, 0f), Quaternion.identity) as GameObject;
-                            instance.transform.SetParent(transform);
+                            GameObject wall = Instantiate(tileRefernce[map[i, j].roomType].wallSprite[map[i, j].tileDir], new Vector3(i, j, 0f), Quaternion.identity) as GameObject;
+                            wall.transform.SetParent(transform);
                             break;
                         default:
                             break;
@@ -110,8 +109,7 @@ public class BoardManager : MonoBehaviour
                 }
                 else
                 {
-                    GameObject instance = Instantiate(waterTile[0], new Vector3(i, j, 0f), Quaternion.identity) as GameObject;
-                    instance.transform.SetParent(transform);
+                    Debug.Log("오류");
                 }
             }
         }
@@ -126,22 +124,21 @@ public class BoardManager : MonoBehaviour
         if (_Space == null)
             return;
 
-        if (!_Space.CheckLeaf())
+        if (_Space.CheckLeaf())
         {
+            SetRoom(_Space.left);
+            SetRoom(_Space.right);
+        }
+        else
+        {
+            var roomType = _Space.roomType;
             for (int i = (int)_Space.room.x; i < _Space.room.xMax; i++)
             {
                 for (int j = (int)_Space.room.y; j < _Space.room.yMax; j++)
                 {
-                    map[i, j] = new TileData(1, UnityEngine.Random.Range(0, floorTile.Count));
+                    map[i, j] = new TileData(roomType, (int)TileType.Floor, UnityEngine.Random.Range(0, tileRefernce[roomType].floorSprite.Count));
                 }
             }
-
-            SetOutLine(3, (int)_Space.room.x, (int)_Space.room.y, (int)_Space.room.xMax, (int)_Space.room.yMax);
-        }
-        else
-        {
-            SetRoom(_Space.left);
-            SetRoom(_Space.right);
         }
     }
 
@@ -157,51 +154,96 @@ public class BoardManager : MonoBehaviour
         SetCorridors(_Space.left);
         SetCorridors(_Space.right);
 
-        foreach (Rect cor in _Space.corridors)
+        foreach (var cor in _Space.corridors)
         {
-            for (int i = (int)cor.x; i < cor.xMax; i++)
+            var corridorType = cor.type;
+            for (int i = (int)cor.rect.x; i < cor.rect.xMax; i++)
             {
-                for (int j = (int)cor.y; j < cor.yMax; j++)
+                for (int j = (int)cor.rect.y; j < cor.rect.yMax; j++)
                 {
-                    map[i, j] = cor.width > cor.height ? new TileData(2, UnityEngine.Random.Range(0, 2)) : new TileData(2, UnityEngine.Random.Range(4, 5));
+                    if (map[i, j] == null)
+                    {
+                        map[i, j] = cor.rect.width > cor.rect.height ?
+                            new TileData(corridorType, (int)TileType.Corridor, UnityEngine.Random.Range(0, 2)) :
+                            new TileData(corridorType, (int)TileType.Corridor, UnityEngine.Random.Range(4, 5));
+                    }
                 }
             }
 
         }
+
     }
 
     /// <summary>
-    /// Wall 생성(주변 맵이나 도로의 rect값을 파라미터로 보내어 처리
+    /// 방 노드를 모두 돌면서 테두리 생성
     /// </summary>
-    /// <param name="wallTileNum"></param>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    /// <param name="xMax"></param>
-    /// <param name="yMax"></param>
-    private void SetOutLine(int wallTileNum, int x, int y, int xMax, int yMax)
+    /// <param name="_Space"></param>
+    private void SetRoomOutLine(Space _Space)
     {
-        for (int i = x - 1; i <= xMax; i++)
+        if (_Space == null)
+            return;
+
+        if (_Space.CheckLeaf())
         {
-            for (int j = y - 1; j <= yMax; j++)
+            SetRoomOutLine(_Space.left);
+            SetRoomOutLine(_Space.right);
+        }
+        else
+        {
+            var x = (int)_Space.room.x;
+            var y = (int)_Space.room.y;
+            var xMax = (int)_Space.room.xMax;
+            var yMax = (int)_Space.room.yMax;
+            var wallTileNum = (int)TileType.Wall;
+            var roomType = _Space.roomType;
+
+            for (int i = x - 1; i <= xMax; i++)
             {
-                if (map[i, j] == null)
+                for (int j = y - 1; j <= yMax; j++)
                 {
-                    if (i == x - 1 && j == y - 1)
-                        map[i, j] = new TileData(wallTileNum, (int)Dir.LeftBottom);
-                    else if (i == x - 1 && j == yMax)
-                        map[i, j] = new TileData(wallTileNum, (int)Dir.LeftTop);
-                    else if (i == xMax && j == y - 1)
-                        map[i, j] = new TileData(wallTileNum, (int)Dir.RightBottom);
-                    else if (i == xMax && j == yMax)
-                        map[i, j] = new TileData(wallTileNum, (int)Dir.RightTop);
-                    else if (i == x - 1)
-                        map[i, j] = new TileData(wallTileNum, (int)Dir.Left);
-                    else if (j == y - 1)
-                        map[i, j] = new TileData(wallTileNum, (int)Dir.Bottom);
-                    else if (i == xMax)
-                        map[i, j] = new TileData(wallTileNum, (int)Dir.Right);
-                    else if (j == yMax)
-                        map[i, j] = new TileData(wallTileNum, (int)Dir.Top);
+                    if (map[i, j] == null)
+                    {
+                        if (i == x - 1 && j == y - 1)
+                            map[i, j] = new TileData(roomType, wallTileNum, (int)Dir.LeftBottom);
+                        else if (i == x - 1 && j == yMax)
+                            map[i, j] = new TileData(roomType, wallTileNum, (int)Dir.LeftTop);
+                        else if (i == xMax && j == y - 1)
+                            map[i, j] = new TileData(roomType, wallTileNum, (int)Dir.RightBottom);
+                        else if (i == xMax && j == yMax)
+                            map[i, j] = new TileData(roomType, wallTileNum, (int)Dir.RightTop);
+                        else if (i == x - 1)
+                            map[i, j] = new TileData(roomType, wallTileNum, (int)Dir.Left);
+                        else if (j == y - 1)
+                            map[i, j] = new TileData(roomType, wallTileNum, (int)Dir.Bottom);
+                        else if (i == xMax)
+                            map[i, j] = new TileData(roomType, wallTileNum, (int)Dir.Right);
+                        else if (j == yMax)
+                            map[i, j] = new TileData(roomType, wallTileNum, (int)Dir.Top);
+                    }
+                }
+            }
+        }
+    }
+
+    private void SetBackGround(Space _Space)
+    {
+        if (_Space == null)
+            return;
+
+        if (_Space.CheckLeaf())
+        {
+            SetBackGround(_Space.left);
+            SetBackGround(_Space.right);
+        }
+        else
+        {
+            var roomType = _Space.roomType;
+            for (int i = (int)_Space.rect.x; i < _Space.rect.xMax; i++)
+            {
+                for (int j = (int)_Space.rect.y; j < _Space.rect.yMax; j++)
+                {
+                    if (map[i, j] == null)
+                        map[i, j] = new TileData(roomType, (int)TileType.BackGround, UnityEngine.Random.Range(0, tileRefernce[roomType].backGroundSprite.Count));
                 }
             }
         }
@@ -216,11 +258,11 @@ public class Space
     //해당 객체의 설정 공간
     public Space left, right;
     public Rect rect;
-    
+
     public Rect room = new Rect(-1, -1, 0, 0);
     public int roomType = -1;
 
-    public List<Rect> corridors = new List<Rect>();
+    public List<Corridor> corridors = new List<Corridor>();
     private int corridorThicKness = 1;
 
     public int spaceID;
@@ -309,6 +351,7 @@ public class Space
         //leaf가 없을경우에는 그 범위안에서 room생성 
         else
         {
+            roomType = UnityEngine.Random.Range(0, 10)%2;
             //방사이즈 설정 (생성한 방을 감쌀 타일을 생성하기 위해 -2)
             int roomWidth = (int)UnityEngine.Random.Range(rect.width * 0.5f, rect.width - 2);
             int roomHeight = (int)UnityEngine.Random.Range(rect.height * 0.5f, rect.height - 2);
@@ -383,22 +426,40 @@ public class Space
         Debug.Log("LeftPoint : " + leftRoomPoint + ", RightPoint : " + rightRoomPoint + ", w : " + corridorWidth + ", h : " + corridorHeight);
 
 
+        
+        //타입 설정 
+        int type;
+        if (_left.roomType != -1)
+            type = _left.roomType;
+        else if (_right.roomType != -1)
+            type = _right.roomType;
+        else
+            type = UnityEngine.Random.Range(0, 1);
 
-        // 2,18 17,3   -> corridorheight >0 
-        //width가 0일 경우
-        //가로 길 
         if (corridorWidth != 0)
-            corridors.Add(new Rect(leftRoomPoint.x, leftRoomPoint.y, corridorWidth+1, corridorThicKness));
+            corridors.Add(new Corridor(type, new Rect(leftRoomPoint.x, leftRoomPoint.y, corridorWidth + 1, corridorThicKness)));
         if (corridorHeight > 0)
-            corridors.Add(new Rect(rightRoomPoint.x, leftRoomPoint.y, corridorThicKness, corridorHeight));
+            corridors.Add(new Corridor(type, new Rect(rightRoomPoint.x, leftRoomPoint.y, corridorThicKness, corridorHeight)));
         else if (corridorHeight < 0)
-            corridors.Add(new Rect(rightRoomPoint.x, rightRoomPoint.y, corridorThicKness, Mathf.Abs(corridorHeight)));
+            corridors.Add(new Corridor(type, new Rect(rightRoomPoint.x, rightRoomPoint.y, corridorThicKness, Mathf.Abs(corridorHeight))));
         //세로
 
 
-        Debug.Log("Corridors 생성!");
-        foreach (Rect cor in corridors)
-            Debug.Log("Corridor : " + cor);
+        //Debug.Log("Corridors 생성!");
+        //foreach (Rect cor in corridors)
+        //    Debug.Log("Corridor : " + cor);
+    }
+}
+
+public struct Corridor
+{
+    public int type;
+    public Rect rect;
+
+    public Corridor(int _type, Rect _rect)
+    {
+        rect = _rect;
+        type = _type;
     }
 }
 
@@ -418,9 +479,9 @@ public class TileData
         tileDir = 0;
     }
 
-    public TileData(int _tileType, int _tileDir)
+    public TileData(int _roomType, int _tileType, int _tileDir)
     {
-        
+        roomType = _roomType;
         tileType = _tileType;
         tileDir = _tileDir;
     }
@@ -431,7 +492,7 @@ public struct TileReferenceObject
 {
     public List<GameObject> backGroundSprite;
     public List<GameObject> floorSprite;
-    public List<GameObject> wallSprite;
     public List<GameObject> corridorSprite;
+    public List<GameObject> wallSprite;
 }
 
