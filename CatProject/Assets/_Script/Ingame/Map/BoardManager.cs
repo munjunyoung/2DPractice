@@ -21,7 +21,6 @@ public class BoardManager : MonoBehaviour
     [Range(2, 64)]
     public int maxRoomSize;
 
-    [Header("Tile Object")]
     //Random
     public List<GameObject> waterTile;
     //Random
@@ -33,7 +32,7 @@ public class BoardManager : MonoBehaviour
 
     //0 - backGround(Water), 1 - floor, 2 - corridor, 3 - wall
     public TileData[,] map;
-
+    [Header("Tile Reference Object")]
     public TileReferenceObject[] tileRefernce;
 
     private void Start()
@@ -217,9 +216,12 @@ public class Space
     //해당 객체의 설정 공간
     public Space left, right;
     public Rect rect;
-
+    
     public Rect room = new Rect(-1, -1, 0, 0);
+    public int roomType = -1;
+
     public List<Rect> corridors = new List<Rect>();
+    private int corridorThicKness = 1;
 
     public int spaceID;
     private static int debugCounter = 0;
@@ -386,32 +388,17 @@ public class Space
         //width가 0일 경우
         //가로 길 
         if (corridorWidth != 0)
-            corridors.Add(new Rect(leftRoomPoint.x, leftRoomPoint.y, corridorWidth+1, 1));
+            corridors.Add(new Rect(leftRoomPoint.x, leftRoomPoint.y, corridorWidth+1, corridorThicKness));
         if (corridorHeight > 0)
-            corridors.Add(new Rect(rightRoomPoint.x, leftRoomPoint.y, 1, corridorHeight));
+            corridors.Add(new Rect(rightRoomPoint.x, leftRoomPoint.y, corridorThicKness, corridorHeight));
         else if (corridorHeight < 0)
-            corridors.Add(new Rect(rightRoomPoint.x, rightRoomPoint.y, 1, Mathf.Abs(corridorHeight)));
+            corridors.Add(new Rect(rightRoomPoint.x, rightRoomPoint.y, corridorThicKness, Mathf.Abs(corridorHeight)));
         //세로
 
 
         Debug.Log("Corridors 생성!");
         foreach (Rect cor in corridors)
             Debug.Log("Corridor : " + cor);
-    }
-}
-
-/// <summary>
-/// 종류를 변경하고 싶어서 생성 roomtype에 따라서 tile이 변경되고 tile안에서도 종류별로 다를테고 wall의 종류도 다를테지
-/// </summary>
-public struct DungeonRoom
-{
-    public Rect rect;
-    public int roomType;
-
-    public DungeonRoom(int _roomType, Rect _rect)
-    {
-        roomType = _roomType;
-        rect = _rect;
     }
 }
 
@@ -440,17 +427,11 @@ public class TileData
 }
 
 [Serializable]
-public class TileReferenceObject
+public struct TileReferenceObject
 {
-    public List<GameObject> wallSprite;
+    public List<GameObject> backGroundSprite;
     public List<GameObject> floorSprite;
+    public List<GameObject> wallSprite;
     public List<GameObject> corridorSprite;
 }
-
-public struct TileType
-{
-
-}
-
-
 
