@@ -7,7 +7,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Cellular Automata
 /// </summary>
-public class MapGeneration : MonoBehaviour
+public class BoardManagerCellular : MonoBehaviour
 {
     public int width;
     public int height;

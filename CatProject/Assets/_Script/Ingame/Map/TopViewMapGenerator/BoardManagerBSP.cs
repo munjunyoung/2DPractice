@@ -10,7 +10,7 @@ enum TileType { BackGround = 0, Floor, Corridor, Wall }
 /// <summary>
 /// BSP
 /// </summary>
-public class BoardManager : MonoBehaviour
+public class BoardManagerBSP : MonoBehaviour
 {
     [Header("Board Size")]
     public int boardRows;
