@@ -23,8 +23,8 @@ public class JoyStickScript : MonoBehaviour, IDragHandler, IPointerDownHandler, 
         {
             //tmpPos를 bgImg 각 방향의 사이즈 값으로 나눈다
             tmpPos.x = tmpPos.x / bgImg.sizeDelta.x;
-            tmpPos.y = tmpPos.y / bgImg.sizeDelta.y;
-
+            tmpPos.y = 0;
+            //tmpPos.y = tmpPos.y / bgImg.sizeDelta.y;
             inputVector = tmpPos;
             //벡터 길이가 1보다 클경우 normalized
             inputVector = (inputVector.magnitude > 1f) ? inputVector.normalized : inputVector;

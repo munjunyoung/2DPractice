@@ -3,15 +3,16 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-enum Dir { Set = 0, LeftBottom, Bottom, RightBottom, Left, Center, Right, LeftTop, Top, RightTop }
-enum DungeonType { Green = 0, Blue, Gray }
-enum TileType { BackGround = 0, Floor, Corridor, Wall }
+
 
 /// <summary>
 /// BSP
 /// </summary>
 public class BoardManagerBSP : MonoBehaviour
 {
+    enum Dir { Set = 0, LeftBottom, Bottom, RightBottom, Left, Center, Right, LeftTop, Top, RightTop }
+    enum DungeonType { Green = 0, Blue, Gray }
+    enum TileType { BackGround = 0, Floor, Corridor, Wall }
     [Header("Board Size")]
     public int boardRows;
     public int boardColumns;

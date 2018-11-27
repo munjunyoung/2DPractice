@@ -54,7 +54,12 @@ public class Player : MonoBehaviour
 
         //이동을 멈춘후에도 캐릭터의 방향을 유지시키기 위한 설정
         if (!dir.Equals(Vector3.zero))
-            transform.rotation = Quaternion.LookRotation(Vector3.forward, -dir);
+            transform.localScale = dir.x > 0 ? new Vector3(1, 1, 1) : new Vector3(-1, 1, 1);
+    }
+
+    private void Jump()
+    {
+       
     }
     
     /// <summary>
@@ -64,7 +69,6 @@ public class Player : MonoBehaviour
     private void SetMoveAnimator()
     {
         // Animation Setting State Float param  0 : idle 1 : walk
-        
         PlayerMoveState = directionVector.Equals(Vector2.zero) ? MoveState.Idle : MoveState.Walk;
         anim.SetInteger("State", (int)PlayerMoveState);
     }
