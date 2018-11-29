@@ -3,21 +3,23 @@ using System;
 using System.Collections.Generic;
 public class Player : MonoBehaviour
 {
-    enum MoveState { Idle, Walk, Run }
-    enum Key { W = 0, S, A, D }
-    
-    //이동 관련
+    enum MoveState { Idle, Run, Jump, Fall }
+
     [Range(0, 10f)]
     public float speed;
     [HideInInspector]
     public Vector3 directionVector = Vector3.zero;
     private Rigidbody2D rb2D;
-    
+    [Range(10,50)]
+    public float jumpPower;
+
     //Animation 관련
     private MoveState PlayerMoveState;
     private Animator anim;
+
+    [HideInInspector]
+    public bool isGrounded;
     
-    // Use this for initialization
     void Start()
     {
         PlayerMoveState = MoveState.Idle;
@@ -29,6 +31,8 @@ public class Player : MonoBehaviour
     {
         //InputKeyboard();
         //Attack();
+        //if (Input.GetKeyDown(KeyCode.Space))
+        //    Jump();
     }
     
     private void FixedUpdate()
@@ -38,7 +42,8 @@ public class Player : MonoBehaviour
  
     private void LateUpdate()
     {
-        SetMoveAnimator();
+        //애니매이션 설정
+        anim.SetFloat("State", (int)PlayerMoveState);
     }
 
     /// <summary>
@@ -48,31 +53,30 @@ public class Player : MonoBehaviour
     {
         //대각선 일정수치 
         dir = dir.normalized;
-        //rb2D.MovePosition(rb2D.position + dir * speed * Time.deltaTime);
-        //transform.Translate(dir * speed * Time.deltaTime);
         transform.position += dir * speed * Time.deltaTime;
-
+        
         //이동을 멈춘후에도 캐릭터의 방향을 유지시키기 위한 설정
         if (!dir.Equals(Vector3.zero))
             transform.localScale = dir.x > 0 ? new Vector3(1, 1, 1) : new Vector3(-1, 1, 1);
+
+        //캐릭터 애니매이션 상태 설정
+        if (rb2D.velocity.y > 0)
+            PlayerMoveState = MoveState.Jump;
+        else if (rb2D.velocity.y < 0)
+            PlayerMoveState = MoveState.Fall;
+        else
+            PlayerMoveState = directionVector.Equals(Vector2.zero) ? MoveState.Idle : MoveState.Run;
     }
 
-    private void Jump()
+    public void Jump()
     {
-       
+        if (isGrounded)
+        {
+            rb2D.AddForce(Vector3.up * jumpPower, ForceMode2D.Impulse);
+            anim.SetTrigger("Jump");
+        }
     }
     
-    /// <summary>
-    /// 이동관련 애니매이션 설정
-    /// playerMoveState - 상태 param 설정 
-    /// </summary>
-    private void SetMoveAnimator()
-    {
-        // Animation Setting State Float param  0 : idle 1 : walk
-        PlayerMoveState = directionVector.Equals(Vector2.zero) ? MoveState.Idle : MoveState.Walk;
-        anim.SetInteger("State", (int)PlayerMoveState);
-    }
-
     /// <summary>
     /// 공격
     /// </summary>
@@ -80,7 +84,7 @@ public class Player : MonoBehaviour
     {
         anim.SetTrigger("Attack");
     }
-
+    
     #region input Keyboard set
     /// <summary>
     /// 키보드 키 입력 관련 함수

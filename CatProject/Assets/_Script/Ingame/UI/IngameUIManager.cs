@@ -29,6 +29,11 @@ public class IngameUIManager : MonoBehaviour {
         playerSc.directionVector = dir;
     }
 
+    public void JumpPlayer()
+    {
+        playerSc.Jump();
+    }
+
     #region 우측하단 UI
     /// <summary>
     /// 일반공격 실행

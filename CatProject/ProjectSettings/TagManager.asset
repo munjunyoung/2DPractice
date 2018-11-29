@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Ground
   layers:
   - Default
   - TransparentFX
@@ -41,10 +42,10 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Floor
+  - name: BackGround
     uniqueID: 748513025
     locked: 0
-  - name: Road
+  - name: Ground
     uniqueID: 2177671213
     locked: 0
   - name: Obstacle
