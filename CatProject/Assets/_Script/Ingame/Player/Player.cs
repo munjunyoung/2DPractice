@@ -7,8 +7,13 @@ public class Player : MonoBehaviour
 
     [Range(0, 10f)]
     public float speed;
+
     [HideInInspector]
-    public Vector3 directionVector = Vector3.zero;
+    //조이스틱, keydata 외부 참조 벡터
+    public Vector3 referenceDirVector = Vector3.zero;
+    [HideInInspector]
+    //실제 Move에서 참조하는 벡터
+    public Vector3 actualDirVector = Vector3.zero;
     private Rigidbody2D rb2D;
     [Range(10,50)]
     public float jumpPower;
@@ -37,7 +42,7 @@ public class Player : MonoBehaviour
     
     private void FixedUpdate()
     {
-        Move(directionVector);
+        Move(referenceDirVector);
     }
  
     private void LateUpdate()
@@ -49,15 +54,26 @@ public class Player : MonoBehaviour
     /// <summary>
     /// 플레이어 캐릭터 이동 
     /// </summary>
-    private void Move(Vector3 dir)
+    private void Move(Vector3 stickDir)
     {
         //대각선 일정수치 
-        dir = dir.normalized;
-        transform.position += dir * speed * Time.deltaTime;
-        
+        //dir = dir.normalized;
+
+        if (!stickDir.x.Equals(0))
+        {
+            actualDirVector.x += stickDir.x;
+            if (Mathf.Abs(actualDirVector.x) > 10)
+                actualDirVector.x = stickDir.x>0 ? 10 : -10;
+        }
+        else
+            actualDirVector.x = Mathf.Lerp(actualDirVector.x, 0, Time.deltaTime*2f);
+
+        Debug.Log(actualDirVector + "stick dir : " + stickDir);
+
+        transform.position += actualDirVector * Time.deltaTime;
         //이동을 멈춘후에도 캐릭터의 방향을 유지시키기 위한 설정
-        if (!dir.Equals(Vector3.zero))
-            transform.localScale = dir.x > 0 ? new Vector3(1, 1, 1) : new Vector3(-1, 1, 1);
+        if (!stickDir.Equals(Vector3.zero))
+            transform.localScale = stickDir.x > 0 ? new Vector3(1, 1, 1) : new Vector3(-1, 1, 1);
 
         //캐릭터 애니매이션 상태 설정
         if (rb2D.velocity.y > 0)
@@ -65,7 +81,7 @@ public class Player : MonoBehaviour
         else if (rb2D.velocity.y < 0)
             PlayerMoveState = MoveState.Fall;
         else
-            PlayerMoveState = directionVector.Equals(Vector2.zero) ? MoveState.Idle : MoveState.Run;
+            PlayerMoveState = stickDir.Equals(Vector2.zero) ? MoveState.Idle : MoveState.Run;
     }
 
     public void Jump()
@@ -97,7 +113,7 @@ public class Player : MonoBehaviour
         var a = Input.GetKey(KeyCode.A) ? -1 : 0;
         var d = Input.GetKey(KeyCode.D) ? 1 : 0;
         
-        directionVector = new Vector2(a + d, w + s);
+        referenceDirVector = new Vector2(a + d, w + s);
     }
     
     private void InputAttack()

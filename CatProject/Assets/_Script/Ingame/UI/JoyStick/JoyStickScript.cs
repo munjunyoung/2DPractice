@@ -12,6 +12,7 @@ public class JoyStickScript : MonoBehaviour, IDragHandler, IPointerDownHandler, 
     private Vector2 inputVector;
     public Vector2 DirValue { get { return inputVector; } }
 
+
     /// <summary>
     /// Drag 
     /// </summary>

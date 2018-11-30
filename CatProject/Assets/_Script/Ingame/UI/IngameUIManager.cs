@@ -21,12 +21,12 @@ public class IngameUIManager : MonoBehaviour {
     }
 
     /// <summary>
-    /// 조이스틱을 이용한 플레이어 이동벡터 초기화
+    /// 조이스틱을 이용한 플레이어 이동벡터 초기화 (이렇게 할 필요가 있을지는 의문)
     /// </summary>
     /// <param name="dir"></param>
     private void MovePlayer(Vector2 dir)
     {
-        playerSc.directionVector = dir;
+        playerSc.referenceDirVector = dir;
     }
 
     public void JumpPlayer()

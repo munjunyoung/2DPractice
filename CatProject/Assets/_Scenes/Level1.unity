@@ -998,7 +998,7 @@ MonoBehaviour:
   RoomsObject: {fileID: 1419268984}
   numberOfRoom: 1
   widthMinSize: 30
-  widthMaxSize: 50
+  widthMaxSize: 100
   heightSize: 15
 --- !u!114 &1202703322
 MonoBehaviour:
@@ -1666,7 +1666,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 10
-  directionVector: {x: 0, y: 0, z: 0}
+  referenceDirVector: {x: 0, y: 0, z: 0}
+  actualDirVector: {x: 0, y: 0, z: 0}
   jumpPower: 30
   isGrounded: 0
 --- !u!50 &2086183621
