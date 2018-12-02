@@ -22,7 +22,9 @@ public class BoardManagerSideView : MonoBehaviour
     [Range(30, 100)]
     public int widthMaxSize;
     [Range(15, 30)]
-    public int heightSize;
+    public int heightMinSize;
+    [Range(30, 60)]
+    public int heightMaxSize;
 
     private void Start()
     {
@@ -33,7 +35,7 @@ public class BoardManagerSideView : MonoBehaviour
     private void CreateRooms(int _numberOfRoom)
     {
         for(int i = 0; i<_numberOfRoom; i++)
-            roomList.Add(new DungeonRoom((int)RoomType.Type1, widthMinSize, widthMaxSize, heightSize));
+            roomList.Add(new DungeonRoom((int)RoomType.Type1, widthMinSize, widthMaxSize, heightMinSize, heightMaxSize));
     }
 
     private void DrawRoom()
@@ -75,12 +77,13 @@ public class DungeonRoom
     public int roomType;
     public int[,] roomArray;
 
-    public DungeonRoom(int _roomType, int _widthMin, int _widthMax, int _height)
+    public DungeonRoom(int _roomType, int _widthMin, int _widthMax, int _heightMin, int _heightMax)
     {
         roomType = _roomType;
 
         var tmpW = Random.Range(_widthMin, _widthMax);
-        room = new Rect(0, 0, tmpW, _height);
+        var tmpH = Random.Range(_heightMin, _heightMax);
+        room = new Rect(0, 0, tmpW, tmpH);
 
         roomArray = new int[(int)room.width, (int)room.height];
         SetOutLine();

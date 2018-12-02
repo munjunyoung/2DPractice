@@ -999,7 +999,8 @@ MonoBehaviour:
   numberOfRoom: 1
   widthMinSize: 30
   widthMaxSize: 100
-  heightSize: 15
+  heightMinSize: 15
+  heightMaxSize: 60
 --- !u!114 &1202703322
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1665,11 +1666,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f22b58f9b0ba1cb45b18216973566e81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 10
-  referenceDirVector: {x: 0, y: 0, z: 0}
-  actualDirVector: {x: 0, y: 0, z: 0}
+  maxSpeed: 0
+  accelerationValue: 1
+  decelerationValue: 2
   jumpPower: 30
   isGrounded: 0
+  stickValueVector: {x: 0, y: 0, z: 0}
 --- !u!50 &2086183621
 Rigidbody2D:
   serializedVersion: 4

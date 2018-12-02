@@ -5,25 +5,30 @@ public class Player : MonoBehaviour
 {
     enum MoveState { Idle, Run, Jump, Fall }
 
-    [Range(0, 10f)]
-    public float speed;
+    //물리 관련
+    private Rigidbody2D rb2D;
+    [Header("MOVE OPTION")]
+    [Range(10, 20f)]
+    public float maxSpeed;
+    [Range(0.1f, 3f)]
+    public float accelerationValue;
+    [Range(0.1f, 3f)]
+    public float decelerationValue;
+    [Range(10, 50)]
+    public float jumpPower;
+    [HideInInspector]
+    public bool isGrounded;
 
     [HideInInspector]
     //조이스틱, keydata 외부 참조 벡터
-    public Vector3 referenceDirVector = Vector3.zero;
-    [HideInInspector]
-    //실제 Move에서 참조하는 벡터
-    public Vector3 actualDirVector = Vector3.zero;
-    private Rigidbody2D rb2D;
-    [Range(10,50)]
-    public float jumpPower;
-
+    public Vector3 stickValueVector; 
+    //실제 Move에서 참조하는 벡터 (Vector3를 사용하나 y값은 사용안해서 제외해도 될듯 하다)
+    private Vector3 actualMoveDirVector;
+    
     //Animation 관련
     private MoveState PlayerMoveState;
     private Animator anim;
 
-    [HideInInspector]
-    public bool isGrounded;
     
     void Start()
     {
@@ -34,15 +39,12 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        //InputKeyboard();
-        //Attack();
-        //if (Input.GetKeyDown(KeyCode.Space))
-        //    Jump();
+        InputKeyboard();
     }
     
     private void FixedUpdate()
     {
-        Move(referenceDirVector);
+        Move(stickValueVector);
     }
  
     private void LateUpdate()
@@ -56,26 +58,28 @@ public class Player : MonoBehaviour
     /// </summary>
     private void Move(Vector3 stickDir)
     {
-        //대각선 일정수치 
-        //dir = dir.normalized;
-
+        //가속, 감속 적용
         if (!stickDir.x.Equals(0))
         {
-            actualDirVector.x += stickDir.x;
-            if (Mathf.Abs(actualDirVector.x) > 10)
-                actualDirVector.x = stickDir.x>0 ? 10 : -10;
+            actualMoveDirVector.x += stickDir.x * accelerationValue;
+
+            if (Mathf.Abs(actualMoveDirVector.x) > maxSpeed)
+                actualMoveDirVector.x = actualMoveDirVector.x > 0 ? maxSpeed : -maxSpeed;
         }
         else
-            actualDirVector.x = Mathf.Lerp(actualDirVector.x, 0, Time.deltaTime*2f);
+        {
+            //actualMoveDirVector.x가 0에 도달 했을 경우 slerp를 도는것보다 조건문을 넘기는게 더 나아보인다.
+            if (!actualMoveDirVector.x.Equals(0))
+                actualMoveDirVector = Vector3.Slerp(actualMoveDirVector, Vector3.zero, Time.deltaTime * decelerationValue);
+        }
+        //실제 물리 이동
+        transform.position += actualMoveDirVector * Time.deltaTime;
 
-        Debug.Log(actualDirVector + "stick dir : " + stickDir);
-
-        transform.position += actualDirVector * Time.deltaTime;
-        //이동을 멈춘후에도 캐릭터의 방향을 유지시키기 위한 설정
+        //캐릭터의 방향 설정
         if (!stickDir.Equals(Vector3.zero))
             transform.localScale = stickDir.x > 0 ? new Vector3(1, 1, 1) : new Vector3(-1, 1, 1);
 
-        //캐릭터 애니매이션 상태 설정
+        //캐릭터 상태 설정(애니매이션 상태 설정)
         if (rb2D.velocity.y > 0)
             PlayerMoveState = MoveState.Jump;
         else if (rb2D.velocity.y < 0)
@@ -84,13 +88,13 @@ public class Player : MonoBehaviour
             PlayerMoveState = stickDir.Equals(Vector2.zero) ? MoveState.Idle : MoveState.Run;
     }
 
+    /// <summary>
+    /// 점프 IsGrounded는 캐릭터 오브젝트의 자식오브젝트를 통하여 설정
+    /// </summary>
     public void Jump()
     {
         if (isGrounded)
-        {
             rb2D.AddForce(Vector3.up * jumpPower, ForceMode2D.Impulse);
-            anim.SetTrigger("Jump");
-        }
     }
     
     /// <summary>
@@ -113,14 +117,17 @@ public class Player : MonoBehaviour
         var a = Input.GetKey(KeyCode.A) ? -1 : 0;
         var d = Input.GetKey(KeyCode.D) ? 1 : 0;
         
-        referenceDirVector = new Vector2(a + d, w + s);
+        stickValueVector = new Vector2(a + d , 0);
+
+        InputJump();
     }
     
-    private void InputAttack()
+    private void InputJump()
     {
-        if(Input.GetKeyDown(KeyCode.Space))
-            Attack();
+        if (Input.GetKeyDown(KeyCode.Space))
+            Jump();
     }
+    
     #endregion
 }
 
