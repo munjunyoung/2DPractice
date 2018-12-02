@@ -10,11 +10,6 @@ public class IngameUIManager : MonoBehaviour {
     [Header("JoyStick Object")]
     public JoyStickScript joyStickSc;
     
-    // Use this for initialization
-    void Start () {
-		
-	}
-
     private void Update()
     {
         MovePlayer(joyStickSc.DirValue);
@@ -29,6 +24,9 @@ public class IngameUIManager : MonoBehaviour {
         playerSc.stickValueVector = dir;
     }
 
+    /// <summary>
+    /// Player Jump Button
+    /// </summary>
     public void JumpPlayer()
     {
         playerSc.Jump();

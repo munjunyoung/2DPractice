@@ -11,8 +11,7 @@ public class JoyStickScript : MonoBehaviour, IDragHandler, IPointerDownHandler, 
 
     private Vector2 inputVector;
     public Vector2 DirValue { get { return inputVector; } }
-
-
+    
     /// <summary>
     /// Drag 
     /// </summary>
@@ -43,6 +42,7 @@ public class JoyStickScript : MonoBehaviour, IDragHandler, IPointerDownHandler, 
         joyStickImg.GetComponent<Image>().color = new Color32(255, 255, 255, 150);
         OnDrag(eventData);
     }
+
     /// <summary>
     /// 터치에서 뗄 시 스틱 이미지 복구 및 위치 앵커포지션 초기화
     /// </summary>

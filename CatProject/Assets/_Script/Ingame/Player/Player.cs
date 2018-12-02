@@ -39,7 +39,7 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        InputKeyboard();
+        //InputKeyboard();
     }
     
     private void FixedUpdate()
@@ -73,6 +73,7 @@ public class Player : MonoBehaviour
                 actualMoveDirVector = Vector3.Slerp(actualMoveDirVector, Vector3.zero, Time.deltaTime * decelerationValue);
         }
         //실제 물리 이동
+        
         transform.position += actualMoveDirVector * Time.deltaTime;
 
         //캐릭터의 방향 설정

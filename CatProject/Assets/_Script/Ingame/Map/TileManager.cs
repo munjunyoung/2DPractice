@@ -5,15 +5,16 @@ using System.IO;
 using System;
 
 enum RoomType { Type1 = 0 }
-enum TileType { BackGround = 0, Floor, Obstacle, Wall}
+enum TileType { BackGround = 0, Floor, Obstacle, Ground }
 
 public class TileManager : MonoBehaviour
 {
     //Resouces Load Path
     private string[] roomTypePathArray = { "Type1" };
-    private string[] tileTypePathArray = { "1.BackGround", "2.Floor", "3.Obstacle", "4.Ground" };
+    private string[] tileTypePathArray = { "1.BackGround", "2.Floor", "3.Obstacle", "4.Ground", "5.GroundOutLine" };
 
-    public TileObject[] TileReferenceArray;
+
+    public TileObject[] tileReferenceArray;
 
     private void Awake()
     {
@@ -27,51 +28,17 @@ public class TileManager : MonoBehaviour
     /// </summary>
     private void LoadTile()
     {
-        TileReferenceArray = new TileObject[roomTypePathArray.Length];
+        tileReferenceArray = new TileObject[roomTypePathArray.Length];
         for (int i = 0; i<roomTypePathArray.Length;i++)
         {
-            TileReferenceArray[i].tileType = new TypeofTile[tileTypePathArray.Length];
+            tileReferenceArray[i].tileType = new TypeofTile[tileTypePathArray.Length];
             for(int j = 0; j<tileTypePathArray.Length;j++)
             {
                 GameObject[] tmp = Resources.LoadAll<GameObject>(roomTypePathArray[i] + "/" + tileTypePathArray[j]);
-                TileReferenceArray[i].tileType[j].sprite = tmp;
+                tileReferenceArray[i].tileType[j].sprite = tmp;
             }
         }
     }
-
-    /// <summary>
-    /// 간단하게 번호로 모두 처리하면 좀더 간단하게 처리 할 수 있지만 일단 구분하기 쉽게 하기 위해 
-    /// case문을 처리하고 폴더명을 정확히 정의함
-    /// </summary>
-    //public void LoadTileObject()
-    //{
-    //    for (int i = 0; i < roomTypePathArray.Length; i++)
-    //    {
-    //        foreach (string _tiletype in tileTypePathArray)
-    //        {
-    //            GameObject[] tmp = Resources.LoadAll<GameObject>(roomTypePathArray[i] + "/" + _tiletype);
-    //            switch (_tiletype)
-    //            {
-    //                case "1.BackGround":
-    //                    TileReferenceArray[i].backGroundSprite = tmp;
-    //                    break;
-    //                case "2.Floor":
-    //                    TileReferenceArray[i].floorSprite = tmp;
-    //                    break;
-    //                case "3.Obstacle":
-    //                    TileReferenceArray[i].obstacleSprite = tmp;
-    //                    break;
-    //                case "4.Wall":
-    //                    TileReferenceArray[i].wallSprite = tmp;
-    //                    break;
-    //                default:
-    //                    Debug.Log("해당 폴더명에 맞는 오브젝트가 존재하지 않습니다.");
-    //                    break;
-
-    //            }
-    //        }
-    //    }
-    //}
 }
 
 /// <summary>
@@ -86,8 +53,8 @@ public struct TileObject
 {
     [Header("0 : BackGround")]
     [Header("1 : Floor")]
-    [Header("0 : Obstacle")]
-    [Header("0 : Wall")]
+    [Header("2 : Obstacle")]
+    [Header("3 : Wall")]
     public TypeofTile[] tileType; 
 
 }
@@ -100,3 +67,39 @@ public struct TypeofTile
 {
     public GameObject[] sprite;
 }
+
+
+
+/// <summary>
+/// 간단하게 번호로 모두 처리하면 좀더 간단하게 처리 할 수 있지만 일단 구분하기 쉽게 하기 위해 
+/// case문을 처리하고 폴더명을 정확히 정의함
+/// </summary>
+//public void LoadTileObject()
+//{
+//    for (int i = 0; i < roomTypePathArray.Length; i++)
+//    {
+//        foreach (string _tiletype in tileTypePathArray)
+//        {
+//            GameObject[] tmp = Resources.LoadAll<GameObject>(roomTypePathArray[i] + "/" + _tiletype);
+//            switch (_tiletype)
+//            {
+//                case "1.BackGround":
+//                    TileReferenceArray[i].backGroundSprite = tmp;
+//                    break;
+//                case "2.Floor":
+//                    TileReferenceArray[i].floorSprite = tmp;
+//                    break;
+//                case "3.Obstacle":
+//                    TileReferenceArray[i].obstacleSprite = tmp;
+//                    break;
+//                case "4.Wall":
+//                    TileReferenceArray[i].wallSprite = tmp;
+//                    break;
+//                default:
+//                    Debug.Log("해당 폴더명에 맞는 오브젝트가 존재하지 않습니다.");
+//                    break;
+
+//            }
+//        }
+//    }
+//}
