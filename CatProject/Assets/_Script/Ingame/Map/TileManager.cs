@@ -5,7 +5,7 @@ using System.IO;
 using System;
 
 enum RoomType { Type1 = 0 }
-enum TileType { BackGround = 0, Floor, Obstacle, Ground }
+enum TileType { BackGround = 0, Floor, Obstacle, Ground , GroundOutLine }
 
 public class TileManager : MonoBehaviour
 {

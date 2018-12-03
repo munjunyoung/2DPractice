@@ -876,48 +876,6 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 905669942}
   m_CullTransparentMesh: 0
---- !u!1001 &1077513304
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 4898868971400200, guid: c6888b0f1ef33554c9b52278573f4740, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4898868971400200, guid: c6888b0f1ef33554c9b52278573f4740, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4898868971400200, guid: c6888b0f1ef33554c9b52278573f4740, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4898868971400200, guid: c6888b0f1ef33554c9b52278573f4740, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4898868971400200, guid: c6888b0f1ef33554c9b52278573f4740, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4898868971400200, guid: c6888b0f1ef33554c9b52278573f4740, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4898868971400200, guid: c6888b0f1ef33554c9b52278573f4740, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4898868971400200, guid: c6888b0f1ef33554c9b52278573f4740, type: 2}
-      propertyPath: m_RootOrder
-      value: 7
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: c6888b0f1ef33554c9b52278573f4740, type: 2}
-  m_IsPrefabAsset: 0
 --- !u!1 &1202703317
 GameObject:
   m_ObjectHideFlags: 0
@@ -1039,7 +997,7 @@ MonoBehaviour:
   tileArray: []
   RoomsObject: {fileID: 1419268984}
   numberOfRoom: 1
-  widthMinSize: 30
+  widthMinSize: 60
   widthMaxSize: 100
   heightMinSize: 30
   heightMaxSize: 60
@@ -1061,48 +1019,6 @@ MonoBehaviour:
   tileList: []
   wallList: []
   bushLis: []
---- !u!1001 &1321190389
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 4740039710214858, guid: 6c7d7bdd017acd347a279693b7df75a2, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4740039710214858, guid: 6c7d7bdd017acd347a279693b7df75a2, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4740039710214858, guid: 6c7d7bdd017acd347a279693b7df75a2, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4740039710214858, guid: 6c7d7bdd017acd347a279693b7df75a2, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4740039710214858, guid: 6c7d7bdd017acd347a279693b7df75a2, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4740039710214858, guid: 6c7d7bdd017acd347a279693b7df75a2, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4740039710214858, guid: 6c7d7bdd017acd347a279693b7df75a2, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4740039710214858, guid: 6c7d7bdd017acd347a279693b7df75a2, type: 2}
-      propertyPath: m_RootOrder
-      value: 6
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 6c7d7bdd017acd347a279693b7df75a2, type: 2}
-  m_IsPrefabAsset: 0
 --- !u!1 &1368111472
 GameObject:
   m_ObjectHideFlags: 0
@@ -1156,7 +1072,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.2, y: 0.2}
+  m_Size: {x: 1.2, y: 0.1}
   m_EdgeRadius: 0
 --- !u!114 &1368111475
 MonoBehaviour:
@@ -1660,7 +1576,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!212 &2086183617
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1732,7 +1648,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2086183616}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1, y: 2, z: 0}
+  m_LocalPosition: {x: 1, y: 20, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1368111473}

@@ -20,20 +20,21 @@ public class BoardManagerSideView : MonoBehaviour
     public int numberOfRoom;
 
     [Header("RoomSize")]
-    [Range(20, 30)]
+    [Range(30, 60)]
     public int widthMinSize;
-    [Range(30, 100)]
+    [Range(60, 100)]
     public int widthMaxSize;
     [Range(15, 30)]
     public int heightMinSize;
     [Range(30, 60)]
     public int heightMaxSize;
-    
+
     private void Start()
     {
         tileArray = GetComponent<TileManager>().tileReferenceArray;
         CreateRooms(numberOfRoom);
         DrawRoom();
+        roomGameObjectList[0].SetActive(true);
     }
 
     private void CreateRooms(int _numberOfRoom)
@@ -66,13 +67,15 @@ public class BoardManagerSideView : MonoBehaviour
                 {
                     //해당 타일의 랜덤 설정
                     GameObject tmpTileObj = Instantiate(tileArray[_roomType].
-                        tileType[_room.roomArray[i, j].tileType].sprite[_room.roomArray[i,j].tileNumber],
+                        tileType[_room.roomArray[i, j].tileType].sprite[_room.roomArray[i, j].tileNumber],
                         new Vector3(i, j, 0f), Quaternion.identity);
                     //부모 설정
                     tmpTileObj.transform.SetParent(tmpParent.transform);
                 }
             }
             roomGameObjectList.Add(tmpParent);
+            tmpParent.SetActive(false);
+
         }
     }
 }
@@ -80,7 +83,7 @@ public class BoardManagerSideView : MonoBehaviour
 /// <summary>
 /// 
 /// </summary>
-internal class DungeonRoom 
+internal class DungeonRoom
 {
     //해당 통로
     //public DungeonRoom left;
@@ -102,19 +105,20 @@ internal class DungeonRoom
 
     public void SetBackGround()
     {
-        for(int i=0; i<room.xMax;i++)
+        for (int i = 0; i < room.xMax; i++)
         {
-            for(int j=0; j<room.yMax;j++)
+            for (int j = 0; j < room.yMax; j++)
             {
                 roomArray[i, j] = new TileMap();
             }
         }
     }
-    
+
     //가로 세로 랜덤값
     private int groundWidthMin = 5;
     private int groundWidthMax = 10;
     private int groundHeightValue = 5;
+    private int groundMinheight = 1; //최소 floor 높이값
     /// <summary>
     /// 땅 생성 
     /// </summary>
@@ -122,10 +126,12 @@ internal class DungeonRoom
     /// <param name="groundtilelength"></param>
     public void SetGround(int floortilelength, int groundtilelength)
     {
-        int beforeheight = Random.Range(0, (int)(room.yMax / 3));
+        int beforeheight = Random.Range(groundMinheight, (int)(room.yMax / 3));
         int currentheight = beforeheight;
         int beforewidth = 5;
         bool changeheight = false; //높이가 바뀔 때 설정
+
+        int heightgapcount = 0;
 
         for (int i = 0; i < room.xMax; i++)
         {
@@ -135,55 +141,60 @@ internal class DungeonRoom
                 if (j.Equals(currentheight))
                 {
                     roomArray[i, j] = new TileMap((int)TileType.Floor, Random.Range(0, floortilelength));
-                    continue;
                 }
                 else
                 {
-                    //높이 바뀔 경우
-                    if (changeheight)
-                    {
-                        //땅이 높아질 경우 현재 돌고있는 땅들을 변경 i 
-                        if (beforeheight < currentheight)
-                        {
-                            if (currentheight - beforeheight >= 2)
-                            {
-                                
-                            }
-                            else
-                            {
-
-                            }
-                        }
-                        //땅이 낮아질 경우 이전 땅들을 변경 i-1
-                        else if (beforeheight > currentheight)
-                        {
-                            if (beforeheight - currentheight >= 2)
-                            {
-
-                            }
-                            else
-                            {
-
-                            }
-                        }
-                        //높이가 2이상 일경우 테두리 생성
-                        changeheight = false;
-                    }
-                    else
+                    //높이가 바뀌지 않을 경우 
+                    if (!changeheight)
                     {
                         roomArray[i, j] = new TileMap((int)TileType.Ground, Random.Range(0, groundtilelength));
+                    }
+                    //높이 바뀔 경우
+                    else
+                    {
+                        heightgapcount = Mathf.Abs(beforeheight - currentheight);
+                        //gap count가 1이하면 그대로 생성
+                        if (heightgapcount < 1)
+                        {
+                            roomArray[i, j] = new TileMap((int)TileType.Ground, Random.Range(0, groundtilelength));
+                        }
+                        //gap count가 2이상일 경우 생성
+                        else
+                        {
+                            //땅이 높아질 경우 현재 땅들을 변경
+                            if (beforeheight < currentheight)
+                            {
+                                //현재 j값의 - gapcount만큼 j값을 감소시키면서 셋팅함
+                                var currentjvalue = j;
+                                for (; j > (currentjvalue - heightgapcount); j--)
+                                {
+                                    roomArray[i, j] = new TileMap((int)TileType.GroundOutLine, 0);
+                                }
+                            }
+                            //땅이 낮아질 경우 이전 땅들을 변경 i-1 
+                            else if (beforeheight > currentheight)
+                            {
+                                //현재 j값을 건들지 않고 처리 
+                                var currentjvalue = j;
+                                for (int k = currentjvalue + 1; k <= currentjvalue + heightgapcount; k++)
+                                {
+                                    roomArray[i - 1, k] = new TileMap((int)TileType.GroundOutLine, 1);
+                                }
+                            }
+                            changeheight = false;
+                        }
                     }
                 }
             }
 
             //높이 변경 및 넓이 설정
             beforewidth--;
-            if (beforewidth<=0)
+            if (beforewidth <= 0)
             {
                 beforeheight = currentheight;
-
+                //랜덤으로 설정할 경우 -가 계속되어 1이하로 내려가는 경우가 생기기 때문에 tmph를 따로 설정 하여 currenth를 따로 초기화
                 var tmpH = Random.Range(-groundHeightValue, groundHeightValue);
-                currentheight = (currentheight + tmpH >= 0) ? currentheight + tmpH : 0;
+                currentheight = (currentheight + tmpH >= groundMinheight) ? currentheight + tmpH : groundMinheight;
 
                 beforewidth = Random.Range(groundWidthMin, groundWidthMax);
 

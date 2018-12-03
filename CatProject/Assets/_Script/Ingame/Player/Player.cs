@@ -95,7 +95,10 @@ public class Player : MonoBehaviour
     public void Jump()
     {
         if (isGrounded)
-            rb2D.AddForce(Vector3.up * jumpPower, ForceMode2D.Impulse);
+        {
+            if(PlayerMoveState!=MoveState.Jump)
+                rb2D.AddForce(Vector3.up * jumpPower, ForceMode2D.Impulse);
+        }
     }
     
     /// <summary>
