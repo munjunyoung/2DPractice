@@ -12,14 +12,10 @@ public class BoardManagerSideView : MonoBehaviour
     public TileObject[] tileArray;
 
     //RoomParent들의 부모가 될 오브젝트
-    [Header("Rooms Parent Object")]
+    [Header("ROOM OPTION")]
     public Transform RoomsObject;
-
-    [Header("RoomNumber")]
     [Range(1, 100)]
     public int numberOfRoom;
-
-    [Header("RoomSize")]
     [Range(30, 60)]
     public int widthMinSize;
     [Range(60, 100)]
@@ -45,7 +41,6 @@ public class BoardManagerSideView : MonoBehaviour
 
             int groundlength = tileArray[roomList[i].roomType].tileType[(int)TileType.Ground].sprite.Length;
             int floorlength = tileArray[roomList[i].roomType].tileType[(int)TileType.Floor].sprite.Length;
-            roomList[i].SetBackGround();
             roomList[i].SetGround(groundlength, floorlength);
         }
     }
@@ -65,19 +60,31 @@ public class BoardManagerSideView : MonoBehaviour
             {
                 for (int j = 0; j < _room.room.yMax; j++)
                 {
-                    //해당 타일의 랜덤 설정
-                    GameObject tmpTileObj = Instantiate(tileArray[_roomType].
-                        tileType[_room.roomArray[i, j].tileType].sprite[_room.roomArray[i, j].tileNumber],
-                        new Vector3(i, j, 0f), Quaternion.identity);
-                    //부모 설정
-                    tmpTileObj.transform.SetParent(tmpParent.transform);
+                    if (_room.roomArray[i, j] != null)
+                    {
+                        //해당 타일의 랜덤 설정
+                        GameObject tmpTileObj = Instantiate(tileArray[_roomType].
+                            tileType[_room.roomArray[i, j].tileType].sprite[_room.roomArray[i, j].tileNumber],
+                            new Vector3(i, j, 0f), Quaternion.identity);
+                        //부모 설정
+                        tmpTileObj.transform.SetParent(tmpParent.transform);
+                    }
                 }
             }
+            //배경 셋팅
+            var xmax = _room.room.xMax;
+            var ymax = _room.room.yMax;
+            Vector2 centerpos = new Vector3((xmax / 2) - 0.5f, (ymax / 2) - 0.5f);
+            var tmpbackground = Instantiate(tileArray[_roomType].tileType[(int)TileType.BackGround].sprite[0], centerpos, Quaternion.identity);
+            tmpbackground.transform.localScale = new Vector2(xmax, ymax);
+            tmpbackground.transform.SetParent(tmpParent.transform);
+
+            //부모 설정
             roomGameObjectList.Add(tmpParent);
             tmpParent.SetActive(false);
-
         }
     }
+
 }
 
 /// <summary>
@@ -103,16 +110,6 @@ internal class DungeonRoom
         roomArray = new TileMap[(int)room.width, (int)room.height];
     }
 
-    public void SetBackGround()
-    {
-        for (int i = 0; i < room.xMax; i++)
-        {
-            for (int j = 0; j < room.yMax; j++)
-            {
-                roomArray[i, j] = new TileMap();
-            }
-        }
-    }
 
     //가로 세로 랜덤값
     private int groundWidthMin = 5;
@@ -170,6 +167,7 @@ internal class DungeonRoom
                                 {
                                     roomArray[i, j] = new TileMap((int)TileType.GroundOutLine, 0);
                                 }
+
                             }
                             //땅이 낮아질 경우 이전 땅들을 변경 i-1 
                             else if (beforeheight > currentheight)
@@ -181,6 +179,7 @@ internal class DungeonRoom
                                     roomArray[i - 1, k] = new TileMap((int)TileType.GroundOutLine, 1);
                                 }
                             }
+                            roomArray[i, j] = new TileMap((int)TileType.Ground, Random.Range(0, groundtilelength));
                             changeheight = false;
                         }
                     }
