@@ -12,8 +12,9 @@ public class BoardManagerSideView : MonoBehaviour
     public TileObject[] tileArray;
 
     //RoomParent들의 부모가 될 오브젝트
+    private GameObject RoomsObject;
+
     [Header("ROOM OPTION")]
-    public Transform RoomsObject;
     [Range(1, 100)]
     public int numberOfRoom;
     [Range(30, 60)]
@@ -27,6 +28,7 @@ public class BoardManagerSideView : MonoBehaviour
 
     private void Start()
     {
+        CreateParentRoom();
         tileArray = GetComponent<TileManager>().tileReferenceArray;
         CreateRooms(numberOfRoom);
         DrawRoom();
@@ -45,12 +47,20 @@ public class BoardManagerSideView : MonoBehaviour
         }
     }
 
+    private void CreateParentRoom()
+    {
+        RoomsObject = new GameObject();
+        RoomsObject.transform.position = Vector3.zero;
+        RoomsObject.transform.rotation = Quaternion.identity;
+        RoomsObject.name = "Rooms";
+    }
+
     private void DrawRoom()
     {
         foreach (DungeonRoom _room in roomList)
         {
             GameObject tmpParent = new GameObject();
-            tmpParent.transform.SetParent(RoomsObject);
+            tmpParent.transform.SetParent(RoomsObject.transform);
             tmpParent.transform.position = Vector3.zero;
             tmpParent.transform.rotation = Quaternion.identity;
             tmpParent.name = "Room";
