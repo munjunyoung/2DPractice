@@ -7,9 +7,10 @@ public class BoardManagerSideView : MonoBehaviour
 {
     private List<DungeonRoom> roomList = new List<DungeonRoom>();
     private List<GameObject> roomGameObjectList = new List<GameObject>();
+    private Rect currentRoom;
 
     //타일 클래스에서 복사할 tileArray
-    public TileObject[] tileArray;
+    private TileObject[] tileArray;
 
     //RoomParent들의 부모가 될 오브젝트
     private GameObject RoomsObject;
@@ -26,15 +27,31 @@ public class BoardManagerSideView : MonoBehaviour
     [Range(30, 60)]
     public int heightMaxSize;
 
-    private void Start()
+    private List<EdgeCollider2D> outLineColliderList;  
+
+    //카메라를 맵안에 가두기 위해서 참조 방을 넘어가는 이벤트 처리시 그쪽으로 이관할듯
+    [Header("CAM Script")]
+    public IngameCam cam;
+
+    private void Awake()
     {
         CreateParentRoom();
         tileArray = GetComponent<TileManager>().tileReferenceArray;
+
         CreateRooms(numberOfRoom);
         DrawRoom();
+
         roomGameObjectList[0].SetActive(true);
+        currentRoom = roomList[0].room;
+
+        cam.currentRoomRect = currentRoom;
+        
     }
 
+    /// <summary>
+    /// 해당 갯수 만큼 DungeonRoom 객체 생성
+    /// </summary>
+    /// <param name="_numberOfRoom"></param>
     private void CreateRooms(int _numberOfRoom)
     {
         for (int i = 0; i < _numberOfRoom; i++)
@@ -46,15 +63,10 @@ public class BoardManagerSideView : MonoBehaviour
             roomList[i].SetGround(groundlength, floorlength);
         }
     }
-
-    private void CreateParentRoom()
-    {
-        RoomsObject = new GameObject();
-        RoomsObject.transform.position = Vector3.zero;
-        RoomsObject.transform.rotation = Quaternion.identity;
-        RoomsObject.name = "Rooms";
-    }
-
+    
+    /// <summary>
+    /// 생성한 DungeonRoom객체의 정보들을 이용하여 실제 sprite를 생성 하여 배치
+    /// </summary>
     private void DrawRoom()
     {
         foreach (DungeonRoom _room in roomList)
@@ -95,6 +107,25 @@ public class BoardManagerSideView : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 오브젝트를 생성할때 방들의 상위 오브젝트가 될 부모 설정
+    /// 함수로 만든 이유는 씬이 넘어갈때마다 필요할 거라고 생각되었기 때문 (방을 남겨두기에는 하위오브젝트들을 destroy함으로써 gc가 돌꺼같나..?)
+    /// </summary>
+    private void CreateParentRoom()
+    {
+        RoomsObject = new GameObject();
+        RoomsObject.transform.position = Vector3.zero;
+        RoomsObject.transform.rotation = Quaternion.identity;
+        RoomsObject.name = "Rooms";
+    }
+
+    /// <summary>
+    /// 모든방에 테두리를 만드는것이 아니라 하나를 가지고 수정하기 위함 
+    /// </summary>
+    private void SetOutlineCollider()
+    {
+        
+    }
 }
 
 /// <summary>
