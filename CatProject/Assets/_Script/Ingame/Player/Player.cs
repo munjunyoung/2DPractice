@@ -90,6 +90,7 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
+    /// 
     /// 점프 IsGrounded는 캐릭터 오브젝트의 자식오브젝트를 통하여 설정
     /// </summary>
     public void Jump()

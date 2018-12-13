@@ -6,21 +6,20 @@ using System;
 
 enum RoomType { Type1 = 0 }
 enum TileType { BackGround = 0, Floor, Obstacle, Ground , GroundOutLine }
-
+/// <summary>
+/// 싱글턴을 사용하려다가 참조할 곳이 boardManager밖에 없어서 컴포넌트 참조
+/// </summary>
 public class TileManager : MonoBehaviour
 {
     //Resouces Load Path
     private string[] roomTypePathArray = { "Type1" };
     private string[] tileTypePathArray = { "1.BackGround", "2.Floor", "3.Obstacle", "4.Ground", "5.GroundOutLine" };
-
-
+    
     public TileObject[] tileReferenceArray;
 
-    private void Awake()
+    public void Awake()
     {
         LoadTile();
-        
-        //LoadTileObject();
     }
 
     /// <summary>
@@ -55,6 +54,7 @@ public struct TileObject
     [Header("1 : Floor")]
     [Header("2 : Obstacle")]
     [Header("3 : Wall")]
+    [Header("4 : GroundOutLine")]
     public TypeofTile[] tileType; 
 
 }
@@ -69,12 +69,12 @@ public struct TypeofTile
 }
 
 
-
 /// <summary>
-/// 간단하게 번호로 모두 처리하면 좀더 간단하게 처리 할 수 있지만 일단 구분하기 쉽게 하기 위해 
+/// 번호로 모두 처리하면 좀더 간단하게 처리 할 수 있지만 일단 구분하기 쉽게 하기 위해 
 /// case문을 처리하고 폴더명을 정확히 정의함
 /// </summary>
 //public void LoadTileObject()
+
 //{
 //    for (int i = 0; i < roomTypePathArray.Length; i++)
 //    {

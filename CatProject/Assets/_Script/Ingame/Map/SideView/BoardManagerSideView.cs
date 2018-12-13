@@ -10,6 +10,7 @@ public class BoardManagerSideView : MonoBehaviour
     private Rect currentRoom;
 
     //타일 클래스에서 복사할 tileArray
+    [SerializeField]
     private TileObject[] tileArray;
 
     //RoomParent들의 부모가 될 오브젝트
@@ -116,22 +117,15 @@ public class BoardManagerSideView : MonoBehaviour
         RoomsObject = new GameObject();
         RoomsObject.transform.position = Vector3.zero;
         RoomsObject.transform.rotation = Quaternion.identity;
+        RoomsObject.transform.localScale = Vector3.one;
         RoomsObject.name = "Rooms";
-    }
-
-    /// <summary>
-    /// 모든방에 테두리를 만드는것이 아니라 하나를 가지고 수정하기 위함 
-    /// </summary>
-    private void SetOutlineCollider()
-    {
-        
     }
 }
 
 /// <summary>
 /// 
 /// </summary>
-internal class DungeonRoom
+public class DungeonRoom
 {
     //해당 통로
     //public DungeonRoom left;
@@ -244,7 +238,7 @@ internal class DungeonRoom
     }
 }
 
-class TileMap
+public class TileMap
 {
     public int tileType;
     public int tileNumber;
