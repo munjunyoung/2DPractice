@@ -5,17 +5,26 @@ public class Player : MonoBehaviour
 {
     enum MoveState { Idle, Run, Jump, Fall }
 
+    [SerializeField]    
+    [Header("JOYSTICK")]
+    private JoyStickScript joystickSc;
     //물리 관련
     private Rigidbody2D rb2D;
     [Header("MOVE OPTION")]
-    [Range(10, 20f)]
-    public float maxSpeed;
+
+    //스틱 dircetion x 값 * speedValue
+    [SerializeField]
+    [Range(10f, 20f)]
+    private float speedValue;
+    [SerializeField]
     [Range(0.1f, 3f)]
-    public float accelerationValue;
+    private float accelerationValue;
+    [SerializeField]
     [Range(0.1f, 3f)]
-    public float decelerationValue;
+    private float decelerationValue;
+    [SerializeField]
     [Range(10, 50)]
-    public float jumpPower;
+    private float jumpPower;
     [HideInInspector]
     public bool isGrounded;
 
@@ -39,11 +48,12 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        InputKeyboard();
+       // InputKeyboard();
     }
     
     private void FixedUpdate()
     {
+        stickValueVector = joystickSc.DirValue;
         Move(stickValueVector);
     }
  
@@ -52,19 +62,29 @@ public class Player : MonoBehaviour
         //애니매이션 설정
         anim.SetFloat("State", (int)PlayerMoveState);
     }
-
+    
     /// <summary>
     /// 플레이어 캐릭터 이동 
     /// </summary>
     private void Move(Vector3 stickDir)
     {
+     
+        var maxspeed = stickDir.x * speedValue;
+        
         //가속, 감속 적용
         if (!stickDir.x.Equals(0))
         {
+            //이전 프레임 값을 저장하여 증가하는지 감속하는지 비교
+            var beforedirX = actualMoveDirVector.x;
+            
             actualMoveDirVector.x += stickDir.x * accelerationValue;
-
-            if (Mathf.Abs(actualMoveDirVector.x) > maxSpeed)
-                actualMoveDirVector.x = actualMoveDirVector.x > 0 ? maxSpeed : -maxSpeed;
+            if (Mathf.Abs(beforedirX) <= Mathf.Abs(actualMoveDirVector.x))
+            {
+                //속도가 올라가는 중일경우 
+                if (Mathf.Abs(actualMoveDirVector.x) > maxspeed)
+                    actualMoveDirVector.x = maxspeed;
+            }
+            
         }
         else
         {
@@ -72,10 +92,9 @@ public class Player : MonoBehaviour
             if (!actualMoveDirVector.x.Equals(0))
                 actualMoveDirVector = Vector3.Slerp(actualMoveDirVector, Vector3.zero, Time.deltaTime * decelerationValue);
         }
-        //실제 물리 이동
         
         transform.position += actualMoveDirVector * Time.deltaTime;
-
+      
         //캐릭터의 방향 설정
         if (!stickDir.Equals(Vector3.zero))
             transform.localScale = stickDir.x > 0 ? new Vector3(1, 1, 1) : new Vector3(-1, 1, 1);
@@ -86,7 +105,10 @@ public class Player : MonoBehaviour
         else if (rb2D.velocity.y < 0)
             PlayerMoveState = MoveState.Fall;
         else
+        {
             PlayerMoveState = stickDir.Equals(Vector2.zero) ? MoveState.Idle : MoveState.Run;
+            anim.speed = stickDir.Equals(Vector2.zero) ? 1 : Mathf.Abs(stickDir.x);
+        }
     }
 
     /// <summary>
@@ -115,15 +137,12 @@ public class Player : MonoBehaviour
     /// 키보드 키 입력 관련 함수
     /// </summary>
     private void InputKeyboard()
-    {
-        //이렇게 되면 성능차이가 심하려나 ? 매프레임마다 초기화 됨
-        var w = Input.GetKey(KeyCode.W) ? 1 : 0;
-        var s = Input.GetKey(KeyCode.S) ? -1 : 0;
+    { 
         var a = Input.GetKey(KeyCode.A) ? -1 : 0;
         var d = Input.GetKey(KeyCode.D) ? 1 : 0;
         
         stickValueVector = new Vector2(a + d , 0);
-
+        joystickSc.joyStickImg.transform.localPosition = stickValueVector*60;
         InputJump();
     }
     

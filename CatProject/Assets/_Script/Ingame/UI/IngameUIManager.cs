@@ -12,18 +12,9 @@ public class IngameUIManager : MonoBehaviour {
     
     private void Update()
     {
-        MovePlayer(joyStickSc.DirValue);
-    }
 
-    /// <summary>
-    /// 조이스틱을 이용한 플레이어 이동벡터 초기화 (플레이어와 ui간의 중간다리가 있어야 할거 같아서 만듦 이렇게 할 필요가 있을지는 의문)
-    /// </summary>
-    /// <param name="dir"></param>
-    private void MovePlayer(Vector2 dir)
-    {
-        playerSc.stickValueVector = dir;
     }
-
+    
     /// <summary>
     /// Player Jump Button
     /// </summary>

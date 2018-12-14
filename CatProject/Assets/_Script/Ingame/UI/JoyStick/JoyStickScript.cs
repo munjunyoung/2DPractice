@@ -9,8 +9,14 @@ public class JoyStickScript : MonoBehaviour, IDragHandler, IPointerDownHandler, 
     public RectTransform bgImg;
     public RectTransform joyStickImg;
 
+    private Vector2 stickPos;
     private Vector2 inputVector;
     public Vector2 DirValue { get { return inputVector; } }
+
+    private void Update()
+    {
+        //SetStickValue();
+    }
     
     /// <summary>
     /// Drag 
@@ -18,19 +24,24 @@ public class JoyStickScript : MonoBehaviour, IDragHandler, IPointerDownHandler, 
     /// <param name="pad"></param>
     public virtual void OnDrag(PointerEventData pad)
     {
-        Vector2 tmpPos;
-        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(bgImg, pad.position, pad.pressEventCamera, out tmpPos))
+        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(bgImg, pad.position, pad.pressEventCamera, out stickPos))
         {
             //tmpPos를 bgImg 각 방향의 사이즈 값으로 나눈다
-            tmpPos.x = tmpPos.x / bgImg.sizeDelta.x;
-            tmpPos.y = 0;
-            //tmpPos.y = tmpPos.y / bgImg.sizeDelta.y;
-            inputVector = tmpPos;
+            stickPos.x = stickPos.x / bgImg.sizeDelta.x;
+            stickPos.y = 0;
             //벡터 길이가 1보다 클경우 normalized
-            inputVector = (inputVector.magnitude > 1f) ? inputVector.normalized : inputVector;
+            stickPos = (stickPos.magnitude > 1f) ? stickPos.normalized : stickPos;
 
-            joyStickImg.anchoredPosition = inputVector * (bgImg.sizeDelta / 2f);
+            joyStickImg.anchoredPosition = stickPos * (bgImg.sizeDelta / 2f);
+            inputVector = stickPos;
         }
+    }
+
+    private void SetStickValue()
+    {
+        inputVector = stickPos; 
+     //   inputVector = tmpPos;
+     //   inputVector = inputVector.normalized;
     }
 
     /// <summary>
