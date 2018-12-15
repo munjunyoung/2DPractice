@@ -59,9 +59,9 @@ public class BoardManagerSideView : MonoBehaviour
         {
             roomList.Add(new DungeonRoom((int)RoomType.Type1, widthMinSize, widthMaxSize, heightMinSize, heightMaxSize));
 
-            int groundlength = tileArray[roomList[i].roomType].tileType[(int)TileType.Ground].sprite.Length;
             int floorlength = tileArray[roomList[i].roomType].tileType[(int)TileType.Floor].sprite.Length;
-            roomList[i].SetGround(groundlength, floorlength);
+            int groundlength = tileArray[roomList[i].roomType].tileType[(int)TileType.Ground].sprite.Length;
+            roomList[i].SetGroundNormal(floorlength);
         }
     }
     
@@ -144,7 +144,28 @@ public class DungeonRoom
 
         roomArray = new TileMap[(int)room.width, (int)room.height];
     }
+    
+    /// <summary>
+    /// 땅 depth 1 테두리 생성
+    /// </summary>
+    /// <param name="floortilelength"></param>
+    /// <param name="groundtilelength"></param>
+    public void SetGroundNormal(int floortilelength)
+    {
+        //bottom, top
+        for (int i = 1; i < room.xMax-1; i++)
+        {
+            roomArray[i, 0] = new TileMap((int)TileType.Floor, Random.Range(0, floortilelength));
+            roomArray[i, (int)room.yMax-1] = new TileMap((int)TileType.Floor, Random.Range(0, floortilelength));
+        }
 
+        //left, right
+        for(int j=0; j<room.yMax;j++ )
+        {
+            roomArray[0, j] = new TileMap((int)TileType.GroundOutLine, 0);
+            roomArray[(int)room.xMax-1, j] = new TileMap((int)TileType.GroundOutLine, 0);
+        }
+    }
 
     //가로 세로 랜덤값
     private int groundWidthMin = 5;
@@ -156,7 +177,7 @@ public class DungeonRoom
     /// </summary>
     /// <param name="floortilelength"></param>
     /// <param name="groundtilelength"></param>
-    public void SetGround(int floortilelength, int groundtilelength)
+    public void SetGroundHegihtRandomly(int floortilelength, int groundtilelength)
     {
         int beforeheight = Random.Range(groundMinheight, (int)(room.yMax / 3));
         int currentheight = beforeheight;

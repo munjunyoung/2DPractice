@@ -6,62 +6,100 @@ using UnityEngine.UI;
 public class JoyStickScript : MonoBehaviour, IDragHandler, IPointerDownHandler, IPointerUpHandler
 {
     [Header("JoyStick UI Reference")]
-    public RectTransform bgImg;
-    public RectTransform joyStickImg;
+    [SerializeField]
+    public RectTransform bgImg, joyStickImg;
+    private float bgImgDeltaValue;
+    
+    private Vector2 keyboardVector;
+    private Vector2 stickVector;
 
-    private Vector2 stickPos;
     private Vector2 inputVector;
+    [HideInInspector]
     public Vector2 DirValue { get { return inputVector; } }
+    
+    bool onStick = false;
 
     private void Update()
     {
-        //SetStickValue();
+        InputKeyboard();
+        SetStickValue();
     }
-    
+
+    #region joyStick
     /// <summary>
     /// Drag 
     /// </summary>
     /// <param name="pad"></param>
     public virtual void OnDrag(PointerEventData pad)
     {
-        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(bgImg, pad.position, pad.pressEventCamera, out stickPos))
+        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(bgImg, pad.position, pad.pressEventCamera, out stickVector))
         {
-            //tmpPos를 bgImg 각 방향의 사이즈 값으로 나눈다
-            stickPos.x = stickPos.x / bgImg.sizeDelta.x;
-            stickPos.y = 0;
-            //벡터 길이가 1보다 클경우 normalized
-            stickPos = (stickPos.magnitude > 1f) ? stickPos.normalized : stickPos;
+            stickVector.x = stickVector.x / (bgImg.sizeDelta.x * 0.5f);
+            stickVector.y = 0;
 
-            joyStickImg.anchoredPosition = stickPos * (bgImg.sizeDelta / 2f);
-            inputVector = stickPos;
+            stickVector = (Mathf.Abs(stickVector.x) > 1f) ? stickVector.normalized : stickVector;
+            
+            joyStickImg.anchoredPosition = stickVector * (bgImg.sizeDelta * 0.5f);
         }
     }
 
-    private void SetStickValue()
-    {
-        inputVector = stickPos; 
-     //   inputVector = tmpPos;
-     //   inputVector = inputVector.normalized;
-    }
-
+    
     /// <summary>
-    /// 터치 다운시 이미지 변경 및 드래그 시작
+    /// 누를경우 이미지 변경 , OnDrag 함수 실행
     /// </summary>
     /// <param name="eventData"></param>
-    public virtual void OnPointerDown(PointerEventData eventData)
+    public void OnPointerDown(PointerEventData eventData)
     {
         joyStickImg.GetComponent<Image>().color = new Color32(255, 255, 255, 150);
+        onStick = true;
         OnDrag(eventData);
+        
     }
 
     /// <summary>
     /// 터치에서 뗄 시 스틱 이미지 복구 및 위치 앵커포지션 초기화
     /// </summary>
     /// <param name="eventData"></param>
-    public virtual void OnPointerUp(PointerEventData eventData)
+    public void OnPointerUp(PointerEventData eventData)
     {
         joyStickImg.GetComponent<Image>().color = new Color32(255, 255, 255, 255);
-        inputVector = Vector2.zero;
         joyStickImg.anchoredPosition = Vector2.zero;
+        onStick = false;
+    }
+    #endregion
+
+    #region input Keyboard set
+
+    private float keyinputX;
+    /// <summary>
+    /// 키보드 키 입력 관련 함수
+    /// </summary>
+    private void InputKeyboard()
+    {
+        var a = Input.GetKey(KeyCode.A) ? -0.1f : 0;
+        var d = Input.GetKey(KeyCode.D) ? 0.1f : 0;
+
+        if (!(a + d).Equals(0))
+            keyinputX += (a + d);
+        else
+            keyinputX = 0;
+
+        if (Mathf.Abs(keyinputX) > 1f)
+            keyinputX = (a + d) > 0 ? 1f : -1f;
+
+        keyboardVector = new Vector2(keyinputX, 0);
+
+        if(!onStick)
+            joyStickImg.anchoredPosition = keyboardVector * (bgImg.sizeDelta * 0.5f);
+    }
+
+    #endregion
+
+    /// <summary>
+    /// inputvector set
+    /// </summary>
+    private void SetStickValue()
+    {
+        inputVector = joyStickImg.anchoredPosition / (bgImg.sizeDelta.x*0.5f);
     }
 }

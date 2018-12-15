@@ -1,18 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
-public class IngameUIManager : MonoBehaviour {
+public class InputButtonManager : MonoBehaviour
+{
     
     [Header("Player Object")]
-    public Player playerSc;
+    [SerializeField]
+    private Player playerSc;
     //UI 스크립트
     [Header("JoyStick Object")]
-    public JoyStickScript joyStickSc;
+    [SerializeField]
+    private JoyStickScript joyStickSc;
     
+    [Header("JUMP BUTTON")]
+    [SerializeField]
+    private Button jumpButton;
+
     private void Update()
     {
-
     }
     
     /// <summary>
@@ -22,7 +30,6 @@ public class IngameUIManager : MonoBehaviour {
     {
         playerSc.Jump();
     }
-
     #region 우측하단 UI
     /// <summary>
     /// 일반공격 실행
@@ -55,5 +62,6 @@ public class IngameUIManager : MonoBehaviour {
     {
         Debug.Log("Skill3");
     }
+
     #endregion
 }

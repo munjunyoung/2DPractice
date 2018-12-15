@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections.Generic;
+
 public class Player : MonoBehaviour
 {
     enum MoveState { Idle, Run, Jump, Fall }
 
-    [SerializeField]    
+    [SerializeField]
     [Header("JOYSTICK")]
     private JoyStickScript joystickSc;
     //물리 관련
@@ -18,27 +19,25 @@ public class Player : MonoBehaviour
     private float speedValue;
     [SerializeField]
     [Range(0.1f, 3f)]
-    private float accelerationValue;
-    [SerializeField]
-    [Range(0.1f, 3f)]
-    private float decelerationValue;
+    private float accelerationValue, decelerationValue;
     [SerializeField]
     [Range(10, 50)]
     private float jumpPower;
+
     [HideInInspector]
     public bool isGrounded;
 
     [HideInInspector]
     //조이스틱, keydata 외부 참조 벡터
-    public Vector3 stickValueVector; 
+    public Vector3 dirValueVector;
     //실제 Move에서 참조하는 벡터 (Vector3를 사용하나 y값은 사용안해서 제외해도 될듯 하다)
     private Vector3 actualMoveDirVector;
-    
+
     //Animation 관련
     private MoveState PlayerMoveState;
     private Animator anim;
 
-    
+
     void Start()
     {
         PlayerMoveState = MoveState.Idle;
@@ -48,53 +47,54 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-       // InputKeyboard();
+        dirValueVector = joystickSc.DirValue;
     }
-    
+
     private void FixedUpdate()
     {
-        stickValueVector = joystickSc.DirValue;
-        Move(stickValueVector);
+        Move(dirValueVector);
     }
- 
+
     private void LateUpdate()
     {
         //애니매이션 설정
         anim.SetFloat("State", (int)PlayerMoveState);
     }
-    
+
+
+    private float beforedirX = 0;
     /// <summary>
     /// 플레이어 캐릭터 이동 
     /// </summary>
     private void Move(Vector3 stickDir)
     {
-     
         var maxspeed = stickDir.x * speedValue;
-        
-        //가속, 감속 적용
-        if (!stickDir.x.Equals(0))
+
+        actualMoveDirVector.x += (stickDir.x * accelerationValue);
+
+        if (stickDir.x > 0)
         {
-            //이전 프레임 값을 저장하여 증가하는지 감속하는지 비교
-            var beforedirX = actualMoveDirVector.x;
-            
-            actualMoveDirVector.x += stickDir.x * accelerationValue;
-            if (Mathf.Abs(beforedirX) <= Mathf.Abs(actualMoveDirVector.x))
+            if (beforedirX <= stickDir.x)
             {
-                //속도가 올라가는 중일경우 
-                if (Mathf.Abs(actualMoveDirVector.x) > maxspeed)
+                if (actualMoveDirVector.x >= maxspeed)
                     actualMoveDirVector.x = maxspeed;
             }
-            
+        }
+        else if (stickDir.x < 0)
+        {
+            if (beforedirX >= stickDir.x)
+            {
+                if (actualMoveDirVector.x <= maxspeed)
+                    actualMoveDirVector.x = maxspeed;
+            }
         }
         else
         {
-            //actualMoveDirVector.x가 0에 도달 했을 경우 slerp를 도는것보다 조건문을 넘기는게 더 나아보인다.
-            if (!actualMoveDirVector.x.Equals(0))
-                actualMoveDirVector = Vector3.Slerp(actualMoveDirVector, Vector3.zero, Time.deltaTime * decelerationValue);
+            actualMoveDirVector = Vector3.Slerp(actualMoveDirVector, Vector3.zero, Time.deltaTime * decelerationValue);
         }
-        
+
         transform.position += actualMoveDirVector * Time.deltaTime;
-      
+        beforedirX = stickDir.x;
         //캐릭터의 방향 설정
         if (!stickDir.Equals(Vector3.zero))
             transform.localScale = stickDir.x > 0 ? new Vector3(1, 1, 1) : new Vector3(-1, 1, 1);
@@ -107,7 +107,8 @@ public class Player : MonoBehaviour
         else
         {
             PlayerMoveState = stickDir.Equals(Vector2.zero) ? MoveState.Idle : MoveState.Run;
-            anim.speed = stickDir.Equals(Vector2.zero) ? 1 : Mathf.Abs(stickDir.x);
+            // 애니매이션 속도 설정
+            anim.speed = stickDir.Equals(Vector2.zero) ? 1 : Mathf.Abs(actualMoveDirVector.x*0.1f);
         }
     }
 
@@ -119,11 +120,11 @@ public class Player : MonoBehaviour
     {
         if (isGrounded)
         {
-            if(PlayerMoveState!=MoveState.Jump)
+            if (PlayerMoveState != MoveState.Jump)
                 rb2D.AddForce(Vector3.up * jumpPower, ForceMode2D.Impulse);
         }
     }
-    
+
     /// <summary>
     /// 공격
     /// </summary>
@@ -131,28 +132,8 @@ public class Player : MonoBehaviour
     {
         anim.SetTrigger("Attack");
     }
-    
-    #region input Keyboard set
-    /// <summary>
-    /// 키보드 키 입력 관련 함수
-    /// </summary>
-    private void InputKeyboard()
-    { 
-        var a = Input.GetKey(KeyCode.A) ? -1 : 0;
-        var d = Input.GetKey(KeyCode.D) ? 1 : 0;
-        
-        stickValueVector = new Vector2(a + d , 0);
-        joystickSc.joyStickImg.transform.localPosition = stickValueVector*60;
-        InputJump();
-    }
-    
-    private void InputJump()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-            Jump();
-    }
-    
-    #endregion
+
+  
 }
 
 
