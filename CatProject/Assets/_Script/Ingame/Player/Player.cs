@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
+using System.Collections;
 using System;
-using System.Collections.Generic;
 
 public class Player : MonoBehaviour
 {
     enum MoveState { Idle, Run, Jump, Fall }
 
     [SerializeField]
-    [Header("JOYSTICK")]
+    [Header("JoyStick Script")]
     private JoyStickScript joystickSc;
     //물리 관련
     private Rigidbody2D rb2D;
@@ -20,16 +20,25 @@ public class Player : MonoBehaviour
     [SerializeField]
     [Range(0.1f, 3f)]
     private float accelerationValue, decelerationValue;
-    [SerializeField]
-    [Range(10, 50)]
-    private float jumpPower;
 
+    [Header("JUMP OPTION")]
+    [SerializeField]
+    [Range(1, 30)]
+    private float jumpPower;
+    //코루틴 반복시 addforce 카운트 횟수
+    [SerializeField]
+    [Range(1, 10)]
+    private float jumpMaxCount;
+    //코루틴 대기 속도 설정
+    [SerializeField]
+    [Range(0.01f, 0.1f)]
+    private float jumpSpeed;
+
+    [HideInInspector]
+    public bool jumpButtonOn = false;
     [HideInInspector]
     public bool isGrounded;
 
-    [HideInInspector]
-    //조이스틱, keydata 외부 참조 벡터
-    public Vector3 dirValueVector;
     //실제 Move에서 참조하는 벡터 (Vector3를 사용하나 y값은 사용안해서 제외해도 될듯 하다)
     private Vector3 actualMoveDirVector;
 
@@ -45,14 +54,9 @@ public class Player : MonoBehaviour
         rb2D = GetComponent<Rigidbody2D>();
     }
 
-    private void Update()
-    {
-        dirValueVector = joystickSc.DirValue;
-    }
-
     private void FixedUpdate()
     {
-        Move(dirValueVector);
+        Move(joystickSc.DirValue);
     }
 
     private void LateUpdate()
@@ -66,7 +70,7 @@ public class Player : MonoBehaviour
     /// <summary>
     /// 플레이어 캐릭터 이동 
     /// </summary>
-    private void Move(Vector3 stickDir)
+    public void Move(Vector3 stickDir)
     {
         var maxspeed = stickDir.x * speedValue;
 
@@ -108,21 +112,34 @@ public class Player : MonoBehaviour
         {
             PlayerMoveState = stickDir.Equals(Vector2.zero) ? MoveState.Idle : MoveState.Run;
             // 애니매이션 속도 설정
-            anim.speed = stickDir.Equals(Vector2.zero) ? 1 : Mathf.Abs(actualMoveDirVector.x*0.1f);
+            anim.speed = stickDir.Equals(Vector2.zero) ? 1 : Mathf.Abs(actualMoveDirVector.x * 0.1f);
         }
     }
 
     /// <summary>
-    /// 
     /// 점프 IsGrounded는 캐릭터 오브젝트의 자식오브젝트를 통하여 설정
     /// </summary>
     public void Jump()
     {
         if (isGrounded)
+            StartCoroutine(JumpCoroutine());
+    }
+
+    /// <summary>
+    /// jump Coroutine
+    /// </summary>
+    /// <param name="onButton"></param>
+    /// <returns></returns>
+    IEnumerator JumpCoroutine()
+    {;
+        var jumpCount = 0;
+        while (jumpButtonOn && jumpCount <= jumpMaxCount)
         {
-            if (PlayerMoveState != MoveState.Jump)
-                rb2D.AddForce(Vector3.up * jumpPower, ForceMode2D.Impulse);
+            jumpCount++;
+            rb2D.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
+            yield return new WaitForSeconds(jumpSpeed);
         }
+        jumpButtonOn = false;
     }
 
     /// <summary>
@@ -133,7 +150,6 @@ public class Player : MonoBehaviour
         anim.SetTrigger("Attack");
     }
 
-  
 }
 
 

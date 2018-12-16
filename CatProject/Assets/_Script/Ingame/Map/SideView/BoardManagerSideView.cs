@@ -46,7 +46,6 @@ public class BoardManagerSideView : MonoBehaviour
         currentRoom = roomList[0].room;
 
         cam.currentRoomRect = currentRoom;
-        
     }
 
     /// <summary>

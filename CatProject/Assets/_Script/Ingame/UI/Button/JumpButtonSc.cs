@@ -3,15 +3,35 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class JumpButtonSc : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+public class JumpButtonSc : InputButtonManager
 {
-    public void OnPointerDown(PointerEventData eventData)
+    private void Update()
     {
-        Debug.Log("Down");
+        JumpButton();
+    }
+    public override void OnPointerDown(PointerEventData eventData)
+    {
+        playerSc.jumpButtonOn = true;
+        playerSc.Jump();
     }
 
-    public void OnPointerUp(PointerEventData eventData)
+    public override void OnPointerUp(PointerEventData eventData)
     {
-        Debug.Log("On");
+        playerSc.jumpButtonOn = false;
+    }
+
+    public void JumpButton()
+    {
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            playerSc.jumpButtonOn = true;
+            playerSc.Jump();
+        }
+
+        if(Input.GetKeyUp(KeyCode.Space))
+        {
+            playerSc.jumpButtonOn = false;
+        }
+                
     }
 }
