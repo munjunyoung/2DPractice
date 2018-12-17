@@ -24,13 +24,13 @@ public class BoardManagerBSP : MonoBehaviour
     public int maxRoomSize;
 
     //0 - backGround(Water), 1 - floor, 2 - corridor, 3 - wall
-    public TileData[,] map;
+    public MapTileData[,] map;
     [Header("Tile Reference Object")]
     public TileReferenceObject[] tileRefernce;
 
     private void Start()
     {
-        map = new TileData[boardRows, boardColumns];
+        map = new MapTileData[boardRows, boardColumns];
 
         Space rootSpace = new Space(new Rect(0, 0, boardRows, boardColumns));
 
@@ -137,7 +137,7 @@ public class BoardManagerBSP : MonoBehaviour
             {
                 for (int j = (int)_Space.room.y; j < _Space.room.yMax; j++)
                 {
-                    map[i, j] = new TileData(roomType, (int)TileType.Floor, UnityEngine.Random.Range(0, tileRefernce[roomType].floorSprite.Count));
+                    map[i, j] = new MapTileData(roomType, (int)TileType.Floor, UnityEngine.Random.Range(0, tileRefernce[roomType].floorSprite.Count));
                 }
             }
         }
@@ -165,8 +165,8 @@ public class BoardManagerBSP : MonoBehaviour
                     if (map[i, j] == null)
                     {
                         map[i, j] = cor.rect.width > cor.rect.height ?
-                            new TileData(corridorType, (int)TileType.Corridor, UnityEngine.Random.Range(0, 2)) :
-                            new TileData(corridorType, (int)TileType.Corridor, UnityEngine.Random.Range(4, 5));
+                            new MapTileData(corridorType, (int)TileType.Corridor, UnityEngine.Random.Range(0, 2)) :
+                            new MapTileData(corridorType, (int)TileType.Corridor, UnityEngine.Random.Range(4, 5));
                     }
                 }
             }
@@ -205,21 +205,21 @@ public class BoardManagerBSP : MonoBehaviour
                     if (map[i, j] == null)
                     {
                         if (i == x - 1 && j == y - 1)
-                            map[i, j] = new TileData(roomType, wallTileNum, (int)Dir.LeftBottom);
+                            map[i, j] = new MapTileData(roomType, wallTileNum, (int)Dir.LeftBottom);
                         else if (i == x - 1 && j == yMax)
-                            map[i, j] = new TileData(roomType, wallTileNum, (int)Dir.LeftTop);
+                            map[i, j] = new MapTileData(roomType, wallTileNum, (int)Dir.LeftTop);
                         else if (i == xMax && j == y - 1)
-                            map[i, j] = new TileData(roomType, wallTileNum, (int)Dir.RightBottom);
+                            map[i, j] = new MapTileData(roomType, wallTileNum, (int)Dir.RightBottom);
                         else if (i == xMax && j == yMax)
-                            map[i, j] = new TileData(roomType, wallTileNum, (int)Dir.RightTop);
+                            map[i, j] = new MapTileData(roomType, wallTileNum, (int)Dir.RightTop);
                         else if (i == x - 1)
-                            map[i, j] = new TileData(roomType, wallTileNum, (int)Dir.Left);
+                            map[i, j] = new MapTileData(roomType, wallTileNum, (int)Dir.Left);
                         else if (j == y - 1)
-                            map[i, j] = new TileData(roomType, wallTileNum, (int)Dir.Bottom);
+                            map[i, j] = new MapTileData(roomType, wallTileNum, (int)Dir.Bottom);
                         else if (i == xMax)
-                            map[i, j] = new TileData(roomType, wallTileNum, (int)Dir.Right);
+                            map[i, j] = new MapTileData(roomType, wallTileNum, (int)Dir.Right);
                         else if (j == yMax)
-                            map[i, j] = new TileData(roomType, wallTileNum, (int)Dir.Top);
+                            map[i, j] = new MapTileData(roomType, wallTileNum, (int)Dir.Top);
                     }
                 }
             }
@@ -244,7 +244,7 @@ public class BoardManagerBSP : MonoBehaviour
                 for (int j = (int)_Space.rect.y; j < _Space.rect.yMax; j++)
                 {
                     if (map[i, j] == null)
-                        map[i, j] = new TileData(roomType, (int)TileType.BackGround, UnityEngine.Random.Range(0, tileRefernce[roomType].backGroundSprite.Count));
+                        map[i, j] = new MapTileData(roomType, (int)TileType.BackGround, UnityEngine.Random.Range(0, tileRefernce[roomType].backGroundSprite.Count));
                 }
             }
         }
@@ -467,20 +467,20 @@ public struct Corridor
 /// <summary>
 /// Map으로 저장할 tileData
 /// </summary>
-public class TileData
+public class MapTileData
 {
     public int roomType;
     public int tileType;
     public int tileDir;
 
-    public TileData()
+    public MapTileData()
     {
         roomType = 0;
         tileType = 0;
         tileDir = 0;
     }
 
-    public TileData(int _roomType, int _tileType, int _tileDir)
+    public MapTileData(int _roomType, int _tileType, int _tileDir)
     {
         roomType = _roomType;
         tileType = _tileType;
