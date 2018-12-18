@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-public class JoyStickScript : MonoBehaviour, IDragHandler, IPointerDownHandler, IPointerUpHandler
+public class JoyStickScript : InputButtonManager, IDragHandler
 {
     [Header("JoyStick UI Reference")]
     [SerializeField]
@@ -48,7 +48,7 @@ public class JoyStickScript : MonoBehaviour, IDragHandler, IPointerDownHandler, 
     /// 누를경우 이미지 변경 , OnDrag 함수 실행
     /// </summary>
     /// <param name="eventData"></param>
-    public void OnPointerDown(PointerEventData eventData)
+    public override void OnPointerDown(PointerEventData eventData)
     {
         joyStickImg.GetComponent<Image>().color = new Color32(255, 255, 255, 150);
         onStick = true;
@@ -60,7 +60,7 @@ public class JoyStickScript : MonoBehaviour, IDragHandler, IPointerDownHandler, 
     /// 터치에서 뗄 시 스틱 이미지 복구 및 위치 앵커포지션 초기화
     /// </summary>
     /// <param name="eventData"></param>
-    public void OnPointerUp(PointerEventData eventData)
+    public override void OnPointerUp(PointerEventData eventData)
     {
         joyStickImg.GetComponent<Image>().color = new Color32(255, 255, 255, 255);
         joyStickImg.anchoredPosition = Vector2.zero;
@@ -101,5 +101,7 @@ public class JoyStickScript : MonoBehaviour, IDragHandler, IPointerDownHandler, 
     private void SetStickValue()
     {
         inputVector = joyStickImg.anchoredPosition / (bgImg.sizeDelta.x*0.5f);
+        playerSc.dirvalue = inputVector;
+
     }
 }

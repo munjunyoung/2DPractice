@@ -1,0 +1,157 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &324500466300686046
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 324500466300686044}
+  - component: {fileID: 324500466300686045}
+  - component: {fileID: 324500466300686033}
+  - component: {fileID: 324500466300686035}
+  - component: {fileID: 324500466300686034}
+  m_Layer: 0
+  m_Name: BoardManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &324500466300686044
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 324500466300686046}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &324500466300686045
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 324500466300686046}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbe30b0fdfc1e9a49b7447a75d5c569d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  boardRows: 80
+  boardColumns: 80
+  minRoomSize: 8
+  maxRoomSize: 12
+  tileRefernce:
+  - backGroundSprite:
+    - {fileID: 1862120369512088, guid: 06712100546de4344a4d6a371251e1ff, type: 3}
+    floorSprite:
+    - {fileID: 1658343104443948, guid: 959cb6838e1892f42a1b61372fe3385a, type: 3}
+    - {fileID: 1888066690416544, guid: 5ff9889292ecd404ea873bd4a10ccf42, type: 3}
+    - {fileID: 1816161081798488, guid: 3c55e4b9588f6e5478991911124b0398, type: 3}
+    corridorSprite:
+    - {fileID: 1834556435868144, guid: 67b7b48ce90e70e41b32fdff83de5331, type: 3}
+    - {fileID: 1601116728520534, guid: 893285b56edb1874ea0030b5757871bf, type: 3}
+    - {fileID: 1971735506186526, guid: b584c112658c85a4d8827e8c1e1aecf8, type: 3}
+    - {fileID: 1908809441038016, guid: 255d88b0c0e9ff349aa2ec3de50bb74e, type: 3}
+    - {fileID: 1389738804882276, guid: 6cf7af81d39770c40b67be160caffe99, type: 3}
+    - {fileID: 1302818528144988, guid: edbcb029a4f94d341a659cabc3755b43, type: 3}
+    wallSprite:
+    - {fileID: 1768302031974258, guid: 44943bc3c61a81b408568d83adf26ce6, type: 3}
+    - {fileID: 1500712533868318, guid: 848c59123160e4b4b954bef13f00e950, type: 3}
+    - {fileID: 1768302031974258, guid: 44943bc3c61a81b408568d83adf26ce6, type: 3}
+    - {fileID: 1458957920182196, guid: 794a8d43a3ff5f243a25315de97d318d, type: 3}
+    - {fileID: 1255515025383264, guid: a8f9e2fdae283ea409dcee4db6da9c07, type: 3}
+    - {fileID: 1768302031974258, guid: 44943bc3c61a81b408568d83adf26ce6, type: 3}
+    - {fileID: 1339519618928668, guid: d5d7ee3ab2a1bca4abf0d61173716dc6, type: 3}
+    - {fileID: 1500712533868318, guid: 848c59123160e4b4b954bef13f00e950, type: 3}
+    - {fileID: 1768302031974258, guid: 44943bc3c61a81b408568d83adf26ce6, type: 3}
+    - {fileID: 1458957920182196, guid: 794a8d43a3ff5f243a25315de97d318d, type: 3}
+  - backGroundSprite:
+    - {fileID: 0}
+    - {fileID: 0}
+    floorSprite:
+    - {fileID: 0}
+    corridorSprite:
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    wallSprite:
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+--- !u!114 &324500466300686033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 324500466300686046}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23a0e88b8a470fc41bb6e1ac0a76c8e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  width: 0
+  height: 0
+  useRandomSeed: 0
+  randomFillPercent: 0
+  tileList: []
+  wallList: []
+  bushLis: []
+--- !u!114 &324500466300686035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 324500466300686046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 438a2e52026bc5242803ef5228b5dca9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tileReferenceArray:
+  - tileType:
+    - sprite: []
+    - sprite: []
+    - sprite: []
+    - sprite: []
+    - sprite: []
+--- !u!114 &324500466300686034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 324500466300686046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83e482a7200edcb4aa725e5276f6fff0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tileArray: []
+  numberOfRoom: 1
+  widthMinSize: 60
+  widthMaxSize: 100
+  heightMinSize: 30
+  heightMaxSize: 30
+  cam: {fileID: 0}

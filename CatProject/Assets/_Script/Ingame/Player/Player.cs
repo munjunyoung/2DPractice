@@ -6,32 +6,27 @@ public class Player : MonoBehaviour
 {
     enum MoveState { Idle, Run, Jump, Fall }
 
-    [SerializeField]
-    [Header("JoyStick Script")]
-    private JoyStickScript joystickSc;
     //물리 관련
     private Rigidbody2D rb2D;
     [Header("MOVE OPTION")]
 
     //스틱 dircetion x 값 * speedValue
-    [SerializeField]
-    [Range(10f, 20f)]
+
+    [SerializeField, Range(10f, 20f)]
     private float speedValue;
-    [SerializeField]
-    [Range(0.1f, 3f)]
+    [SerializeField, Range(0.1f, 3f)]
     private float accelerationValue, decelerationValue;
+    [HideInInspector]
+    public Vector2 dirvalue;
 
     [Header("JUMP OPTION")]
-    [SerializeField]
-    [Range(1, 30)]
+    [SerializeField, Range(1, 30)]
     private float jumpPower;
     //코루틴 반복시 addforce 카운트 횟수
-    [SerializeField]
-    [Range(1, 10)]
+    [SerializeField, Range(1, 10)]
     private float jumpMaxCount;
     //코루틴 대기 속도 설정
-    [SerializeField]
-    [Range(0.01f, 0.1f)]
+    [SerializeField, Range(0.01f, 0.1f)]
     private float jumpSpeed;
 
     [HideInInspector]
@@ -46,7 +41,6 @@ public class Player : MonoBehaviour
     private MoveState PlayerMoveState;
     private Animator anim;
 
-
     void Start()
     {
         PlayerMoveState = MoveState.Idle;
@@ -56,7 +50,7 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Move(joystickSc.DirValue);
+        Move(dirvalue);
     }
 
     private void LateUpdate()
@@ -131,7 +125,8 @@ public class Player : MonoBehaviour
     /// <param name="onButton"></param>
     /// <returns></returns>
     IEnumerator JumpCoroutine()
-    {;
+    {
+        ;
         var jumpCount = 0;
         while (jumpButtonOn && jumpCount <= jumpMaxCount)
         {

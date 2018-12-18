@@ -17,24 +17,20 @@ public class BoardManagerSideView : MonoBehaviour
     private GameObject RoomsObject;
 
     [Header("ROOM OPTION")]
-    [Range(1, 100)]
-    public int numberOfRoom;
-    [Range(30, 60)]
-    public int widthMinSize;
-    [Range(60, 100)]
-    public int widthMaxSize;
-    [Range(15, 30)]
-    public int heightMinSize;
-    [Range(30, 60)]
-    public int heightMaxSize;
+    [SerializeField, Range(1, 100)]
+    private int numberOfRoom;    
+    [SerializeField, Range(30, 60)]
+    private int widthMinSize;
+    [SerializeField, Range(60, 100)]
+    private int widthMaxSize;
+    [SerializeField, Range(15, 30)]
+    private int heightMinSize;
+    [SerializeField, Range(30, 60)]
+    private int heightMaxSize;
 
     private List<EdgeCollider2D> outLineColliderList;  
-
-    //카메라를 맵안에 가두기 위해서 참조 방을 넘어가는 이벤트 처리시 그쪽으로 이관할듯
-    [Header("CAM Script")]
-    public IngameCam cam;
-
-    private void Awake()
+    
+    private void Start()
     {
         CreateParentRoom();
         tileArray = GetComponent<TileManager>().tileReferenceArray;
@@ -43,9 +39,6 @@ public class BoardManagerSideView : MonoBehaviour
         DrawRoom();
 
         roomGameObjectList[0].SetActive(true);
-        currentRoom = roomList[0].room;
-
-        cam.currentRoomRect = currentRoom;
     }
 
     /// <summary>
@@ -131,7 +124,7 @@ public class DungeonRoom
     //public DungeonRoom right;
     public Rect room;
     public int roomType;
-    public TileMap[,] roomArray;
+    public TileInfo[,] roomArray;
 
     public DungeonRoom(int _roomType, int _widthMin, int _widthMax, int _heightMin, int _heightMax)
     {
@@ -141,7 +134,7 @@ public class DungeonRoom
         var tmpH = Random.Range(_heightMin, _heightMax);
         room = new Rect(0, 0, tmpW, tmpH);
 
-        roomArray = new TileMap[(int)room.width, (int)room.height];
+        roomArray = new TileInfo[(int)room.width, (int)room.height];
     }
     
     /// <summary>
@@ -154,15 +147,15 @@ public class DungeonRoom
         //bottom, top
         for (int i = 1; i < room.xMax-1; i++)
         {
-            roomArray[i, 0] = new TileMap((int)TileType.Floor, Random.Range(0, floortilelength));
-            roomArray[i, (int)room.yMax-1] = new TileMap((int)TileType.Floor, Random.Range(0, floortilelength));
+            roomArray[i, 0] = new TileInfo((int)TileType.Floor, Random.Range(0, floortilelength));
+            roomArray[i, (int)room.yMax-1] = new TileInfo((int)TileType.Floor, Random.Range(0, floortilelength));
         }
 
         //left, right
         for(int j=0; j<room.yMax;j++ )
         {
-            roomArray[0, j] = new TileMap((int)TileType.GroundOutLine, 0);
-            roomArray[(int)room.xMax-1, j] = new TileMap((int)TileType.GroundOutLine, 0);
+            roomArray[0, j] = new TileInfo((int)TileType.GroundOutLine, 0);
+            roomArray[(int)room.xMax-1, j] = new TileInfo((int)TileType.GroundOutLine, 0);
         }
     }
 
@@ -192,14 +185,14 @@ public class DungeonRoom
                 //제일 위일 경우 floor를 생성 
                 if (j.Equals(currentheight))
                 {
-                    roomArray[i, j] = new TileMap((int)TileType.Floor, Random.Range(0, floortilelength));
+                    roomArray[i, j] = new TileInfo((int)TileType.Floor, Random.Range(0, floortilelength));
                 }
                 else
                 {
                     //높이가 바뀌지 않을 경우 
                     if (!changeheight)
                     {
-                        roomArray[i, j] = new TileMap((int)TileType.Ground, Random.Range(0, groundtilelength));
+                        roomArray[i, j] = new TileInfo((int)TileType.Ground, Random.Range(0, groundtilelength));
                     }
                     //높이 바뀔 경우
                     else
@@ -208,7 +201,7 @@ public class DungeonRoom
                         //gap count가 1이하면 그대로 생성
                         if (heightgapcount < 1)
                         {
-                            roomArray[i, j] = new TileMap((int)TileType.Ground, Random.Range(0, groundtilelength));
+                            roomArray[i, j] = new TileInfo((int)TileType.Ground, Random.Range(0, groundtilelength));
                         }
                         //gap count가 2이상일 경우 생성
                         else
@@ -220,7 +213,7 @@ public class DungeonRoom
                                 var currentjvalue = j;
                                 for (; j > (currentjvalue - heightgapcount); j--)
                                 {
-                                    roomArray[i, j] = new TileMap((int)TileType.GroundOutLine, 0);
+                                    roomArray[i, j] = new TileInfo((int)TileType.GroundOutLine, 0);
                                 }
 
                             }
@@ -231,10 +224,10 @@ public class DungeonRoom
                                 var currentjvalue = j;
                                 for (int k = currentjvalue + 1; k <= currentjvalue + heightgapcount; k++)
                                 {
-                                    roomArray[i - 1, k] = new TileMap((int)TileType.GroundOutLine, 1);
+                                    roomArray[i - 1, k] = new TileInfo((int)TileType.GroundOutLine, 1);
                                 }
                             }
-                            roomArray[i, j] = new TileMap((int)TileType.Ground, Random.Range(0, groundtilelength));
+                            roomArray[i, j] = new TileInfo((int)TileType.Ground, Random.Range(0, groundtilelength));
                             changeheight = false;
                         }
                     }
@@ -258,18 +251,18 @@ public class DungeonRoom
     }
 }
 
-public class TileMap
+public class TileInfo
 {
     public int tileType;
     public int tileNumber;
 
-    public TileMap(int _tiletype, int _tilenumber)
+    public TileInfo(int _tiletype, int _tilenumber)
     {
         tileType = _tiletype;
         tileNumber = _tilenumber;
     }
 
-    public TileMap()
+    public TileInfo()
     {
         tileType = 0;
         tileNumber = 0;

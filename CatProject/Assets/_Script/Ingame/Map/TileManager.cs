@@ -16,7 +16,7 @@ public class TileManager : MonoBehaviour
     private string[] tileTypePathArray = { "1.BackGround", "2.Floor", "3.Obstacle", "4.Ground", "5.GroundOutLine" };
     
     public TileObject[] tileReferenceArray;
-
+    
     public void Awake()
     {
         LoadTile();

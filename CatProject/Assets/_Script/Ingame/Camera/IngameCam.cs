@@ -4,12 +4,11 @@ using UnityEngine;
 
 public class IngameCam : MonoBehaviour
 {
-    [SerializeField]
     [Header("Cam Target")]
     private Transform target;
     
-    [SerializeField]
-    [Range(0, 10)]
+    
+    [SerializeField,Range(0, 10)]
     private float camSmoothing, camDistanceOffset, camUpOffset;
    
 
@@ -22,13 +21,9 @@ public class IngameCam : MonoBehaviour
     private float bottomBound;
     private float topBound;
 
-    //현재 실행중인 맵 현재 BoardManager에서 초기화
-    [HideInInspector]
-    public Rect currentRoomRect;
-
-    void Start()
+    private void Start()
     {
-
+        target = GameObject.Find("Player").transform;
     }
 
     private void LateUpdate()
@@ -41,20 +36,22 @@ public class IngameCam : MonoBehaviour
 
         transform.position = pos;
     }
+    
+    //[HideInInspector]
+    //public Rect currentRoomRect;
+    ///// <summary>
+    ///// 카메라가 맵 밖으로 나가지 않게하기위해 bound값을 설정
+    ///// </summary>
+    //public void SetBoundValue()
+    //{
 
-    /// <summary>
-    /// 카메라가 맵 밖으로 나가지 않게하기위해 bound값을 설정
-    /// </summary>
-    public void SetBoundValue()
-    {
+    //    verticalExtent = Camera.main.orthographicSize;
+    //    horizontalExtent = verticalExtent * Screen.width / Screen.height;
 
-        verticalExtent = Camera.main.orthographicSize;
-        horizontalExtent = verticalExtent * Screen.width / Screen.height;
-
-        leftBound = (float)(horizontalExtent);
-        rightBound = (float)((currentRoomRect.xMax) - horizontalExtent);
-        bottomBound = verticalExtent;
-        topBound = (currentRoomRect.yMax) - verticalExtent;
-    }
+    //    leftBound = (float)(horizontalExtent);
+    //    rightBound = (float)((currentRoomRect.xMax) - horizontalExtent);
+    //    bottomBound = verticalExtent;
+    //    topBound = (currentRoomRect.yMax) - verticalExtent;
+    //}
 
 }
