@@ -26,7 +26,7 @@ public class Player : MonoBehaviour
     [SerializeField, Range(1, 10)]
     private float jumpMaxCount;
     //코루틴 대기 속도 설정
-    [SerializeField, Range(0.01f, 0.1f)]
+    [SerializeField, Range(0.001f, 0.1f)]
     private float jumpSpeed;
 
     [HideInInspector]
@@ -126,7 +126,6 @@ public class Player : MonoBehaviour
     /// <returns></returns>
     IEnumerator JumpCoroutine()
     {
-        ;
         var jumpCount = 0;
         while (jumpButtonOn && jumpCount <= jumpMaxCount)
         {

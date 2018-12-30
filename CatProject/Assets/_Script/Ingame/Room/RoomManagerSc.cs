@@ -9,4 +9,9 @@ public class RoomManagerSc : MonoBehaviour {
     {
 
     }
+
+    private void FpsView()
+    {
+
+    }
 }
