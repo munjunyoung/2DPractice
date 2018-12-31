@@ -10,7 +10,7 @@ public class TileLoadManager : MonoBehaviour
     //Resouces Load Path
     private string[] roomTypePathArray = { "TileType1" };
     private string[] tileTypePathArray = { "1.BackGround", "2.Floor", "3.Obstacle", "4.Ground", "5.GroundOutLine" };
-
+    [HideInInspector]
     public TypeOfTileSetType[] loadTileArray;
 
     public void Awake()

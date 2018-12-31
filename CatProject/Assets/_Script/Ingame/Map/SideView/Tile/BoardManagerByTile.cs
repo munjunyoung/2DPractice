@@ -5,8 +5,8 @@ using UnityEngine.Tilemaps;
 [RequireComponent(typeof(TileLoadManager))]
 public class BoardManagerByTile : MonoBehaviour
 {
-    private List<DungeonRoomByTile> roomList = new List<DungeonRoomByTile>();
-    private List<GameObject> roomObjectList = new List<GameObject>();
+    [HideInInspector]
+    public List<DungeonRoomByTile> roomList = new List<DungeonRoomByTile>();
     
     private TypeOfTileSetType[] tileReferenceArray;
 
@@ -32,12 +32,13 @@ public class BoardManagerByTile : MonoBehaviour
         
         CreateRooms(numberOfRoom);
         DrawRoom();
-       // roomObjectList[0].SetActive(true);
+        roomList[0].roomOwnObjecet.SetActive(true);
     }
 
     /// <summary>
     /// 오브젝트를 생성할때 방들의 상위 오브젝트가 될 부모 설정
     /// 함수로 만든 이유는 씬이 넘어갈때마다 필요할 거라고 생각되었기 때문 (방을 남겨두기에는 하위오브젝트들을 destroy함으로써 gc가 돌꺼같나..?)
+    /// 씬하나에 끝날 경우에는 미리 생성해두어도 상관없을듯
     /// </summary>
     private void CreateParentGridObject()
     {
@@ -63,7 +64,7 @@ public class BoardManagerByTile : MonoBehaviour
             int groundlength = tileReferenceArray[roomList[i].roomType].tileType[(int)TileType.Ground].tile.Length;
             
             roomList[i].SetGroundNormal(floorlength);
-            //roomList[i].SetGroundHegihtRandomly(floorlength, groundlength);
+            roomList[i].SetGroundHegihtRandomly(floorlength, groundlength);
         }
     }
 
@@ -72,12 +73,13 @@ public class BoardManagerByTile : MonoBehaviour
     /// </summary>
     private void DrawRoom()
     {
+        int countroom = 1;
         foreach(DungeonRoomByTile _room in roomList)
         {
             GameObject tmpParent = new GameObject();
             tmpParent.transform.position = Vector3.zero;
             tmpParent.transform.rotation = Quaternion.identity;
-            tmpParent.name = "Room";
+            tmpParent.name = "Room" + countroom;
             tmpParent.transform.SetParent(RoomsParentObject.transform);
 
             int _roomtype = _room.roomType;
@@ -93,6 +95,9 @@ public class BoardManagerByTile : MonoBehaviour
                         tmpTilemap.SetTile(new Vector3Int(i, j, 0), tileReferenceArray[_roomtype].tileType[_room.roomArray[i,j].tileType].tile[_room.roomArray[i,j].tileNumber]);
                 }
             }
+            countroom++;
+            _room.roomOwnObjecet = tmpParent;
+            tmpParent.SetActive(false);
         }
     }
 
@@ -110,16 +115,23 @@ public class BoardManagerByTile : MonoBehaviour
 
         return tmptilemap;
     }
+    
 }
 
 public class DungeonRoomByTile
 {
-    //해당 통로
-    //public DungeonRoom left;
-    //public DungeonRoom right;
+    //자신의 오브젝트 (오브젝트 리스트를 따로 만들어서 관리하지 않기 위함)
+    public GameObject roomOwnObjecet;
+
     public Rect room;
     public int roomType;
     public TileInfo[,] roomArray;
+    
+    //인덱스가 낮은곳이 왼쪽 배치
+    public List<DungeonRoomByTile> neighborRooms;
+    //방의 가중치 
+    public int weight;
+
 
     public DungeonRoomByTile(int _roomType, int _widthMin, int _widthMax, int _heightMin, int _heightMax)
     {

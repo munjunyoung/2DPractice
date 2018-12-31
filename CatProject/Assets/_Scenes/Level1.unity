@@ -324,11 +324,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
       propertyPath: numberOfRoom
-      value: 1
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
       propertyPath: widthMaxSize
-      value: 60
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
       propertyPath: heightMinSize
