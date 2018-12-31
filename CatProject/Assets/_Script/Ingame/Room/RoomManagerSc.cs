@@ -43,7 +43,7 @@ public class RoomManagerSc : MonoBehaviour
             }
         }
 
-        roomList[roomList.Count].weight = weightCount++;
+        roomList[roomList.Count-1].weight = weightCount++;
     }
 
     
