@@ -520,7 +520,7 @@ PrefabInstance:
     - target: {fileID: 5844019777274396630, guid: db7fd549b468c8942aeede02e5084d14,
         type: 3}
       propertyPath: m_AutoTiling
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5844019777274396625, guid: db7fd549b468c8942aeede02e5084d14,
         type: 3}
@@ -535,12 +535,17 @@ PrefabInstance:
     - target: {fileID: 5844019777883808866, guid: db7fd549b468c8942aeede02e5084d14,
         type: 3}
       propertyPath: m_Size.x
-      value: 2.5
+      value: 2.35
       objectReference: {fileID: 0}
     - target: {fileID: 5844019777883808866, guid: db7fd549b468c8942aeede02e5084d14,
         type: 3}
       propertyPath: m_Offset.x
       value: -0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 5844019777274396629, guid: db7fd549b468c8942aeede02e5084d14,
+        type: 3}
+      propertyPath: m_CollisionDetection
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: db7fd549b468c8942aeede02e5084d14, type: 3}

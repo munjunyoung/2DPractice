@@ -64,7 +64,7 @@ public class BoardManagerByTile : MonoBehaviour
             int groundlength = tileReferenceArray[roomList[i].roomType].tileType[(int)TileType.Ground].tile.Length;
             
             roomList[i].SetGroundNormal(floorlength);
-            //roomList[i].SetGroundHegihtRandomly(floorlength, groundlength);
+            roomList[i].SetGroundHegihtRandomly(floorlength, groundlength);
         }
     }
 
