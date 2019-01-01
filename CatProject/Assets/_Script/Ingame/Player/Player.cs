@@ -9,7 +9,7 @@ public class Player : MonoBehaviour
     //물리 관련
     private Rigidbody2D rb2D;
     [Header("MOVE OPTION")]
-    [SerializeField, Range(10f, 20f)]
+    [SerializeField, Range(10f, 100f)]
     private float speedValue;
     [SerializeField, Range(0.1f, 3f)]
     private float accelerationValue, decelerationValue;
@@ -32,7 +32,7 @@ public class Player : MonoBehaviour
     public bool isGrounded;
 
     //실제 Move에서 참조하는 벡터 (Vector3를 사용하나 y값은 사용안해서 제외해도 될듯 하다)
-    private Vector2 actualMoveDirVector;
+    private Vector3 actualMoveDirVector;
 
     //Animation 관련
     private MoveState PlayerMoveState;
@@ -89,10 +89,11 @@ public class Player : MonoBehaviour
         }
         //transform.Translate(actualMoveDirVector * Time.deltaTime);
         //rb2D.position += actualMoveDirVector * Time.deltaTime;
-        rb2D.velocity = new Vector2(actualMoveDirVector.x, rb2D.velocity.y);
-        Debug.Log(rb2D.velocity);
+        //rb2D.velocity = new Vector2(actualMoveDirVector.x, rb2D.velocity.y);
+        
+        //Debug.Log(rb2D.velocity);
         //rb2D.MovePosition(transform.position + actualMoveDirVector * Time.deltaTime);
-        //transform.position += actualMoveDirVector * Time.deltaTime;
+         transform.position += actualMoveDirVector * Time.deltaTime;
         beforedirX = stickDir.x;
         //캐릭터의 방향 설정
         if (!stickDir.Equals(Vector3.zero))
@@ -113,7 +114,7 @@ public class Player : MonoBehaviour
             }
         }
     }
-
+    
     /// <summary>
     /// 점프 IsGrounded는 캐릭터 오브젝트의 자식오브젝트를 통하여 설정
     /// </summary>
@@ -147,7 +148,6 @@ public class Player : MonoBehaviour
     {
         anim.SetTrigger("Attack");
     }
-
 }
 
 
