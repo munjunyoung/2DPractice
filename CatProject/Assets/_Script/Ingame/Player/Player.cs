@@ -4,14 +4,11 @@ using System;
 
 public class Player : MonoBehaviour
 {
-    enum MoveState { Idle, Run, Jump, Fall }
+    enum MoveState { Idle, Walk, Jump, Fall }
 
     //물리 관련
     private Rigidbody2D rb2D;
     [Header("MOVE OPTION")]
-
-    //스틱 dircetion x 값 * speedValue
-
     [SerializeField, Range(10f, 20f)]
     private float speedValue;
     [SerializeField, Range(0.1f, 3f)]
@@ -56,7 +53,7 @@ public class Player : MonoBehaviour
     private void LateUpdate()
     {
         //애니매이션 설정
-        anim.SetFloat("State", (int)PlayerMoveState);
+        anim.SetFloat("StateBlend", (int)PlayerMoveState);
     }
 
 
@@ -104,11 +101,11 @@ public class Player : MonoBehaviour
             PlayerMoveState = MoveState.Fall;
         else
         {
-            PlayerMoveState = stickDir.Equals(Vector2.zero) ? MoveState.Idle : MoveState.Run;
+            PlayerMoveState = (int)(actualMoveDirVector.x*10)==0 ? MoveState.Idle : MoveState.Walk;
             // 애니매이션 속도 설정
             anim.speed = stickDir.Equals(Vector2.zero) ? 1 : Mathf.Abs(actualMoveDirVector.x * 0.1f);
         }
-    }
+    }   
 
     /// <summary>
     /// 점프 IsGrounded는 캐릭터 오브젝트의 자식오브젝트를 통하여 설정

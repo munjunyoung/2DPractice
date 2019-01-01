@@ -141,6 +141,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d3b2be30ebe7814688ff09d57459dc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  randomConnectWeight: 50
 --- !u!4 &243715568
 Transform:
   m_ObjectHideFlags: 0

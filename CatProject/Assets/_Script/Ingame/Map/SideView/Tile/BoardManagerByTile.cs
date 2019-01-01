@@ -58,13 +58,13 @@ public class BoardManagerByTile : MonoBehaviour
     {
         for(int i =0; i<_numberOfroom; i++)
         {
-            roomList.Add(new DungeonRoomByTile((int)RoomType.Type1, widthMinSize, widthMaxSize, heightMinSize, heightMaxSize));
+            roomList.Add(new DungeonRoomByTile(i,(int)RoomType.Type1, widthMinSize, widthMaxSize, heightMinSize, heightMaxSize));
 
             int floorlength = tileReferenceArray[roomList[i].roomType].tileType[(int)TileType.Floor].tile.Length;
             int groundlength = tileReferenceArray[roomList[i].roomType].tileType[(int)TileType.Ground].tile.Length;
             
             roomList[i].SetGroundNormal(floorlength);
-            roomList[i].SetGroundHegihtRandomly(floorlength, groundlength);
+            //roomList[i].SetGroundHegihtRandomly(floorlength, groundlength);
         }
     }
 
@@ -101,6 +101,11 @@ public class BoardManagerByTile : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// TileMap Object 동적 생성
+    /// </summary>
+    /// <param name="nameoftilemap"></param>
+    /// <returns></returns>
     private Tilemap CreateTileMap(string nameoftilemap)
     {
         GameObject tmpob = new GameObject(nameoftilemap, typeof(Tilemap));
@@ -121,20 +126,22 @@ public class BoardManagerByTile : MonoBehaviour
 public class DungeonRoomByTile
 {
     //자신의 오브젝트 (오브젝트 리스트를 따로 만들어서 관리하지 않기 위함)
+    public int roomNumber;
     public GameObject roomOwnObjecet;
 
     public Rect room;
     public int roomType;
     public TileInfo[,] roomArray;
-    
-    //인덱스가 낮은곳이 왼쪽 배치
-    public List<DungeonRoomByTile> neighborRooms;
+
+    //0은 왼쪽 1은 중앙 2는 오른쪽
+    public List<DungeonRoomByTile> neighborRooms = new List<DungeonRoomByTile>();
     //방의 가중치 
     public int weight;
 
 
-    public DungeonRoomByTile(int _roomType, int _widthMin, int _widthMax, int _heightMin, int _heightMax)
+    public DungeonRoomByTile(int _roomNumber, int _roomType, int _widthMin, int _widthMax, int _heightMin, int _heightMax)
     {
+        roomNumber = _roomNumber;
         roomType = _roomType;
 
         var tmpW = Random.Range(_widthMin, _widthMax);
