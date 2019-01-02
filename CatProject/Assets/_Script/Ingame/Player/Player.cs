@@ -30,6 +30,7 @@ public class Player : MonoBehaviour
     public bool jumpButtonOn = false;
     //[HideInInspector]
     public bool isGrounded;
+    public bool leftCheck;
 
     //실제 Move에서 참조하는 벡터 (Vector3를 사용하나 y값은 사용안해서 제외해도 될듯 하다)
     private Vector3 actualMoveDirVector;
@@ -87,18 +88,22 @@ public class Player : MonoBehaviour
         {
             actualMoveDirVector = Vector3.Slerp(actualMoveDirVector, Vector3.zero, Time.deltaTime * decelerationValue);
         }
-        //transform.Translate(actualMoveDirVector * Time.deltaTime);
+
+        if (leftCheck)
+            actualMoveDirVector = Vector3.zero;
+
+        transform.Translate(actualMoveDirVector * Time.deltaTime);
         //rb2D.position += actualMoveDirVector * Time.deltaTime;
-        //rb2D.velocity = new Vector2(actualMoveDirVector.x, rb2D.velocity.y);
-        
+        //if(!leftCheck)
+        //    rb2D.velocity = new Vector2(actualMoveDirVector.x, rb2D.velocity.y);
         //Debug.Log(rb2D.velocity);
         //rb2D.MovePosition(transform.position + actualMoveDirVector * Time.deltaTime);
-         transform.position += actualMoveDirVector * Time.deltaTime;
+        //transform.position += actualMoveDirVector * Time.deltaTime;
         beforedirX = stickDir.x;
         //캐릭터의 방향 설정
         if (!stickDir.Equals(Vector3.zero))
             transform.localScale = stickDir.x > 0 ? new Vector3(1, 1, 1) : new Vector3(-1, 1, 1);
-        
+
         //캐릭터 상태 설정(애니매이션 상태 설정)
         if (rb2D.velocity.y > 0)
             PlayerMoveState = MoveState.Jump;
@@ -114,7 +119,7 @@ public class Player : MonoBehaviour
             }
         }
     }
-    
+
     /// <summary>
     /// 점프 IsGrounded는 캐릭터 오브젝트의 자식오브젝트를 통하여 설정
     /// </summary>

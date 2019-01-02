@@ -4,12 +4,22 @@ using UnityEngine;
 
 public class LeftTriggerCheck : MonoBehaviour
 {
-    public bool leftCheck;
+    [SerializeField]
+    private Player playerSc;
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.tag == "Ground")
         {
-            leftCheck = true;
+            playerSc.leftCheck = true;
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if(collision.tag == "Ground")
+        {
+            playerSc.leftCheck = true;
         }
     }
 
@@ -17,7 +27,7 @@ public class LeftTriggerCheck : MonoBehaviour
     {
         if(collision.tag == "Ground")
         {
-            leftCheck = false;
+            playerSc.leftCheck = false;
         }
     }
 
