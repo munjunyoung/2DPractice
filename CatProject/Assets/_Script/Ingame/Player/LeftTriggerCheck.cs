@@ -7,28 +7,28 @@ public class LeftTriggerCheck : MonoBehaviour
     [SerializeField]
     private Player playerSc;
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.tag == "Ground")
-        {
-            playerSc.leftCheck = true;
-        }
-    }
+    //private void OnTriggerEnter2D(Collider2D collision)
+    //{
+    //    if (collision.tag == "Ground")
+    //    {
+    //        playerSc.leftCheck = true;
+    //    }
+    //}
 
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        if(collision.tag == "Ground")
-        {
-            playerSc.leftCheck = true;
-        }
-    }
+    //private void OnTriggerStay2D(Collider2D collision)
+    //{
+    //    if(collision.tag == "Ground")
+    //    {
+    //        playerSc.leftCheck = true;
+    //    }
+    //}
 
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if(collision.tag == "Ground")
-        {
-            playerSc.leftCheck = false;
-        }
-    }
+    //private void OnTriggerExit2D(Collider2D collision)
+    //{
+    //    if(collision.tag == "Ground")
+    //    {
+    //        playerSc.leftCheck = false;
+    //    }
+    //}
 
 }

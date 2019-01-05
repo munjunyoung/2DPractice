@@ -9,6 +9,7 @@ public class RoomManagerSc : MonoBehaviour
     private List<List<DungeonRoomByTile>> WeightRoomList = new List<List<DungeonRoomByTile>>();
     private int weightCount;
 
+
     private void Start()
     {
         roomList = GameObject.Find("BoardManager").GetComponent<BoardManagerByTile>().roomList;
@@ -27,12 +28,14 @@ public class RoomManagerSc : MonoBehaviour
         room2.neighborRooms.Add(room1);
     }
 
+
+    [Header("Set Same Weight Per"), SerializeField, Range(0, 100)]
+    private int randomWeight = 50;
     /// <summary>
     /// 모든 방의 가중치 설정하고 가중치를 id로 한 2차원 리스트에 저장
     /// </summary>
     private void SetWeight()
     {
-        int randomWeight = 50;
         weightCount = 0;
         WeightRoomList.Add(new List<DungeonRoomByTile>());
 
@@ -54,6 +57,56 @@ public class RoomManagerSc : MonoBehaviour
         }
     }
 
+    //지역 변수로 선언하려하다가 방의 랜덤성에 연결 퍼센티지를 조정하고싶어서 클래스 변수로 선언
+    [Header("Set Connect Percentage")]
+    [SerializeField, Range(0, 100)]
+    private int randomConnectSameWeightPer = 50;
+    /// <summary>
+    /// 각 방들 연결
+    /// </summary>
+    private void RandomEdgeConnected()
+    {
+        //..weightRoomList;
+        for (int i = 0; i < WeightRoomList.Count; i++)
+        {
+            //같은 가중치 방이 2개 이상 있을 경우
+            if (WeightRoomList[i].Count >= 2)
+            {
+                //1,2,3 이 있을경우 1,2 1,3 2,3 
+                for (int j = 0; j < WeightRoomList[i].Count - 1; j++)
+                {
+                    for (int k = j + 1; k < WeightRoomList[i].Count; k++)
+                    {
+                        if (WeightRoomList[i][k].neighborRooms.Count == 0)
+                        {
+                            ConnectEdge(WeightRoomList[i][j], WeightRoomList[i][k]);
+                        }
+                        else
+                        {
+                            if (Random.Range(0, 100) <= randomConnectSameWeightPer)
+                                ConnectEdge(WeightRoomList[i][j], WeightRoomList[i][k]);
+                        }
+
+                        if (i + 1 < weightCount)
+                            ConnectEdge(WeightRoomList[i][0], WeightRoomList[i + 1][Random.Range(0, WeightRoomList[i + 1].Count)]);
+                    }
+                }
+            }
+            else if (WeightRoomList[i].Count == 1)
+            {
+                if (i + 1 < weightCount)
+                    ConnectEdge(WeightRoomList[i][0], WeightRoomList[i + 1][Random.Range(0, WeightRoomList[i + 1].Count)]);
+            }
+            else
+            {
+                Debug.Log(" 가중치 [" + i + "] 를 가진 방이 존재하지 않습니다.");
+            }
+        }
+    }
+
+    /// <summary>
+    /// 방 연결 프린트
+    /// </summary>
     private void PrintTest()
     {
         for (int i = 0; i < roomList.Count; i++)
@@ -74,39 +127,7 @@ public class RoomManagerSc : MonoBehaviour
             {
                 Debug.Log("[" + i + "]Room -> [" + roomList[i].neighborRooms[j].roomNumber + "] Room");
             }
-            
-        }
-    }
-    
-    [SerializeField, Header("SameWeightRoom Connect Percentage"), Range(0,100)]
-    private int randomConnectWeight = 50;
-    private void RandomEdgeConnected()
-    {
-        //..weightRoomList;
-        for (int i = 0; i < WeightRoomList.Count; i++)
-        {
-            //같은 가중치 방이 2개 이상 있을 경우
-            if (WeightRoomList[i].Count >= 2)
-            {
-                //1,2,3 이 있을경우 1,2 1,3 2,3 
-                for(int j=0; j<WeightRoomList[i].Count-1;j++)
-                {
-                    for(int k=j+1;k<WeightRoomList[i].Count;k++)
-                    {
-                        if (Random.Range(0, 100) <= randomConnectWeight) 
-                            ConnectEdge(WeightRoomList[i][j], WeightRoomList[i][k]);
-                    }
 
-                    
-                }
-            }
-            else
-            {
-                Debug.Log(" 가중치 [" + i + "] 를 가진 방이 존재하지 않습니다.");
-            }
-            //다음 가중치를 가진방이 한개 이상일 경우 하나를 선택하여 연결 (조건문은 마지막 방일 경우)
-            if (i + 1 < weightCount)
-                ConnectEdge(WeightRoomList[i][0], WeightRoomList[i + 1][Random.Range(0, WeightRoomList[i + 1].Count)]);
         }
     }
 }

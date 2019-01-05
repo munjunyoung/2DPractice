@@ -28,9 +28,8 @@ public class Player : MonoBehaviour
 
     [HideInInspector]
     public bool jumpButtonOn = false;
-    //[HideInInspector]
+    [HideInInspector]
     public bool isGrounded;
-    public bool leftCheck;
 
     //실제 Move에서 참조하는 벡터 (Vector3를 사용하나 y값은 사용안해서 제외해도 될듯 하다)
     private Vector3 actualMoveDirVector;
@@ -88,17 +87,13 @@ public class Player : MonoBehaviour
         {
             actualMoveDirVector = Vector3.Slerp(actualMoveDirVector, Vector3.zero, Time.deltaTime * decelerationValue);
         }
+        
 
-        if (leftCheck)
-            actualMoveDirVector = Vector3.zero;
-
-        transform.Translate(actualMoveDirVector * Time.deltaTime);
+        //transform.Translate(actualMoveDirVector * Time.deltaTime);
         //rb2D.position += actualMoveDirVector * Time.deltaTime;
-        //if(!leftCheck)
-        //    rb2D.velocity = new Vector2(actualMoveDirVector.x, rb2D.velocity.y);
         //Debug.Log(rb2D.velocity);
         //rb2D.MovePosition(transform.position + actualMoveDirVector * Time.deltaTime);
-        //transform.position += actualMoveDirVector * Time.deltaTime;
+        transform.position += actualMoveDirVector * Time.deltaTime;
         beforedirX = stickDir.x;
         //캐릭터의 방향 설정
         if (!stickDir.Equals(Vector3.zero))
