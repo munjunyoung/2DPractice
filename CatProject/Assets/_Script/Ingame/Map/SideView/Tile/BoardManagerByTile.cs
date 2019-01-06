@@ -7,7 +7,7 @@ public class BoardManagerByTile : MonoBehaviour
 {
     [HideInInspector]
     public List<DungeonRoomByTile> roomList = new List<DungeonRoomByTile>();
-    
+    private Dictionary<int, List<DungeonRoomByTile>> LevelRoomDic = new Dictionary<int, List<DungeonRoomByTile>>();
     private TypeOfTileSetType[] tileReferenceArray;
 
     //RoomParent들의 부모가 될 오브젝트 (Grid)
@@ -29,9 +29,17 @@ public class BoardManagerByTile : MonoBehaviour
     {
         CreateParentGridObject();
         tileReferenceArray = GetComponent<TileLoadManager>().loadTileArray;
-        
+        //Rooms 생성
         CreateRooms(numberOfRoom);
+        //Rooms 레벨 설정
+        SetRoomLevel();
+        //Rooms 연결
+        RandomEdgeConnected();
+
+        PrintTest();
+        //Rooms Draw
         DrawRoom();
+
         roomList[0].roomOwnObjecet.SetActive(true);
     }
 
@@ -63,8 +71,115 @@ public class BoardManagerByTile : MonoBehaviour
             int floorlength = tileReferenceArray[roomList[i].roomType].tileType[(int)TileType.Floor].tile.Length;
             int groundlength = tileReferenceArray[roomList[i].roomType].tileType[(int)TileType.Ground].tile.Length;
             
-            roomList[i].SetGroundNormal(floorlength);
-            roomList[i].SetGroundHegihtRandomly(floorlength, groundlength);
+            roomList[i].SetGroundNormal(floorlength);           
+        }
+    }
+    
+    private int levelCount;
+    private int setSameLevelPer = 50;
+    /// <summary>
+    /// 방들의 레벨 설정
+    /// </summary>
+    private void SetRoomLevel()
+    {
+        //시작 0레벨 방 설정;
+        levelCount = 0;
+        LevelRoomDic.Add(levelCount, new List<DungeonRoomByTile>());
+        
+        for (int i = 0; i < roomList.Count-1; i++)
+        {
+            roomList[i].Level = levelCount;
+            LevelRoomDic[levelCount].Add(roomList[i]);
+
+            if (Random.Range(0, 100) > setSameLevelPer)
+            {
+                setSameLevelPer = 50;
+                levelCount++;
+                LevelRoomDic.Add(levelCount, new List<DungeonRoomByTile>());
+            }           
+            else
+            {
+                setSameLevelPer -= 25;
+            }
+        }
+
+        //마지막 보스방 설정
+        if (roomList[roomList.Count - 2].Level.Equals(levelCount))
+        {
+            levelCount++;
+            LevelRoomDic.Add(levelCount, new List<DungeonRoomByTile>());
+            setSameLevelPer = 50;
+        }
+        
+        roomList[roomList.Count-1].Level = levelCount;
+        LevelRoomDic[levelCount].Add(roomList[roomList.Count - 1]);
+    }
+
+    /// <summary>
+    /// 두개 연결
+    /// </summary>
+    /// <param name="room1"></param>
+    /// <param name="room2"></param>
+    private void ConnectEdge(DungeonRoomByTile room1, DungeonRoomByTile room2)
+    {
+        room1.neighborRooms.Add(room2);
+        room2.neighborRooms.Add(room1);
+    }
+
+    /// <summary>
+    /// 각 방 랜덤 연결
+    /// </summary>
+    private void RandomEdgeConnected()
+    {
+        //..RoomList;
+        for (int i = 0; i < LevelRoomDic.Count-1; i++)
+        {
+            //같은 레벨 방이 2개 이상 있을 경우
+            if (LevelRoomDic[i].Count >= 2)
+            {
+                for (int j = 0; j < LevelRoomDic[i].Count - 1; j++)
+                    ConnectEdge(LevelRoomDic[i][j], LevelRoomDic[i][j + 1]);
+                
+                //다음레벨로 길이 끊기지 않도록 한개는 우선 적용 (우선 적용할 방은 같은 레벨을 가진 방중 랜덤으로 선택)
+                var s = Random.Range(0, LevelRoomDic[i].Count - 1);
+                ConnectEdge(LevelRoomDic[i][s], LevelRoomDic[i + 1][Random.Range(0, LevelRoomDic[i + 1].Count - 1)]);
+
+                for (int k = 0; k < LevelRoomDic[i].Count - 1; k++)
+                {
+                    s++;
+                    var tmpIndex = s % LevelRoomDic[i].Count;
+                    if (Random.Range(0, 100) > 50)
+                        ConnectEdge(LevelRoomDic[i][tmpIndex], LevelRoomDic[i+1][Random.Range(0, LevelRoomDic[i + 1].Count)]);
+                }
+            }
+            else if (LevelRoomDic[i].Count == 1)
+            {
+                ConnectEdge(LevelRoomDic[i][0], LevelRoomDic[i + 1][Random.Range(0, LevelRoomDic[i + 1].Count - 1)]);
+            }
+            else
+            {
+                Debug.Log(" 레벨 [" + i + "] 를 가진 방이 존재하지 않습니다.");
+            }
+        }
+    }
+
+    /// <summary>
+    /// 테스트
+    /// </summary>
+    private void PrintTest()
+    {
+        for (int i = 0; i < roomList.Count; i++)
+        {
+            Debug.Log("Room[" + i + "] : " + roomList[i].Level);
+        }
+        
+        for (int i = 0; i < roomList.Count; i++)
+        {
+            Debug.Log(i + "번째 Room Neighbor! Level : " + roomList[i].Level);
+            for (int j = 0; j < roomList[i].neighborRooms.Count; j++)
+            {
+                Debug.Log("[" + i + "]번 Room <Level : " + roomList[i].Level + "> -> [" + roomList[i].neighborRooms[j].roomNumber + "]번 Room <Level : " + roomList[roomList[i].neighborRooms[j].roomNumber].Level+">");
+            }
         }
     }
 
@@ -135,8 +250,10 @@ public class DungeonRoomByTile
 
     //0은 왼쪽 1은 중앙 2는 오른쪽
     public List<DungeonRoomByTile> neighborRooms = new List<DungeonRoomByTile>();
+    //public DungeonRoomByTile nextRoom = null;
+    //public DungeonRoomByTile prevRoom = null;
     //방의 가중치 
-    public int weight;
+    public int Level;
 
 
     public DungeonRoomByTile(int _roomNumber, int _roomType, int _widthMin, int _widthMax, int _heightMin, int _heightMax)
