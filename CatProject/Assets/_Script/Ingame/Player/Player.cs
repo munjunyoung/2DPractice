@@ -12,7 +12,7 @@ public class Player : MonoBehaviour
     [SerializeField, Range(10f, 100f)]
     private float speedValue;
     [SerializeField, Range(0.1f, 3f)]
-    private float accelerationValue, decelerationValue;
+    private float accelerationValue, decelerationValue = 0;
     [HideInInspector]
     public Vector2 dirvalue;
 
@@ -28,7 +28,7 @@ public class Player : MonoBehaviour
 
     [HideInInspector]
     public bool jumpButtonOn = false;
-    [HideInInspector]
+    //[HideInInspector]
     public bool isGrounded;
 
     //실제 Move에서 참조하는 벡터 (Vector3를 사용하나 y값은 사용안해서 제외해도 될듯 하다)
@@ -87,14 +87,17 @@ public class Player : MonoBehaviour
         {
             actualMoveDirVector = Vector3.Slerp(actualMoveDirVector, Vector3.zero, Time.deltaTime * decelerationValue);
         }
-        
+
 
         //transform.Translate(actualMoveDirVector * Time.deltaTime);
         //rb2D.position += actualMoveDirVector * Time.deltaTime;
-        //Debug.Log(rb2D.velocity);
+
         //rb2D.MovePosition(transform.position + actualMoveDirVector * Time.deltaTime);
+        //Debug.Log(rb2D.velocity);
+
         transform.position += actualMoveDirVector * Time.deltaTime;
         beforedirX = stickDir.x;
+        
         //캐릭터의 방향 설정
         if (!stickDir.Equals(Vector3.zero))
             transform.localScale = stickDir.x > 0 ? new Vector3(1, 1, 1) : new Vector3(-1, 1, 1);
@@ -110,7 +113,7 @@ public class Player : MonoBehaviour
             {
                 PlayerMoveState = (int)(actualMoveDirVector.x * 10) == 0 ? MoveState.Idle : MoveState.Walk;
                 // 애니매이션 속도 설정
-                anim.speed = stickDir.Equals(Vector2.zero) ? 1 : Mathf.Abs(actualMoveDirVector.x * 0.1f);
+                anim.speed = stickDir.Equals(Vector2.zero) ? 1 : Mathf.Abs(actualMoveDirVector.x * 0.05f);
             }
         }
     }

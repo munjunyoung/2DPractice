@@ -6,9 +6,9 @@ public class IngameCam : MonoBehaviour
 {
     [Header("Cam Target")]
     private Transform target;
-    
-    
-    [SerializeField,Range(0, 10)]
+
+
+    [SerializeField, Range(0, 10)]
     private float camSmoothing, camDistanceOffset, camUpOffset;
    
 

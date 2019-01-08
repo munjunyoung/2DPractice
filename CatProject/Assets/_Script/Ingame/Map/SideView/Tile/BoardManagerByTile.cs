@@ -25,6 +25,10 @@ public class BoardManagerByTile : MonoBehaviour
     [SerializeField, Range(30, 60)]
     private int heightMaxSize;
 
+    //Struct
+    [Header("Struct Object"), SerializeField]
+    private GameObject entrance;
+
     private void Awake()
     {
         CreateParentGridObject();
@@ -35,8 +39,10 @@ public class BoardManagerByTile : MonoBehaviour
         SetRoomLevel();
         //Rooms 연결
         RandomEdgeConnected();
-
+        
         PrintTest();
+        foreach(var room in roomList)
+            room.SetDoor();
         //Rooms Draw
         DrawRoom();
 
@@ -51,7 +57,7 @@ public class BoardManagerByTile : MonoBehaviour
     private void CreateParentGridObject()
     {
         RoomsParentObject = new GameObject();
-        RoomsParentObject.AddComponent<Grid>();
+        RoomsParentObject.AddComponent<Grid>().cellGap = new Vector3(-0.01f, -0.01f, 0);
         RoomsParentObject.transform.position = Vector3.zero;
         RoomsParentObject.transform.rotation = Quaternion.identity;
         RoomsParentObject.transform.localScale = Vector3.one;
@@ -64,17 +70,17 @@ public class BoardManagerByTile : MonoBehaviour
     /// <param name="_numberOfroom"></param>
     private void CreateRooms(int _numberOfroom)
     {
-        for(int i =0; i<_numberOfroom; i++)
+        for (int i = 0; i < _numberOfroom; i++)
         {
-            roomList.Add(new DungeonRoomByTile(i,(int)RoomType.Type1, widthMinSize, widthMaxSize, heightMinSize, heightMaxSize));
+            roomList.Add(new DungeonRoomByTile(i, (int)RoomType.Type1, widthMinSize, widthMaxSize, heightMinSize, heightMaxSize));
 
             int floorlength = tileReferenceArray[roomList[i].roomType].tileType[(int)TileType.Floor].tile.Length;
             int groundlength = tileReferenceArray[roomList[i].roomType].tileType[(int)TileType.Ground].tile.Length;
-            
-            roomList[i].SetGroundNormal(floorlength);           
+
+            roomList[i].SetGroundNormal(floorlength);
         }
     }
-    
+
     private int levelCount;
     private int setSameLevelPer = 50;
     /// <summary>
@@ -85,8 +91,8 @@ public class BoardManagerByTile : MonoBehaviour
         //시작 0레벨 방 설정;
         levelCount = 0;
         LevelRoomDic.Add(levelCount, new List<DungeonRoomByTile>());
-        
-        for (int i = 0; i < roomList.Count-1; i++)
+
+        for (int i = 0; i < roomList.Count - 1; i++)
         {
             roomList[i].Level = levelCount;
             LevelRoomDic[levelCount].Add(roomList[i]);
@@ -96,7 +102,7 @@ public class BoardManagerByTile : MonoBehaviour
                 setSameLevelPer = 50;
                 levelCount++;
                 LevelRoomDic.Add(levelCount, new List<DungeonRoomByTile>());
-            }           
+            }
             else
             {
                 setSameLevelPer -= 25;
@@ -110,8 +116,8 @@ public class BoardManagerByTile : MonoBehaviour
             LevelRoomDic.Add(levelCount, new List<DungeonRoomByTile>());
             setSameLevelPer = 50;
         }
-        
-        roomList[roomList.Count-1].Level = levelCount;
+
+        roomList[roomList.Count - 1].Level = levelCount;
         LevelRoomDic[levelCount].Add(roomList[roomList.Count - 1]);
     }
 
@@ -122,8 +128,8 @@ public class BoardManagerByTile : MonoBehaviour
     /// <param name="room2"></param>
     private void ConnectEdge(DungeonRoomByTile room1, DungeonRoomByTile room2)
     {
-        room1.neighborRooms.Add(room2);
-        room2.neighborRooms.Add(room1);
+        room1.neighborRooms.Add(new Entrance(room2,null));
+        room2.neighborRooms.Add(new Entrance(room1,null));
     }
 
     /// <summary>
@@ -132,14 +138,14 @@ public class BoardManagerByTile : MonoBehaviour
     private void RandomEdgeConnected()
     {
         //..RoomList;
-        for (int i = 0; i < LevelRoomDic.Count-1; i++)
+        for (int i = 0; i < LevelRoomDic.Count - 1; i++)
         {
             //같은 레벨 방이 2개 이상 있을 경우
             if (LevelRoomDic[i].Count >= 2)
             {
                 for (int j = 0; j < LevelRoomDic[i].Count - 1; j++)
                     ConnectEdge(LevelRoomDic[i][j], LevelRoomDic[i][j + 1]);
-                
+
                 //다음레벨로 길이 끊기지 않도록 한개는 우선 적용 (우선 적용할 방은 같은 레벨을 가진 방중 랜덤으로 선택)
                 var s = Random.Range(0, LevelRoomDic[i].Count - 1);
                 ConnectEdge(LevelRoomDic[i][s], LevelRoomDic[i + 1][Random.Range(0, LevelRoomDic[i + 1].Count - 1)]);
@@ -149,7 +155,7 @@ public class BoardManagerByTile : MonoBehaviour
                     s++;
                     var tmpIndex = s % LevelRoomDic[i].Count;
                     if (Random.Range(0, 100) > 50)
-                        ConnectEdge(LevelRoomDic[i][tmpIndex], LevelRoomDic[i+1][Random.Range(0, LevelRoomDic[i + 1].Count)]);
+                        ConnectEdge(LevelRoomDic[i][tmpIndex], LevelRoomDic[i + 1][Random.Range(0, LevelRoomDic[i + 1].Count)]);
                 }
             }
             else if (LevelRoomDic[i].Count == 1)
@@ -170,15 +176,10 @@ public class BoardManagerByTile : MonoBehaviour
     {
         for (int i = 0; i < roomList.Count; i++)
         {
-            Debug.Log("Room[" + i + "] : " + roomList[i].Level);
-        }
-        
-        for (int i = 0; i < roomList.Count; i++)
-        {
             Debug.Log(i + "번째 Room Neighbor! Level : " + roomList[i].Level);
             for (int j = 0; j < roomList[i].neighborRooms.Count; j++)
             {
-                Debug.Log("[" + i + "]번 Room <Level : " + roomList[i].Level + "> -> [" + roomList[i].neighborRooms[j].roomNumber + "]번 Room <Level : " + roomList[roomList[i].neighborRooms[j].roomNumber].Level+">");
+                Debug.Log("[" + i + "]번 Room <Level : " + roomList[i].Level + "> -> [" + roomList[i].neighborRooms[j].connectedRoom.roomNumber+ "]번 Room <Level : " + roomList[roomList[i].neighborRooms[j].connectedRoom.roomNumber].Level + ">");
             }
         }
     }
@@ -189,7 +190,7 @@ public class BoardManagerByTile : MonoBehaviour
     private void DrawRoom()
     {
         int countroom = 1;
-        foreach(DungeonRoomByTile _room in roomList)
+        foreach (DungeonRoomByTile _room in roomList)
         {
             GameObject tmpParent = new GameObject();
             tmpParent.transform.position = Vector3.zero;
@@ -198,22 +199,55 @@ public class BoardManagerByTile : MonoBehaviour
             tmpParent.transform.SetParent(RoomsParentObject.transform);
 
             int _roomtype = _room.roomType;
+            //Ground오브젝트 
+            var tmpgroundtilemap = CreateTileMap("TileMap_Ground");
+            tmpgroundtilemap.transform.SetParent(tmpParent.transform);
 
-            var tmpTilemap = CreateTileMap("TileMap_Ground");
-            tmpTilemap.transform.SetParent(tmpParent.transform);
             //타일 셋
             for (int i = 0; i < _room.room.xMax; i++)
             {
                 for (int j = 0; j < _room.room.yMax; j++)
                 {
                     if (_room.roomArray[i, j] != null)
-                        tmpTilemap.SetTile(new Vector3Int(i, j, 0), tileReferenceArray[_roomtype].tileType[_room.roomArray[i,j].tileType].tile[_room.roomArray[i,j].tileNumber]);
+                    {
+                        switch(_room.roomArray[i,j].tileType)
+                        {
+                            case (int)TileType.Obstacle:
+                                GameObject tmpob = Instantiate(entrance, new Vector3(i, j+1f, 0), Quaternion.identity);
+                                tmpob.GetComponent<SpriteRenderer>().sprite = tileReferenceArray[_roomtype].tileType[_room.roomArray[i, j].tileType].tile[_room.roomArray[i, j].tileNumber].sprite;
+                                tmpob.transform.SetParent(tmpParent.transform);
+                                foreach(var nroom in _room.neighborRooms)
+                                {
+                                    if (nroom.entrance == null)
+                                    {
+                                        tmpob.GetComponent<EntranceSc>().nextRoom = nroom.connectedRoom;
+                                        nroom.entrance = tmpob;
+                                        break;
+                                    }
+                                }
+                                break;
+                            default:
+                                tmpgroundtilemap.SetTile(new Vector3Int(i, j, 0), tileReferenceArray[_roomtype].tileType[_room.roomArray[i, j].tileType].tile[_room.roomArray[i, j].tileNumber]);
+                                break;
+                        }   
+                    }
                 }
             }
             countroom++;
             _room.roomOwnObjecet = tmpParent;
             tmpParent.SetActive(false);
         }
+    }
+
+    /// <summary>
+    /// Create Object
+    /// </summary>
+    /// <param name="nameofobject"></param>
+    /// <param name="posx"></param>
+    /// <param name="posy"></param>
+    /// <returns></returns>
+    private void CreateObject(int posx, int posy)
+    {
     }
 
     /// <summary>
@@ -235,7 +269,7 @@ public class BoardManagerByTile : MonoBehaviour
 
         return tmptilemap;
     }
-    
+
 }
 
 public class DungeonRoomByTile
@@ -249,10 +283,10 @@ public class DungeonRoomByTile
     public TileInfo[,] roomArray;
 
     //0은 왼쪽 1은 중앙 2는 오른쪽
-    public List<DungeonRoomByTile> neighborRooms = new List<DungeonRoomByTile>();
+    public List<Entrance> neighborRooms = new List<Entrance>();
     //public DungeonRoomByTile nextRoom = null;
     //public DungeonRoomByTile prevRoom = null;
-    //방의 가중치 
+    //방 Level
     public int Level;
 
 
@@ -309,7 +343,7 @@ public class DungeonRoomByTile
 
         int heightgapcount = 0;
 
-        for (int i = 1; i < room.xMax-1; i++)
+        for (int i = 1; i < room.xMax - 1; i++)
         {
             for (int j = currentheight; j >= 0; j--)
             {
@@ -380,10 +414,63 @@ public class DungeonRoomByTile
             }
         }
     }
+
+    private Dictionary<GameObject, DungeonRoomByTile> connectedRoomDic;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public void SetDoor()
+    {
+        List<int> posX = new List<int>();
+
+        for (int i = 0; i < neighborRooms.Count; i++)
+        {
+            var tmpvalue = (int)Random.Range(1, room.xMax - 1);
+
+            //같은 값이 있는지 체크?
+            for (int j = 0; j < posX.Count; j++)
+            {
+                if (posX[j].Equals(tmpvalue))
+                {
+                    tmpvalue = (int)Random.Range(1, room.xMax - 1);
+                    //다시 처음부터 확인하기 위함
+                    j = 0;
+                }
+            }
+
+            posX.Add(tmpvalue);
+        }
+
+        foreach (var tmpx in posX)
+        {
+            for (int j = 1; j < room.yMax - 1; j++)
+            {
+                if (roomArray[tmpx, j] == null)
+                {
+                    roomArray[tmpx, j] = new TileInfo((int)TileType.Obstacle, 0);
+                    break;
+                }
+            }
+        }
+    }
+
 }
 
+/// <summary>
+/// 출입구 구조체, 연결된 방과 해당 오브젝트 (struct으로 구현하였다가 foreach문에서 반복 변수 수정이 불가하여 class로 변경)
+/// </summary>
+public class Entrance
+{
+    public DungeonRoomByTile connectedRoom;
+    public GameObject entrance;
 
-
+    public Entrance(DungeonRoomByTile room, GameObject ob)
+    {
+        connectedRoom = room;
+        entrance = ob;
+    }
+}
 
 
 //public Tile[] ground;
@@ -420,4 +507,16 @@ public class DungeonRoomByTile
 //    //    map.SetTile(t1, wall[0]);
 //    //    map.SetTile(t2, wall[1]);
 //    //}
+//}
+
+
+
+//var tmpoffset = (int)(room.xMax / neighborRooms.Count);
+//int tmpmin = 1;
+//int tmpmax = tmpoffset;
+//for (int i = 0; i < neighborRooms.Count; i++)
+//{
+//    tmpX.Add((int)Random.Range(tmpmin, tmpmax));
+//    tmpmin += tmpoffset1;
+//    tmpmax += tmpoffset-1;
 //}
