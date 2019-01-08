@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using System.Collections.Generic;
 
 public class Player : MonoBehaviour
 {
+    //플레이어 상태
     enum MoveState { Idle, Walk, Jump, Fall }
 
     //물리 관련
@@ -15,6 +17,8 @@ public class Player : MonoBehaviour
     private float accelerationValue, decelerationValue = 0;
     [HideInInspector]
     public Vector2 dirvalue;
+    //실제 Move에서 참조하는 벡터 (Vector3를 사용하나 y값은 사용안해서 제외해도 될듯 하다)
+    private Vector3 actualMoveDirVector;
 
     [Header("JUMP OPTION")]
     [SerializeField, Range(1, 30)]
@@ -25,20 +29,20 @@ public class Player : MonoBehaviour
     //코루틴 대기 속도 설정
     [SerializeField, Range(0.001f, 0.1f)]
     private float jumpSpeed;
-
     [HideInInspector]
     public bool jumpButtonOn = false;
     //[HideInInspector]
     public bool isGrounded;
 
-    //실제 Move에서 참조하는 벡터 (Vector3를 사용하나 y값은 사용안해서 제외해도 될듯 하다)
-    private Vector3 actualMoveDirVector;
-
+    //Attack
+    [Header("ATTACK"), SerializeField]
+    private List<GameObject> attackEffectList;
+    
     //Animation 관련
     private MoveState PlayerMoveState;
     private Animator anim;
 
-    void Start()
+    private void Awake()
     {
         PlayerMoveState = MoveState.Idle;
         anim = GetComponent<Animator>();
@@ -64,7 +68,6 @@ public class Player : MonoBehaviour
     public void Move(Vector3 stickDir)
     {
         var maxspeed = stickDir.x * speedValue;
-
         actualMoveDirVector.x += (stickDir.x * accelerationValue);
 
         if (stickDir.x > 0)
@@ -91,31 +94,32 @@ public class Player : MonoBehaviour
 
         //transform.Translate(actualMoveDirVector * Time.deltaTime);
         //rb2D.position += actualMoveDirVector * Time.deltaTime;
-
         //rb2D.MovePosition(transform.position + actualMoveDirVector * Time.deltaTime);
         //Debug.Log(rb2D.velocity);
 
         transform.position += actualMoveDirVector * Time.deltaTime;
         beforedirX = stickDir.x;
-        
+
         //캐릭터의 방향 설정
         if (!stickDir.Equals(Vector3.zero))
-            transform.localScale = stickDir.x > 0 ? new Vector3(1, 1, 1) : new Vector3(-1, 1, 1);
+            transform.localEulerAngles = stickDir.x > 0 ? new Vector3(0, 0, 0) : new Vector3(0, 180, 0);
 
         //캐릭터 상태 설정(애니매이션 상태 설정)
-        if (rb2D.velocity.y > 0)
+        
+        if ((int)rb2D.velocity.y > 0)
             PlayerMoveState = MoveState.Jump;
-        else if (rb2D.velocity.y < 0)
+        //플레이어가 떨어지면서 땅에 안착했을때 0이 되지않고 -5.0938같은 이상한 값으로 처리될 때가 있어서 설정
+        else if ((int)rb2D.velocity.y < 0)
             PlayerMoveState = MoveState.Fall;
         else
         {
-            if (isGrounded)
-            {
-                PlayerMoveState = (int)(actualMoveDirVector.x * 10) == 0 ? MoveState.Idle : MoveState.Walk;
-                // 애니매이션 속도 설정
-                anim.speed = stickDir.Equals(Vector2.zero) ? 1 : Mathf.Abs(actualMoveDirVector.x * 0.05f);
-            }
+            PlayerMoveState = (int)(actualMoveDirVector.x * 10) == 0 ? MoveState.Idle : MoveState.Walk;
         }
+        //애니매이션 속도 설정
+        if (anim.GetCurrentAnimatorStateInfo(0).IsName("Move"))
+            anim.speed = stickDir.Equals(Vector2.zero) ? 1 : Mathf.Abs(actualMoveDirVector.x * 0.05f);
+        else
+            anim.speed = 1f;
     }
 
     /// <summary>
@@ -150,6 +154,18 @@ public class Player : MonoBehaviour
     public void Attack()
     {
         anim.SetTrigger("Attack");
+    }
+    
+    /// <summary>
+    /// attackEffect 처리
+    /// </summary>
+    public void AttackEffectOn()
+    {
+        attackEffectList[0].SetActive(true);
+    }
+    public void AttackEffectOff()
+    {
+        attackEffectList[0].SetActive(false);
     }
 }
 

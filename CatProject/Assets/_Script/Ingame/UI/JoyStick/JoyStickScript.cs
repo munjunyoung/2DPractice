@@ -76,8 +76,8 @@ public class JoyStickScript : InputButtonManager, IDragHandler
     /// </summary>
     private void InputKeyboard()
     {
-        var a = Input.GetKey(KeyCode.A) ? -0.1f : 0;
-        var d = Input.GetKey(KeyCode.D) ? 0.1f : 0;
+        var a = Input.GetKey(KeyCode.LeftArrow)||Input.GetKey(KeyCode.A) ? -0.1f : 0;
+        var d = Input.GetKey(KeyCode.RightArrow)||Input.GetKey(KeyCode.D) ? 0.1f : 0;
 
         if (!(a + d).Equals(0))
             keyinputX += (a + d);

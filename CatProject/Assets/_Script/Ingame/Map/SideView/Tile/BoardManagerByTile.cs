@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+
 [RequireComponent(typeof(TileLoadManager))]
 public class BoardManagerByTile : MonoBehaviour
 {
@@ -42,11 +43,11 @@ public class BoardManagerByTile : MonoBehaviour
         
         PrintTest();
         foreach(var room in roomList)
-            room.SetDoor();
+            room.SetEntrance();
         //Rooms Draw
         DrawRoom();
 
-        roomList[0].roomOwnObjecet.SetActive(true);
+        roomList[0].roomOwnObject.SetActive(true);
     }
 
     /// <summary>
@@ -65,7 +66,7 @@ public class BoardManagerByTile : MonoBehaviour
     }
 
     /// <summary>
-    /// 파라미터 숫자만큼 방 생성
+    /// 파라미터 숫자만큼 Room 클래스 객체 생성
     /// </summary>
     /// <param name="_numberOfroom"></param>
     private void CreateRooms(int _numberOfroom)
@@ -78,6 +79,10 @@ public class BoardManagerByTile : MonoBehaviour
             int groundlength = tileReferenceArray[roomList[i].roomType].tileType[(int)TileType.Ground].tile.Length;
 
             roomList[i].SetGroundNormal(floorlength);
+            if(i>0&&i<_numberOfroom)
+            {
+                roomList[i].SetGroundHegihtRandomly(floorlength, groundlength);
+            }
         }
     }
 
@@ -122,7 +127,7 @@ public class BoardManagerByTile : MonoBehaviour
     }
 
     /// <summary>
-    /// 두개 연결
+    /// 파라미터로 설정한 방 2개를 연결
     /// </summary>
     /// <param name="room1"></param>
     /// <param name="room2"></param>
@@ -137,7 +142,6 @@ public class BoardManagerByTile : MonoBehaviour
     /// </summary>
     private void RandomEdgeConnected()
     {
-        //..RoomList;
         for (int i = 0; i < LevelRoomDic.Count - 1; i++)
         {
             //같은 레벨 방이 2개 이상 있을 경우
@@ -158,6 +162,7 @@ public class BoardManagerByTile : MonoBehaviour
                         ConnectEdge(LevelRoomDic[i][tmpIndex], LevelRoomDic[i + 1][Random.Range(0, LevelRoomDic[i + 1].Count)]);
                 }
             }
+            //같은 레벨 방이 1개 일 경우
             else if (LevelRoomDic[i].Count == 1)
             {
                 ConnectEdge(LevelRoomDic[i][0], LevelRoomDic[i + 1][Random.Range(0, LevelRoomDic[i + 1].Count - 1)]);
@@ -218,10 +223,11 @@ public class BoardManagerByTile : MonoBehaviour
                                 tmpob.transform.SetParent(tmpParent.transform);
                                 foreach(var nroom in _room.neighborRooms)
                                 {
-                                    if (nroom.entrance == null)
+                                    if (nroom.entranceOb == null)
                                     {
                                         tmpob.GetComponent<EntranceSc>().nextRoom = nroom.connectedRoom;
-                                        nroom.entrance = tmpob;
+                                        tmpob.GetComponent<EntranceSc>().currentRoom = _room;
+                                        nroom.entranceOb = tmpob;
                                         break;
                                     }
                                 }
@@ -234,22 +240,11 @@ public class BoardManagerByTile : MonoBehaviour
                 }
             }
             countroom++;
-            _room.roomOwnObjecet = tmpParent;
+            _room.roomOwnObject = tmpParent;
             tmpParent.SetActive(false);
         }
     }
-
-    /// <summary>
-    /// Create Object
-    /// </summary>
-    /// <param name="nameofobject"></param>
-    /// <param name="posx"></param>
-    /// <param name="posy"></param>
-    /// <returns></returns>
-    private void CreateObject(int posx, int posy)
-    {
-    }
-
+    
     /// <summary>
     /// TileMap Object 동적 생성
     /// </summary>
@@ -275,20 +270,21 @@ public class BoardManagerByTile : MonoBehaviour
 public class DungeonRoomByTile
 {
     //자신의 오브젝트 (오브젝트 리스트를 따로 만들어서 관리하지 않기 위함)
-    public int roomNumber;
-    public GameObject roomOwnObjecet;
-
-    public Rect room;
-    public int roomType;
+    public int roomNumber = -1;
+    public GameObject roomOwnObject = null;
+    //생성한 방의 정보
+    public Rect room = new Rect(0,0,0,0);
+    public int roomType = -1;
     public TileInfo[,] roomArray;
-
-    //0은 왼쪽 1은 중앙 2는 오른쪽
+    //방이 현재 닫혀있는지 열려 있는지 체크
+    public bool unLockState = false;
+    
+    //연결되어있는 이웃 방들의 리스트
     public List<Entrance> neighborRooms = new List<Entrance>();
-    //public DungeonRoomByTile nextRoom = null;
-    //public DungeonRoomByTile prevRoom = null;
-    //방 Level
-    public int Level;
+    //방의 레벨
+    public int Level = -1;
 
+    
 
     public DungeonRoomByTile(int _roomNumber, int _roomType, int _widthMin, int _widthMax, int _heightMin, int _heightMax)
     {
@@ -420,7 +416,7 @@ public class DungeonRoomByTile
     /// <summary>
     /// 
     /// </summary>
-    public void SetDoor()
+    public void SetEntrance()
     {
         List<int> posX = new List<int>();
 
@@ -458,17 +454,17 @@ public class DungeonRoomByTile
 }
 
 /// <summary>
-/// 출입구 구조체, 연결된 방과 해당 오브젝트 (struct으로 구현하였다가 foreach문에서 반복 변수 수정이 불가하여 class로 변경)
+/// 출입구 구조체, 연결된 방과 해당 오브젝트 (struct으로 구현하였다가 foreach문에서 반복 변수 초기화가 불가하여 class로 변경)
 /// </summary>
 public class Entrance
 {
     public DungeonRoomByTile connectedRoom;
-    public GameObject entrance;
+    public GameObject entranceOb;
 
     public Entrance(DungeonRoomByTile room, GameObject ob)
     {
         connectedRoom = room;
-        entrance = ob;
+        entranceOb = ob;
     }
 }
 
