@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class PlayerButtonManual : InputButtonManual
 {
-    protected CatType1 playerSc;
+    protected CatType1 targetModel;
 
     // Start is called before the first frame update
-    void Start()
+    protected override void Start()
     {
-        playerSc = GameObject.Find("Player").GetComponent<CatType1>();
+        base.Start();
+        targetModel = GameObject.Find("Player").GetComponent<CatType1>();
     }
 }

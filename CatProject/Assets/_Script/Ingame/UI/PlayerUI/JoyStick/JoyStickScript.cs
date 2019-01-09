@@ -7,22 +7,29 @@ public class JoyStickScript : PlayerButtonManual, IDragHandler
 {
     [Header("JoyStick UI Reference")]
     [SerializeField]
-    public RectTransform bgImg, joyStickImg;
+    public RectTransform bgImg;
+    
     private float bgImgDeltaValue;
     
     private Vector2 keyboardVector;
     private Vector2 stickVector;
+    private bool onStick = false;
 
     private Vector2 inputVector;
     [HideInInspector]
     public Vector2 DirValue { get { return inputVector; } }
-    
-    bool onStick = false;
 
-    private void Update()
+    protected override void Start()
     {
-        InputKeyboard();
-        ButtonOn();
+        base.Start();
+        modelUIObject = GameObject.Find("JoyStickImage").GetComponent<Image>();
+        currentColor = modelUIObject.color;
+
+    }
+    protected override void Update()
+    {
+        base.Update();
+        SetInputVector();
     }
 
     #region joyStick
@@ -38,19 +45,18 @@ public class JoyStickScript : PlayerButtonManual, IDragHandler
             stickVector.y = 0;
 
             stickVector = (Mathf.Abs(stickVector.x) > 1f) ? stickVector.normalized : stickVector;
-            
-            joyStickImg.anchoredPosition = stickVector * (bgImg.sizeDelta * 0.5f);
+
+            modelUIObject.GetComponent<RectTransform>().anchoredPosition = stickVector * (bgImg.sizeDelta * 0.5f);
         }
     }
 
-    
     /// <summary>
     /// 누를경우 이미지 변경 , OnDrag 함수 실행
     /// </summary>
     /// <param name="eventData"></param>
     public override void OnPointerDown(PointerEventData eventData)
     {
-        joyStickImg.GetComponent<Image>().color = new Color32(255, 255, 255, 150);
+        base.OnPointerDown(eventData);
         onStick = true;
         OnDrag(eventData);
         
@@ -62,22 +68,21 @@ public class JoyStickScript : PlayerButtonManual, IDragHandler
     /// <param name="eventData"></param>
     public override void OnPointerUp(PointerEventData eventData)
     {
-        joyStickImg.GetComponent<Image>().color = new Color32(255, 255, 255, 255);
-        joyStickImg.anchoredPosition = Vector2.zero;
+        base.OnPointerUp(eventData);
+        modelUIObject.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
         onStick = false;
     }
     #endregion
-
-    #region input Keyboard set
-
+    
     private float keyinputX;
     /// <summary>
-    /// 키보드 키 입력 관련 함수
+    /// 키보드 입력값 처리 함수
+    /// TODO : 리팩토링 가능성이 높음
     /// </summary>
-    private void InputKeyboard()
+    protected override void SetKeyBoard()
     {
-        var a = Input.GetKey(KeyCode.LeftArrow)||Input.GetKey(KeyCode.A) ? -0.1f : 0;
-        var d = Input.GetKey(KeyCode.RightArrow)||Input.GetKey(KeyCode.D) ? 0.1f : 0;
+        var a = Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A) ? -0.1f : 0;
+        var d = Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D) ? 0.1f : 0;
 
         if (!(a + d).Equals(0))
             keyinputX += (a + d);
@@ -86,21 +91,19 @@ public class JoyStickScript : PlayerButtonManual, IDragHandler
 
         if (Mathf.Abs(keyinputX) > 1f)
             keyinputX = (a + d) > 0 ? 1f : -1f;
-
+        
         keyboardVector = new Vector2(keyinputX, 0);
 
-        if(!onStick)
-            joyStickImg.anchoredPosition = keyboardVector * (bgImg.sizeDelta * 0.5f);
+        if (!onStick)
+            modelUIObject.GetComponent<RectTransform>().anchoredPosition = keyboardVector * (bgImg.sizeDelta * 0.5f);
     }
 
-    #endregion
-
     /// <summary>
-    /// inputvector set
+    /// Button On일경우 InputVector 값 설정
     /// </summary>
-    public override void ButtonOn()
+    public void SetInputVector()
     {
-        inputVector = joyStickImg.anchoredPosition / (bgImg.sizeDelta.x*0.5f);
-        playerSc.currentMoveInputValue = inputVector.x;
+        inputVector = modelUIObject.GetComponent<RectTransform>().anchoredPosition / (bgImg.sizeDelta.x * 0.5f);
+        targetModel.currentMoveInputValue = inputVector.x;
     }
 }

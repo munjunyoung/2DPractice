@@ -5,31 +5,24 @@ using UnityEngine.EventSystems;
 
 public class JumpButtonSc : PlayerButtonManual
 {
-    private void Update()
+    protected override void SetKeyBoard()
     {
-        ButtonOn();
-    }
-    public override void OnPointerDown(PointerEventData eventData)
-    {
-        playerSc.JumpButtonOn = true;
-    }
+        if (Input.GetKeyDown(KeyCode.Space))
+            ButtonClickDown();
 
-    public override void OnPointerUp(PointerEventData eventData)
-    {
-        playerSc.JumpButtonOn = false;
+        if (Input.GetKeyUp(KeyCode.Space))
+            ButtonClickOn();
     }
 
-
-    public override void ButtonOn()
+    protected override void ButtonClickDown()
     {
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            playerSc.JumpButtonOn = true;
-        }
+        base.ButtonClickDown();
+        targetModel.JumpButtonOn = true;
+    }
 
-        if(Input.GetKeyUp(KeyCode.Space))
-        {
-            playerSc.JumpButtonOn = false;
-        }
+    protected override void ButtonClickOn()
+    {
+        base.ButtonClickOn();
+        targetModel.JumpButtonOn = false;
     }
 }

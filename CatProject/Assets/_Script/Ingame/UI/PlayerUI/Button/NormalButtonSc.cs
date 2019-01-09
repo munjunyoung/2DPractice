@@ -5,29 +5,24 @@ using UnityEngine.EventSystems;
 
 public class NormalButtonSc : PlayerButtonManual
 {
-    private void Update()
-    {
-        ButtonOn();
-    }
-
-    public override void OnPointerDown(PointerEventData eventData)
-    {
-        playerSc.AttackButtonOn = true;
-        //playerSc.Attack();
-    }
-    
-    public override void ButtonOn()
+    protected override void SetKeyBoard()
     {
         if (Input.GetKeyDown(KeyCode.LeftControl))
-        {
-            //playerSc.Attack();
-            playerSc.AttackButtonOn = true;
-        }
-        
-        if(Input.GetKeyUp(KeyCode.LeftControl))
-        {
-            playerSc.AttackButtonOn = false;
-        }
+            ButtonClickDown();
+
+        if (Input.GetKeyUp(KeyCode.LeftControl))
+            ButtonClickOn();
     }
 
+    protected override void ButtonClickDown()
+    {
+        base.ButtonClickDown();
+        targetModel.AttackButtonOn = true;
+    }
+
+    protected override void ButtonClickOn()
+    {
+        base.ButtonClickOn();
+        targetModel.AttackButtonOn = false;
+    }
 }
