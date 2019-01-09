@@ -110,7 +110,7 @@ public class CharacterInfo : MonoBehaviour
     protected float currentSpeed;
     protected bool isAlive = true;
 
-    private void Awake()
+    protected void Awake()
     {
         rb2D = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();

@@ -11,7 +11,7 @@ public class JumpButtonSc : PlayerButtonManual
             ButtonClickDown();
 
         if (Input.GetKeyUp(KeyCode.Space))
-            ButtonClickOn();
+            ButtonClickUp();
     }
 
     protected override void ButtonClickDown()
@@ -20,9 +20,9 @@ public class JumpButtonSc : PlayerButtonManual
         targetModel.JumpButtonOn = true;
     }
 
-    protected override void ButtonClickOn()
+    protected override void ButtonClickUp()
     {
-        base.ButtonClickOn();
+        base.ButtonClickUp();
         targetModel.JumpButtonOn = false;
     }
 }

@@ -6,12 +6,14 @@ using UnityEngine.Tilemaps;
 [RequireComponent(typeof(TileLoadManager))]
 public class BoardManagerByTile : MonoBehaviour
 {
+    private static BoardManagerByTile instance;
     [HideInInspector]
     public List<DungeonRoomByTile> roomList = new List<DungeonRoomByTile>();
     private Dictionary<int, List<DungeonRoomByTile>> LevelRoomDic = new Dictionary<int, List<DungeonRoomByTile>>();
 
     private TypeOfTileSetType[] tileReferenceArray;
-
+    //현재 active 방 넘버
+    public int currentRoomNumber = -1;
     //RoomParent들의 부모가 될 오브젝트 (Grid)
     private GameObject parentModelOfRooms;
 
@@ -33,6 +35,7 @@ public class BoardManagerByTile : MonoBehaviour
 
     private void Awake()
     {
+        instance = this;
         //Grid 오브젝트 생성
         CreateParentGridObject();
         //오브젝트 타일 참조
@@ -50,8 +53,17 @@ public class BoardManagerByTile : MonoBehaviour
             room.SetEntrance();
         //Rooms Draw
         DrawRoom();
-
+        currentRoomNumber = 0;
         roomList[0].objectModel.SetActive(true);
+    }
+
+    /// <summary>
+    /// singleTone
+    /// </summary>
+    /// <returns></returns>
+    public static BoardManagerByTile GetInstance()
+    {
+        return instance;
     }
 
     /// <summary>
@@ -103,7 +115,7 @@ public class BoardManagerByTile : MonoBehaviour
 
         for (int i = 0; i < roomList.Count - 1; i++)
         {
-            roomList[i].Level = levelCount;
+            roomList[i].level = levelCount;
             LevelRoomDic[levelCount].Add(roomList[i]);
 
             if (Random.Range(0, 100) > setSameLevelPer)
@@ -119,14 +131,14 @@ public class BoardManagerByTile : MonoBehaviour
         }
 
         //마지막 보스방 설정
-        if (roomList[roomList.Count - 2].Level.Equals(levelCount))
+        if (roomList[roomList.Count - 2].level.Equals(levelCount))
         {
             levelCount++;
             LevelRoomDic.Add(levelCount, new List<DungeonRoomByTile>());
             setSameLevelPer = 50;
         }
 
-        roomList[roomList.Count - 1].Level = levelCount;
+        roomList[roomList.Count - 1].level = levelCount;
         LevelRoomDic[levelCount].Add(roomList[roomList.Count - 1]);
     }
 
@@ -185,10 +197,10 @@ public class BoardManagerByTile : MonoBehaviour
     {
         for (int i = 0; i < roomList.Count; i++)
         {
-            Debug.Log(i + "번째 Room Neighbor! Level : " + roomList[i].Level);
+            Debug.Log(i + "번째 Room Neighbor! Level : " + roomList[i].level);
             for (int j = 0; j < roomList[i].neighborRooms.Count; j++)
             {
-                Debug.Log("[" + i + "]번 Room <Level : " + roomList[i].Level + "> -> [" + roomList[i].neighborRooms[j].connectedRoom.roomNumber+ "]번 Room <Level : " + roomList[roomList[i].neighborRooms[j].connectedRoom.roomNumber].Level + ">");
+                Debug.Log("[" + i + "]번 Room <Level : " + roomList[i].level + "> -> [" + roomList[i].neighborRooms[j].connectedRoom.roomNumberOfList+ "]번 Room <Level : " + roomList[roomList[i].neighborRooms[j].connectedRoom.roomNumberOfList].level + ">");
             }
         }
     }
@@ -267,30 +279,26 @@ public class BoardManagerByTile : MonoBehaviour
         Tilemap tmptilemap = tmpob.GetComponent<Tilemap>();
 
         return tmptilemap;
-    }
-
+    }   
 }
 
 /// <summary>
 /// NOTE : DungeonRoom 클래스
-/// TODO : 함수와 클래스 변수들을 분리하여 개선 사항이 보임
+/// TODO : 함수와 클래스 변수들을 분리해야하는 개선 사항 가능성
 /// </summary>
 public class DungeonRoomByTile
 {
-    public int roomNumber = -1;
-    //자신의 오브젝트 (오브젝트 리스트를 따로 만들어서 관리하지 않기 위함)
+    public int roomNumberOfList = -1;
+    //오브젝트
     public GameObject objectModel = null;
     //생성한 방의 정보
     public Rect room = new Rect(0,0,0,0);
     public int roomType = -1;
     public TileInfo[,] roomArray;
-    
-    //연결되어있는 이웃 방들의 리스트
-    public List<Entrance> neighborRooms = new List<Entrance>();
-    //방의 레벨
-    public int Level = -1;
-    //방의 Lock상태
+    public int level = -1;
     public bool unLockState = false;
+
+    public List<Entrance> neighborRooms = new List<Entrance>();
 
     /// <summary>
     /// NOTE : 방의 사이즈 랜덤 설정 생성자
@@ -303,7 +311,7 @@ public class DungeonRoomByTile
     /// <param name="_heightMax"></param>
     public DungeonRoomByTile(int _roomNumber, int _roomType, int _widthMin, int _widthMax, int _heightMin, int _heightMax)
     {
-        roomNumber = _roomNumber;
+        roomNumberOfList = _roomNumber;
         roomType = _roomType;
 
         var tmpW = Random.Range(_widthMin, _widthMax);
@@ -462,7 +470,6 @@ public class DungeonRoomByTile
             }
         }
     }
-
 }
 
 /// <summary>

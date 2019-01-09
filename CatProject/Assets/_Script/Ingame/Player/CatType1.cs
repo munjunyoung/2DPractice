@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 public class CatType1 : CharacterInfo
 {
-    [HideInInspector]
+    //[HideInInspector]
     public bool isGrounded, JumpButtonOn, AttackButtonOn= false;
 
     [HideInInspector]
@@ -157,6 +157,22 @@ public class CatType1 : CharacterInfo
     {
         anim.SetFloat("StateFloat", (int)CurrentPlayerState);
     }
+
+    #region 테스트용
+    private void Update()
+    {
+        UnLockRoom();
+    }
+    private void UnLockRoom()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            var tmp = BoardManagerByTile.GetInstance();
+            tmp.roomList[tmp.currentRoomNumber ].unLockState = true;
+            Debug.Log("CurrentNumber : " + tmp.currentRoomNumber + " Lock 해제");
+        }
+    }
+    #endregion
 }
 
 

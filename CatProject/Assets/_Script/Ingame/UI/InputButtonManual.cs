@@ -22,7 +22,7 @@ public class InputButtonManual : MonoBehaviour, IPointerDownHandler, IPointerUpH
 
     public virtual void OnPointerDown(PointerEventData eventData){ ButtonClickDown(); }
 
-    public virtual void OnPointerUp(PointerEventData eventData){ ButtonClickOn(); }
+    public virtual void OnPointerUp(PointerEventData eventData){ ButtonClickUp(); }
     /// <summary>
     /// 키보드 입력값 처리
     /// </summary>
@@ -38,7 +38,7 @@ public class InputButtonManual : MonoBehaviour, IPointerDownHandler, IPointerUpH
     /// <summary>
     /// 버튼이 떼어졌을 경우 처리
     /// </summary>
-    protected virtual void ButtonClickOn()
+    protected virtual void ButtonClickUp()
     {
         currentColor.a = 1f;
         modelUIObject.color = currentColor;

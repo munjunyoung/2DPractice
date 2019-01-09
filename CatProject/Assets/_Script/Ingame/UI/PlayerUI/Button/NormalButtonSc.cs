@@ -11,7 +11,7 @@ public class NormalButtonSc : PlayerButtonManual
             ButtonClickDown();
 
         if (Input.GetKeyUp(KeyCode.LeftControl))
-            ButtonClickOn();
+            ButtonClickUp();
     }
 
     protected override void ButtonClickDown()
@@ -20,9 +20,9 @@ public class NormalButtonSc : PlayerButtonManual
         targetModel.AttackButtonOn = true;
     }
 
-    protected override void ButtonClickOn()
+    protected override void ButtonClickUp()
     {
-        base.ButtonClickOn();
+        base.ButtonClickUp();
         targetModel.AttackButtonOn = false;
     }
 }
