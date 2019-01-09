@@ -13,8 +13,8 @@ public class EntranceSc : MonoBehaviour
         {
             if (collision.tag.Equals("Player"))
             {
-                currentRoom.roomOwnObject.SetActive(false);
-                nextRoom.roomOwnObject.SetActive(true);
+                currentRoom.objectModel.SetActive(false);
+                nextRoom.objectModel.SetActive(true);
                 Vector3 entrancepos = Vector3.zero;
                 foreach (var tmp in nextRoom.neighborRooms)
                 {

@@ -9,10 +9,11 @@ public class BoardManagerByTile : MonoBehaviour
     [HideInInspector]
     public List<DungeonRoomByTile> roomList = new List<DungeonRoomByTile>();
     private Dictionary<int, List<DungeonRoomByTile>> LevelRoomDic = new Dictionary<int, List<DungeonRoomByTile>>();
+
     private TypeOfTileSetType[] tileReferenceArray;
 
     //RoomParent들의 부모가 될 오브젝트 (Grid)
-    private GameObject RoomsParentObject;
+    private GameObject parentModelOfRooms;
 
     [Header("ROOM OPTION")]
     [SerializeField, Range(1, 100)]
@@ -26,47 +27,49 @@ public class BoardManagerByTile : MonoBehaviour
     [SerializeField, Range(30, 60)]
     private int heightMaxSize;
 
-    //Struct
-    [Header("Struct Object"), SerializeField]
-    private GameObject entrance;
+    //NOTE : Reference GameObject Model
+    [Header("Reference GameObject Model"), SerializeField]
+    private GameObject entranceModel;
 
     private void Awake()
     {
+        //Grid 오브젝트 생성
         CreateParentGridObject();
+        //오브젝트 타일 참조
         tileReferenceArray = GetComponent<TileLoadManager>().loadTileArray;
         //Rooms 생성
         CreateRooms(numberOfRoom);
         //Rooms 레벨 설정
         SetRoomLevel();
         //Rooms 연결
-        RandomEdgeConnected();
-        
-        PrintTest();
+        RandomEdgeConnect();
+        //Rooms 연결 log print
+        PrintLogRoomNeighbors();
+        //Rooms Entrance 오브젝트 생성
         foreach(var room in roomList)
             room.SetEntrance();
         //Rooms Draw
         DrawRoom();
 
-        roomList[0].roomOwnObject.SetActive(true);
+        roomList[0].objectModel.SetActive(true);
     }
 
     /// <summary>
-    /// 오브젝트를 생성할때 방들의 상위 오브젝트가 될 부모 설정
-    /// 함수로 만든 이유는 씬이 넘어갈때마다 필요할 거라고 생각되었기 때문 (방을 남겨두기에는 하위오브젝트들을 destroy함으로써 gc가 돌꺼같나..?)
-    /// 씬하나에 끝날 경우에는 미리 생성해두어도 상관없을듯
+    /// NOTE : 오브젝트를 생성할때 방들의 상위 오브젝트가 될 부모 설정 함수
+    /// TODO : 씬하나에 끝날 경우에는 미리 생성하는 것으로 해당 함수 제거 요망 씬이 넘어갈때마다 필요할 거라고 생각되었기 때문 (방을 남겨두기에는 하위오브젝트들을 destroy함으로써 gc가 돌꺼같나..?)
     /// </summary>
     private void CreateParentGridObject()
     {
-        RoomsParentObject = new GameObject();
-        RoomsParentObject.AddComponent<Grid>().cellGap = new Vector3(-0.01f, -0.01f, 0);
-        RoomsParentObject.transform.position = Vector3.zero;
-        RoomsParentObject.transform.rotation = Quaternion.identity;
-        RoomsParentObject.transform.localScale = Vector3.one;
-        RoomsParentObject.name = "Rooms";
+        parentModelOfRooms = new GameObject();
+        parentModelOfRooms.AddComponent<Grid>().cellGap = new Vector3(-0.01f, -0.01f, 0);
+        parentModelOfRooms.transform.position = Vector3.zero;
+        parentModelOfRooms.transform.rotation = Quaternion.identity;
+        parentModelOfRooms.transform.localScale = Vector3.one;
+        parentModelOfRooms.name = "Rooms";
     }
 
     /// <summary>
-    /// 파라미터 숫자만큼 Room 클래스 객체 생성
+    /// NOTE : 파라미터 숫자만큼 DungeonRoomByTile 클래스 객체 생성 함수
     /// </summary>
     /// <param name="_numberOfroom"></param>
     private void CreateRooms(int _numberOfroom)
@@ -86,15 +89,16 @@ public class BoardManagerByTile : MonoBehaviour
         }
     }
 
-    private int levelCount;
-    private int setSameLevelPer = 50;
+    
     /// <summary>
-    /// 방들의 레벨 설정
+    /// NOTE : 생성 된 방들의 레벨 설정
+    /// XXX : 시작 방은 같은 레벨 여러개 설정, 보스방은 한개만 설정 
     /// </summary>
     private void SetRoomLevel()
     {
-        //시작 0레벨 방 설정;
-        levelCount = 0;
+        int levelCount = 0;
+        int setSameLevelPer = 50;
+        
         LevelRoomDic.Add(levelCount, new List<DungeonRoomByTile>());
 
         for (int i = 0; i < roomList.Count - 1; i++)
@@ -127,7 +131,7 @@ public class BoardManagerByTile : MonoBehaviour
     }
 
     /// <summary>
-    /// 파라미터로 설정한 방 2개를 연결
+    /// NOTE : 파라미터로 설정한 방 2개 각각 neighBorRooms 객체 추가 (출입구 연결) 
     /// </summary>
     /// <param name="room1"></param>
     /// <param name="room2"></param>
@@ -138,9 +142,9 @@ public class BoardManagerByTile : MonoBehaviour
     }
 
     /// <summary>
-    /// 각 방 랜덤 연결
+    /// NOTE : 각 방 랜덤 연결  설명 : 개발노트 ( C.91 )
     /// </summary>
-    private void RandomEdgeConnected()
+    private void RandomEdgeConnect()
     {
         for (int i = 0; i < LevelRoomDic.Count - 1; i++)
         {
@@ -175,9 +179,9 @@ public class BoardManagerByTile : MonoBehaviour
     }
 
     /// <summary>
-    /// 테스트
+    /// NOTE : 방 연결 리스트 Log print
     /// </summary>
-    private void PrintTest()
+    private void PrintLogRoomNeighbors()
     {
         for (int i = 0; i < roomList.Count; i++)
         {
@@ -190,7 +194,7 @@ public class BoardManagerByTile : MonoBehaviour
     }
 
     /// <summary>
-    /// 생성해둔 DungeonRoomByTile객체의 정보를 통하여 설정
+    /// NOTE : 생성해둔 DungeonRoomByTile객체의 정보를 통하여 설정
     /// </summary>
     private void DrawRoom()
     {
@@ -201,7 +205,7 @@ public class BoardManagerByTile : MonoBehaviour
             tmpParent.transform.position = Vector3.zero;
             tmpParent.transform.rotation = Quaternion.identity;
             tmpParent.name = "Room" + countroom;
-            tmpParent.transform.SetParent(RoomsParentObject.transform);
+            tmpParent.transform.SetParent(parentModelOfRooms.transform);
 
             int _roomtype = _room.roomType;
             //Ground오브젝트 
@@ -218,7 +222,7 @@ public class BoardManagerByTile : MonoBehaviour
                         switch(_room.roomArray[i,j].tileType)
                         {
                             case (int)TileType.Obstacle:
-                                GameObject tmpob = Instantiate(entrance, new Vector3(i, j+1f, 0), Quaternion.identity);
+                                GameObject tmpob = Instantiate(entranceModel, new Vector3(i, j+1f, 0), Quaternion.identity);
                                 tmpob.GetComponent<SpriteRenderer>().sprite = tileReferenceArray[_roomtype].tileType[_room.roomArray[i, j].tileType].tile[_room.roomArray[i, j].tileNumber].sprite;
                                 tmpob.transform.SetParent(tmpParent.transform);
                                 foreach(var nroom in _room.neighborRooms)
@@ -240,13 +244,13 @@ public class BoardManagerByTile : MonoBehaviour
                 }
             }
             countroom++;
-            _room.roomOwnObject = tmpParent;
+            _room.objectModel = tmpParent;
             tmpParent.SetActive(false);
         }
     }
     
     /// <summary>
-    /// TileMap Object 동적 생성
+    /// NOTE : TileMap Object 동적 생성
     /// </summary>
     /// <param name="nameoftilemap"></param>
     /// <returns></returns>
@@ -267,25 +271,36 @@ public class BoardManagerByTile : MonoBehaviour
 
 }
 
+/// <summary>
+/// NOTE : DungeonRoom 클래스
+/// TODO : 함수와 클래스 변수들을 분리하여 개선 사항이 보임
+/// </summary>
 public class DungeonRoomByTile
 {
-    //자신의 오브젝트 (오브젝트 리스트를 따로 만들어서 관리하지 않기 위함)
     public int roomNumber = -1;
-    public GameObject roomOwnObject = null;
+    //자신의 오브젝트 (오브젝트 리스트를 따로 만들어서 관리하지 않기 위함)
+    public GameObject objectModel = null;
     //생성한 방의 정보
     public Rect room = new Rect(0,0,0,0);
     public int roomType = -1;
     public TileInfo[,] roomArray;
-    //방이 현재 닫혀있는지 열려 있는지 체크
-    public bool unLockState = false;
     
     //연결되어있는 이웃 방들의 리스트
     public List<Entrance> neighborRooms = new List<Entrance>();
     //방의 레벨
     public int Level = -1;
+    //방의 Lock상태
+    public bool unLockState = false;
 
-    
-
+    /// <summary>
+    /// NOTE : 방의 사이즈 랜덤 설정 생성자
+    /// </summary>
+    /// <param name="_roomNumber"></param>
+    /// <param name="_roomType"></param>
+    /// <param name="_widthMin"></param>
+    /// <param name="_widthMax"></param>
+    /// <param name="_heightMin"></param>
+    /// <param name="_heightMax"></param>
     public DungeonRoomByTile(int _roomNumber, int _roomType, int _widthMin, int _widthMax, int _heightMin, int _heightMax)
     {
         roomNumber = _roomNumber;
@@ -299,7 +314,7 @@ public class DungeonRoomByTile
     }
 
     /// <summary>
-    /// 땅 depth 1 테두리 생성
+    /// NOTE : 땅 depth 1 테두리 생성
     /// </summary>
     /// <param name="floortilelength"></param>
     /// <param name="groundtilelength"></param>
@@ -326,7 +341,7 @@ public class DungeonRoomByTile
     private int groundHeightValue = 5;
     private int groundMinheight = 1; //최소 floor 높이값
     /// <summary>
-    /// 땅 생성 
+    /// NOTE : Ground 높이 랜덤 생성
     /// </summary>
     /// <param name="floortilelength"></param>
     /// <param name="groundtilelength"></param>
@@ -410,11 +425,9 @@ public class DungeonRoomByTile
             }
         }
     }
-
-    private Dictionary<GameObject, DungeonRoomByTile> connectedRoomDic;
-
+    
     /// <summary>
-    /// 
+    /// NOTE : 출입구 랜덤 생성
     /// </summary>
     public void SetEntrance()
     {
@@ -434,7 +447,6 @@ public class DungeonRoomByTile
                     j = 0;
                 }
             }
-
             posX.Add(tmpvalue);
         }
 
@@ -454,7 +466,7 @@ public class DungeonRoomByTile
 }
 
 /// <summary>
-/// 출입구 구조체, 연결된 방과 해당 오브젝트 (struct으로 구현하였다가 foreach문에서 반복 변수 초기화가 불가하여 class로 변경)
+/// NOTE : 출입구 클래스 연결된 방과 해당 오브젝트 (struct으로 구현하였다가 foreach문에서 반복 변수 초기화가 불가하여 class로 변경)
 /// </summary>
 public class Entrance
 {
@@ -467,52 +479,3 @@ public class Entrance
         entranceOb = ob;
     }
 }
-
-
-//public Tile[] ground;
-//public Tile[] wall;
-//public Tilemap map;
-
-
-//GameObject room = new GameObject("Room", typeof(Grid));
-//GameObject t=new GameObject("TileMap_Ground", typeof(Tilemap));
-//t.AddComponent<TilemapRenderer>();
-//map = t.GetComponent<Tilemap>();
-//t.AddComponent<TilemapCollider2D>();
-//t.GetComponent<TilemapCollider2D>().usedByComposite = true;
-//t.AddComponent<CompositeCollider2D>();
-//t.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
-//t.transform.parent = room.transform;
-//t.tag = "Ground";
-//MapSetTest(100,50);
-
-//private void MapSetTest(int width, int height)
-//{
-//    //for (int i = 0; i < width; i++)
-//    //{
-//    //    var t1 = new Vector3Int(i, 0, 0);
-//    //    var t2 = new Vector3Int(i, height, 0);
-//    //    map.SetTile(t1, ground[Random.Range(0, 3)]);
-//    //    map.SetTile(t2, ground[Random.Range(0, 3)]);
-//    //}
-
-//    //for (int j = 0; j < height; j++)
-//    //{
-//    //    var t1 = new Vector3Int(0, j, 0);
-//    //    var t2 = new Vector3Int(width, j, 0);
-//    //    map.SetTile(t1, wall[0]);
-//    //    map.SetTile(t2, wall[1]);
-//    //}
-//}
-
-
-
-//var tmpoffset = (int)(room.xMax / neighborRooms.Count);
-//int tmpmin = 1;
-//int tmpmax = tmpoffset;
-//for (int i = 0; i < neighborRooms.Count; i++)
-//{
-//    tmpX.Add((int)Random.Range(tmpmin, tmpmax));
-//    tmpmin += tmpoffset1;
-//    tmpmax += tmpoffset-1;
-//}

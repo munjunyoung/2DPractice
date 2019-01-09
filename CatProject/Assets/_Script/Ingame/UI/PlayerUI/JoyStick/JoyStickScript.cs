@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-public class JoyStickScript : InputButtonManager, IDragHandler
+public class JoyStickScript : PlayerButtonManual, IDragHandler
 {
     [Header("JoyStick UI Reference")]
     [SerializeField]
@@ -22,12 +22,12 @@ public class JoyStickScript : InputButtonManager, IDragHandler
     private void Update()
     {
         InputKeyboard();
-        SetStickValue();
+        ButtonOn();
     }
 
     #region joyStick
     /// <summary>
-    /// Drag 
+    /// Drag
     /// </summary>
     /// <param name="pad"></param>
     public virtual void OnDrag(PointerEventData pad)
@@ -98,10 +98,9 @@ public class JoyStickScript : InputButtonManager, IDragHandler
     /// <summary>
     /// inputvector set
     /// </summary>
-    private void SetStickValue()
+    public override void ButtonOn()
     {
         inputVector = joyStickImg.anchoredPosition / (bgImg.sizeDelta.x*0.5f);
-        playerSc.dirvalue = inputVector;
-
+        playerSc.dirValueOfJoystick = inputVector;
     }
 }
