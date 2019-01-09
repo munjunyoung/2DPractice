@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class GroundCheck : MonoBehaviour {
 
-    private Player player;
+    private CatType1 player;
 
     private void Start()
     {
-        player = GetComponentInParent<Player>();
+        player = GetComponentInParent<CatType1>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

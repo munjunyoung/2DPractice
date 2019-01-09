@@ -25,7 +25,6 @@ public class JumpButtonSc : PlayerButtonManual
         if(Input.GetKeyDown(KeyCode.Space))
         {
             playerSc.JumpButtonOn = true;
-            playerSc.Jump();
         }
 
         if(Input.GetKeyUp(KeyCode.Space))

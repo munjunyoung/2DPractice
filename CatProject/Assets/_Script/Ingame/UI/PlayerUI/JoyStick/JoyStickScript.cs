@@ -101,6 +101,6 @@ public class JoyStickScript : PlayerButtonManual, IDragHandler
     public override void ButtonOn()
     {
         inputVector = joyStickImg.anchoredPosition / (bgImg.sizeDelta.x*0.5f);
-        playerSc.dirValueOfJoystick = inputVector;
+        playerSc.currentMoveInputValue = inputVector.x;
     }
 }

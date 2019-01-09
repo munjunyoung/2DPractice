@@ -5,7 +5,7 @@ using UnityEngine;
 public class LeftTriggerCheck : MonoBehaviour
 {
     [SerializeField]
-    private Player playerSc;
+    private CatType1 playerSc;
 
     //private void OnTriggerEnter2D(Collider2D collision)
     //{
