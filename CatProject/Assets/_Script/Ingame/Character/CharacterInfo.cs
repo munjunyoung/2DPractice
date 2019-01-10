@@ -7,6 +7,7 @@ public enum CHARACTER_STATE { Idle = 0, Walk, Jump, Fall, Attack }
 /// <summary>
 /// NOTE : 재활용성이 높은 타입들
 /// TODO : 엑셀과 연동하기 위하여 데이터 조정값들은 따로 관리해야함
+/// TODO : 함수또한 분리 해야함
 /// </summary>
 [RequireComponent(typeof(Rigidbody2D),typeof(Animator))]
 public class CharacterInfo : MonoBehaviour
@@ -38,12 +39,16 @@ public class CharacterInfo : MonoBehaviour
             }
         }
     }
+    protected float currentSpeed;
 
     /// <summary>
     /// Require Component
     /// </summary>
     protected Rigidbody2D rb2D;
     protected Animator anim;
+
+    [HideInInspector]
+    public bool isGrounded, isAlive = false;
 
     #region EXCEL DATA
     [Header("HEALTH OPTION")]
@@ -107,12 +112,10 @@ public class CharacterInfo : MonoBehaviour
     protected float attackCoolTime;
     #endregion
     
-    protected float currentSpeed;
-    protected bool isAlive = true;
-
     protected void Awake()
     {
         rb2D = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
     }
+
 }

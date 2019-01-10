@@ -12,7 +12,7 @@ public class InGameManager : MonoBehaviour
 
     private List<DungeonRoomByTile> roomList = new List<DungeonRoomByTile>();
     private DungeonRoomByTile currentRoom;
-    
+
     private void Awake()
     {
         instance = this;
@@ -42,36 +42,29 @@ public class InGameManager : MonoBehaviour
         roomList[0].roomModel.SetActive(true);
         currentRoom = roomList[0];
     }
-    
+
     /// <summary>
     /// NOTE : 출입문에 진입시 해당 함수를 호출 currentnum와 nextnum는 출입문 오브젝트를 생성할때 저장해둔 변수값
+    /// TODO : 해당 함수를 EntranceSc 트리거함수에 구현 하는게되면 roomList를 여러군데에서 참조하게 될것같아서 변경
     /// </summary>
     /// <param name="currentnum"></param>
     /// <param name="nextnum"></param>
-    public void EnterRoom(int currentnum, int nextnum)
+    public void ChangeCurrentRoom(int currentnum, int nextnum)
     {
-        if(currentRoom.roomNumberOfList.Equals(currentnum))
-        {
-            roomList[nextnum].roomModel.SetActive(true);
-
-            roomList[currentnum].roomModel.SetActive(false);
-            currentRoom = roomList[nextnum];
-        }
-        else
-        {
-            Debug.Log("현재 방과 출입문에 저장된 현재방의 NUMBER가 다릅니다.");
-        }
+        roomList[currentnum].roomModel.SetActive(false);
+        roomList[nextnum].roomModel.SetActive(true);
+        currentRoom = roomList[nextnum];
+        Debug.Log("CurrentRoom[" + currentnum + "] -> [" + nextnum + "]");
     }
 
     /// <summary>
     /// NOTE : 적을 모두 죽이거나 방에 저장되어있는 해당 요건을 만족했을경우 해제
-    /// NOTE : 
     /// </summary>
     /// <param name="num"></param>
     public void UnLockRoom()
     {
         roomList[currentRoom.roomNumberOfList].unLockState = true;
-        foreach(var tmpentrance in roomList[currentRoom.roomNumberOfList].neighborRooms)
+        foreach (EntranceConnectRoom tmpentrance in roomList[currentRoom.roomNumberOfList].neighborRooms)
             tmpentrance.entrance.GetComponent<EntranceSc>().unLockState = true;
 
         Debug.Log("UNLOCK ROOM [" + currentRoom.roomNumberOfList + "]");

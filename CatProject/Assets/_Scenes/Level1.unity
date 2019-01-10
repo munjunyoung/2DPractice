@@ -504,7 +504,7 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: " \uC774\uB3D9 : \uBC29\uD5A5\uD0A4 \n \uC810\uD504 : SPACE\n \uACF5\uACA9
-    : LEFT CTRL\n \uD604\uC7AC \uBC29 Lock \uD574\uC81C : ESC "
+    : LEFT CTRL\n \uD604\uC7AC \uBC29 Lock \uD574\uC81C : F1 "
 --- !u!222 &1895839136
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -657,6 +657,36 @@ PrefabInstance:
       propertyPath: m_Name
       value: BoardManager
       objectReference: {fileID: 0}
+    - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
+      propertyPath: widthMinSize
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
+      propertyPath: numberOfRoom
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
+      propertyPath: widthMaxSize
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
+      propertyPath: heightMinSize
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
+      propertyPath: heightMaxSize
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
+      propertyPath: entrance
+      value: 
+      objectReference: {fileID: 6360658713944490580, guid: 3c2820c4ab46ec940a376ed80f7b36d8,
+        type: 3}
+    - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
+      propertyPath: entranceModel
+      value: 
+      objectReference: {fileID: 6360658713944490580, guid: 3c2820c4ab46ec940a376ed80f7b36d8,
+        type: 3}
     - target: {fileID: 324500466300686044, guid: 3bce843e0745d1a4a8cec1f131ac6654,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -712,36 +742,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
-      propertyPath: widthMinSize
-      value: 60
-      objectReference: {fileID: 0}
-    - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
-      propertyPath: numberOfRoom
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
-      propertyPath: widthMaxSize
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
-      propertyPath: heightMinSize
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
-      propertyPath: heightMaxSize
-      value: 50
-      objectReference: {fileID: 0}
-    - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
-      propertyPath: entrance
-      value: 
-      objectReference: {fileID: 6360658713944490580, guid: 3c2820c4ab46ec940a376ed80f7b36d8,
-        type: 3}
-    - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
-      propertyPath: entranceModel
-      value: 
-      objectReference: {fileID: 6360658713944490580, guid: 3c2820c4ab46ec940a376ed80f7b36d8,
-        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
 --- !u!1001 &3846223833490555008

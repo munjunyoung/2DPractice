@@ -9,8 +9,7 @@ public class EntranceSc : MonoBehaviour
     /// </summary>
     public bool unLockState = false;
     public int currentRoomNumber = -1;
-    public int nextRoomNumber = -1;
-    public Vector3 nextEntrancePos = Vector3.zero;
+    public EntranceSc connectedNextEntrance = null;
 
     private void OnTriggerStay2D(Collider2D collision)
     {
@@ -18,8 +17,12 @@ public class EntranceSc : MonoBehaviour
         {
             if (collision.tag.Equals("Player"))
             {
-                InGameManager.GetInstance().EnterRoom(currentRoomNumber, nextRoomNumber);
-                collision.transform.position = nextEntrancePos + new Vector3Int(0,5,0);
+                if (collision.GetComponent<PlayerInfo>().AttackButtonOn)
+                {
+                    InGameManager.GetInstance().ChangeCurrentRoom(currentRoomNumber, connectedNextEntrance.currentRoomNumber);
+                    collision.transform.position = connectedNextEntrance.transform.position;
+                    collision.GetComponent<PlayerInfo>().StopCharacter(1f);
+                }
             }
         }
         

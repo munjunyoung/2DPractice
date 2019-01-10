@@ -48,12 +48,12 @@ public class BoardManagerByTile : MonoBehaviour
         //Rooms 연결 log print
         PrintLogRoomNeighbors();
         //Rooms Entrance 오브젝트 생성
-        foreach(var room in roomList)
+        foreach(DungeonRoomByTile room in roomList)
             room.SetEntrance();
         //Rooms Draw
         DrawRoom();
         //출입문 진입시 출현할 포지션 설정
-        SetNextEntrancePosAll();
+        SetConnectedEntrance();
         
     }
     
@@ -140,8 +140,8 @@ public class BoardManagerByTile : MonoBehaviour
     /// <param name="room2"></param>
     private void ConnectEdge(DungeonRoomByTile room1, DungeonRoomByTile room2)
     {
-        room1.neighborRooms.Add(new EntranceConnectRoom(room2,null));
-        room2.neighborRooms.Add(new EntranceConnectRoom(room1,null));
+        room1.neighborRooms.Add(new EntranceConnectRoom(room2));
+        room2.neighborRooms.Add(new EntranceConnectRoom(room1));
     }
 
     /// <summary>
@@ -224,15 +224,14 @@ public class BoardManagerByTile : MonoBehaviour
                     {
                         switch(_room.roomArray[i,j].tileType)
                         {
-                            case (int)TileType.Obstacle:
+                            case (int)TileType.Entrance:
                                 GameObject tmpob = Instantiate(entranceModel, new Vector3(i, j+1f, 0), Quaternion.identity);
                                 tmpob.GetComponent<SpriteRenderer>().sprite = tileReferenceArray[_roomtype].tileType[_room.roomArray[i, j].tileType].tile[_room.roomArray[i, j].tileNumber].sprite;
                                 tmpob.transform.SetParent(tmpParent.transform);
-                                foreach(var nroom in _room.neighborRooms)
+                                foreach(EntranceConnectRoom nroom in _room.neighborRooms)
                                 {
                                     if (nroom.entrance == null)
                                     {
-                                        tmpob.GetComponent<EntranceSc>().nextRoomNumber = nroom.connectedRoom.roomNumberOfList;
                                         tmpob.GetComponent<EntranceSc>().currentRoomNumber = _room.roomNumberOfList;
                                         nroom.entrance = tmpob.GetComponent<EntranceSc>();
                                         break;
@@ -273,23 +272,24 @@ public class BoardManagerByTile : MonoBehaviour
     }   
     
     /// <summary>
-    /// NOTE : EntranceSc에 다음 방의 정보와 방을 넘어갔을때 다음 방에서 플레이어가 출현할 문의 포지션값을 미리 설정 
-    /// TODO : 매번 다음 방을 진입할 때마다 다음 방의 이웃들을 검색하여 하는것보다 미리 한번에 포지션을 저장해두는 것이 효율이 좋을 것 같다.
+    /// NOTE : 현재 입구 스크립트에 nextEntrance 데이터 초기화
+    /// NOTE : 해당 함수를 생성할때 처리하지 않은 이유는 방의 스프라이트들이 순서대로 생성되어 모두 생성한 후에 연결 가능하다.
+    /// NOTE : 매번 다음 방을 진입할 때마다 다음 방의 이웃들을 검색하여 하는것보다 미리 한번에 포지션을 저장해두는 것이 효율이 좋을 것 같다.
     /// </summary>
-    private void SetNextEntrancePosAll()
+    private void SetConnectedEntrance()
     {
         //모든 방 순회
-        foreach(var room in roomList)
+        foreach(DungeonRoomByTile room in roomList)
         {
             //순회하는 방의 이웃룸들 순회
-            foreach(var tmpcurrentroomneigbor in room.neighborRooms)
+            foreach(EntranceConnectRoom currentroomneigbor in room.neighborRooms)
             {
                 //이웃룸의 연결된 다음 방의 이웃들 순회 하여 entranceSc에 다음방 포지션 변수 초기화
-                foreach (var tmpnextroomneighbor in roomList[tmpcurrentroomneigbor.entrance.nextRoomNumber].neighborRooms)
+                foreach (EntranceConnectRoom nextroomneighbor in roomList[currentroomneigbor.connectedRoom.roomNumberOfList].neighborRooms)
                 {
                     //연결된 방의 통로중 현재 방이 nextroom일 경우 체크하여 position 저장
-                    if (tmpcurrentroomneigbor.entrance.currentRoomNumber.Equals(tmpnextroomneighbor.entrance.nextRoomNumber))
-                        tmpcurrentroomneigbor.entrance.nextEntrancePos = tmpnextroomneighbor.entrance.transform.position;
+                    if (currentroomneigbor.entrance.currentRoomNumber.Equals(nextroomneighbor.connectedRoom.roomNumberOfList))
+                        currentroomneigbor.entrance.connectedNextEntrance = nextroomneighbor.entrance;
                 }
 
             }
@@ -450,12 +450,13 @@ public class DungeonRoomByTile
     }
     
     /// <summary>
-    /// NOTE : 출입구 랜덤 생성
+    /// NOTE : 저장된 NeighborRooms 정보를 통해 출입구 랜덤 생성 
+    /// TODO : 현재는 가로값을 랜덤으로 설정하고 높이는 무조건 땅위에 생성하도록 설정하여 개선 가능성이 매우 높음
     /// </summary>
     public void SetEntrance()
     {
         List<int> posX = new List<int>();
-
+        //Entrance갯수 만큼 x포지션 저장
         for (int i = 0; i < neighborRooms.Count; i++)
         {
             var tmpvalue = (int)Random.Range(1, room.xMax - 1);
@@ -465,21 +466,21 @@ public class DungeonRoomByTile
             {
                 if (posX[j].Equals(tmpvalue))
                 {
-                    tmpvalue = (int)Random.Range(1, room.xMax - 1);
+                    tmpvalue = (int)Random.Range(2, room.xMax - 2);
                     //다시 처음부터 확인하기 위함
                     j = 0;
                 }
             }
             posX.Add(tmpvalue);
         }
-
-        foreach (var tmpx in posX)
+        //저장한 x포지션을 기준으로 y값을 순회하여 roomarray의 0 값을 검색하여 설정
+        foreach (int tmpx in posX)
         {
             for (int j = 1; j < room.yMax - 1; j++)
             {
                 if (roomArray[tmpx, j] == null)
                 {
-                    roomArray[tmpx, j] = new TileInfo((int)TileType.Obstacle, 0);
+                    roomArray[tmpx, j] = new TileInfo((int)TileType.Entrance, 0);
                     break;
                 }
             }
@@ -495,9 +496,9 @@ public class EntranceConnectRoom
     public DungeonRoomByTile connectedRoom;
     public EntranceSc entrance;
 
-    public EntranceConnectRoom(DungeonRoomByTile room, EntranceSc entsc)
+    public EntranceConnectRoom(DungeonRoomByTile room)
     {
         connectedRoom = room;
-        entrance = entsc;
+        entrance = null;
     }
 }

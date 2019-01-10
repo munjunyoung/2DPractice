@@ -5,8 +5,6 @@ using System.IO;
 using System;
 
 
-enum RoomType { Type1 = 0 }
-enum TileType { BackGround = 0, Floor, Obstacle, Ground, GroundOutLine }
 /// <summary>
 /// 싱글턴을 사용하려다가 참조할 곳이 boardManager밖에 없어서 컴포넌트 참조
 /// </summary>

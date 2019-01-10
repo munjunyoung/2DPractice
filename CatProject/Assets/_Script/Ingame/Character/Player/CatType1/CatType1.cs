@@ -2,11 +2,8 @@
 using System.Collections;
 using System;
 using System.Collections.Generic;
-public class CatType1 : CharacterInfo
+public class CatType1 : PlayerInfo
 {
-    //[HideInInspector]
-    public bool isGrounded, JumpButtonOn, AttackButtonOn= false;
-
     [HideInInspector]
     public float currentMoveInputValue;
     private float prevMoveInputValue = 0;
@@ -19,8 +16,11 @@ public class CatType1 : CharacterInfo
 
     private void FixedUpdate()
     {
-        Move();
-        Jump();
+        if (allStop)
+            return;
+
+            Move();
+            Jump();
     }
 
     private void LateUpdate()
@@ -165,7 +165,7 @@ public class CatType1 : CharacterInfo
     }
     private void UnLockRoom()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.F1))
         {
             InGameManager.GetInstance().UnLockRoom();
         }
