@@ -167,9 +167,7 @@ public class CatType1 : CharacterInfo
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            var tmp = BoardManagerByTile.GetInstance();
-            tmp.roomList[tmp.currentRoomNumber ].unLockState = true;
-            Debug.Log("CurrentNumber : " + tmp.currentRoomNumber + " Lock 해제");
+            InGameManager.GetInstance().UnLockRoom();
         }
     }
     #endregion

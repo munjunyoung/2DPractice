@@ -4,25 +4,22 @@ using UnityEngine;
 
 public class EntranceSc : MonoBehaviour
 {
-    public DungeonRoomByTile currentRoom = null;
-    public DungeonRoomByTile nextRoom = null;
+    /// <summary>
+    /// NOTE : 자신이 현재 존재하는 방과 연결된 다음 방
+    /// </summary>
+    public bool unLockState = false;
+    public int currentRoomNumber = -1;
+    public int nextRoomNumber = -1;
+    public Vector3 nextEntrancePos = Vector3.zero;
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (currentRoom.unLockState)
+        if(unLockState)
         {
             if (collision.tag.Equals("Player"))
             {
-                    currentRoom.objectModel.SetActive(false);
-                    nextRoom.objectModel.SetActive(true);
-                    BoardManagerByTile.GetInstance().currentRoomNumber = nextRoom.roomNumberOfList;
-                    Vector3 entrancepos = Vector3.zero;
-                    foreach (var tmp in nextRoom.neighborRooms)
-                    {
-                        if (tmp.connectedRoom == currentRoom)
-                            entrancepos = tmp.entranceOb.transform.position;
-                    }
-                    collision.transform.position = entrancepos + new Vector3(0f,5f,0f);
+                InGameManager.GetInstance().EnterRoom(currentRoomNumber, nextRoomNumber);
+                collision.transform.position = nextEntrancePos + new Vector3Int(0,5,0);
             }
         }
         

@@ -12,8 +12,7 @@ public class BoardManagerByTile : MonoBehaviour
     private Dictionary<int, List<DungeonRoomByTile>> LevelRoomDic = new Dictionary<int, List<DungeonRoomByTile>>();
 
     private TypeOfTileSetType[] tileReferenceArray;
-    //현재 active 방 넘버
-    public int currentRoomNumber = -1;
+
     //RoomParent들의 부모가 될 오브젝트 (Grid)
     private GameObject parentModelOfRooms;
 
@@ -53,19 +52,11 @@ public class BoardManagerByTile : MonoBehaviour
             room.SetEntrance();
         //Rooms Draw
         DrawRoom();
-        currentRoomNumber = 0;
-        roomList[0].objectModel.SetActive(true);
+        //출입문 진입시 출현할 포지션 설정
+        SetNextEntrancePosAll();
+        
     }
-
-    /// <summary>
-    /// singleTone
-    /// </summary>
-    /// <returns></returns>
-    public static BoardManagerByTile GetInstance()
-    {
-        return instance;
-    }
-
+    
     /// <summary>
     /// NOTE : 오브젝트를 생성할때 방들의 상위 오브젝트가 될 부모 설정 함수
     /// TODO : 씬하나에 끝날 경우에는 미리 생성하는 것으로 해당 함수 제거 요망 씬이 넘어갈때마다 필요할 거라고 생각되었기 때문 (방을 남겨두기에는 하위오브젝트들을 destroy함으로써 gc가 돌꺼같나..?)
@@ -149,8 +140,8 @@ public class BoardManagerByTile : MonoBehaviour
     /// <param name="room2"></param>
     private void ConnectEdge(DungeonRoomByTile room1, DungeonRoomByTile room2)
     {
-        room1.neighborRooms.Add(new Entrance(room2,null));
-        room2.neighborRooms.Add(new Entrance(room1,null));
+        room1.neighborRooms.Add(new EntranceConnectRoom(room2,null));
+        room2.neighborRooms.Add(new EntranceConnectRoom(room1,null));
     }
 
     /// <summary>
@@ -239,11 +230,11 @@ public class BoardManagerByTile : MonoBehaviour
                                 tmpob.transform.SetParent(tmpParent.transform);
                                 foreach(var nroom in _room.neighborRooms)
                                 {
-                                    if (nroom.entranceOb == null)
+                                    if (nroom.entrance == null)
                                     {
-                                        tmpob.GetComponent<EntranceSc>().nextRoom = nroom.connectedRoom;
-                                        tmpob.GetComponent<EntranceSc>().currentRoom = _room;
-                                        nroom.entranceOb = tmpob;
+                                        tmpob.GetComponent<EntranceSc>().nextRoomNumber = nroom.connectedRoom.roomNumberOfList;
+                                        tmpob.GetComponent<EntranceSc>().currentRoomNumber = _room.roomNumberOfList;
+                                        nroom.entrance = tmpob.GetComponent<EntranceSc>();
                                         break;
                                     }
                                 }
@@ -256,7 +247,7 @@ public class BoardManagerByTile : MonoBehaviour
                 }
             }
             countroom++;
-            _room.objectModel = tmpParent;
+            _room.roomModel = tmpParent;
             tmpParent.SetActive(false);
         }
     }
@@ -280,6 +271,30 @@ public class BoardManagerByTile : MonoBehaviour
 
         return tmptilemap;
     }   
+    
+    /// <summary>
+    /// NOTE : EntranceSc에 다음 방의 정보와 방을 넘어갔을때 다음 방에서 플레이어가 출현할 문의 포지션값을 미리 설정 
+    /// TODO : 매번 다음 방을 진입할 때마다 다음 방의 이웃들을 검색하여 하는것보다 미리 한번에 포지션을 저장해두는 것이 효율이 좋을 것 같다.
+    /// </summary>
+    private void SetNextEntrancePosAll()
+    {
+        //모든 방 순회
+        foreach(var room in roomList)
+        {
+            //순회하는 방의 이웃룸들 순회
+            foreach(var tmpcurrentroomneigbor in room.neighborRooms)
+            {
+                //이웃룸의 연결된 다음 방의 이웃들 순회 하여 entranceSc에 다음방 포지션 변수 초기화
+                foreach (var tmpnextroomneighbor in roomList[tmpcurrentroomneigbor.entrance.nextRoomNumber].neighborRooms)
+                {
+                    //연결된 방의 통로중 현재 방이 nextroom일 경우 체크하여 position 저장
+                    if (tmpcurrentroomneigbor.entrance.currentRoomNumber.Equals(tmpnextroomneighbor.entrance.nextRoomNumber))
+                        tmpcurrentroomneigbor.entrance.nextEntrancePos = tmpnextroomneighbor.entrance.transform.position;
+                }
+
+            }
+        }
+    }
 }
 
 /// <summary>
@@ -290,7 +305,7 @@ public class DungeonRoomByTile
 {
     public int roomNumberOfList = -1;
     //오브젝트
-    public GameObject objectModel = null;
+    public GameObject roomModel = null;
     //생성한 방의 정보
     public Rect room = new Rect(0,0,0,0);
     public int roomType = -1;
@@ -298,7 +313,7 @@ public class DungeonRoomByTile
     public int level = -1;
     public bool unLockState = false;
 
-    public List<Entrance> neighborRooms = new List<Entrance>();
+    public List<EntranceConnectRoom> neighborRooms = new List<EntranceConnectRoom>();
 
     /// <summary>
     /// NOTE : 방의 사이즈 랜덤 설정 생성자
@@ -475,14 +490,14 @@ public class DungeonRoomByTile
 /// <summary>
 /// NOTE : 출입구 클래스 연결된 방과 해당 오브젝트 (struct으로 구현하였다가 foreach문에서 반복 변수 초기화가 불가하여 class로 변경)
 /// </summary>
-public class Entrance
+public class EntranceConnectRoom
 {
     public DungeonRoomByTile connectedRoom;
-    public GameObject entranceOb;
+    public EntranceSc entrance;
 
-    public Entrance(DungeonRoomByTile room, GameObject ob)
+    public EntranceConnectRoom(DungeonRoomByTile room, EntranceSc entsc)
     {
         connectedRoom = room;
-        entranceOb = ob;
+        entrance = entsc;
     }
 }

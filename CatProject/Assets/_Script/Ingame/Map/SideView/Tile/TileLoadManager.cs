@@ -17,10 +17,9 @@ public class TileLoadManager : MonoBehaviour
     {
         LoadTile();
     }
-
-
+    
     /// <summary>
-    /// 
+    /// NOTE : Resource Load를 통하여 모든 타일들을 불러옴
     /// </summary>
     private void LoadTile()
     {
