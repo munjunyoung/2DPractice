@@ -54,7 +54,7 @@ public class InGameManager : MonoBehaviour
         roomList[currentnum].roomModel.SetActive(false);
         roomList[nextnum].roomModel.SetActive(true);
         currentRoom = roomList[nextnum];
-        Debug.Log("CurrentRoom[" + currentnum + "] -> [" + nextnum + "]");
+        Debug.Log("Change Room ! : CurrentRoom[" + currentnum + "] -> [" + nextnum + "]");
     }
 
     /// <summary>

@@ -84,15 +84,13 @@ public class BoardManagerByTile : MonoBehaviour
 
             int floorlength = tileReferenceArray[roomList[i].roomSpriteType].tileType[(int)TileType.Floor].tile.Length;
             int groundlength = tileReferenceArray[roomList[i].roomSpriteType].tileType[(int)TileType.Ground].tile.Length;
-
+            //테두리 설정
             roomList[i].SetGroundNormal(floorlength);
+            //시작방과 끝방을 제외한 나머지는 높낮이 랜덤 Ground설정
             if(i>0&&i<_numberOfroom)
-            {
-               // roomList[i].SetGroundHegihtRandomly(floorlength, groundlength);
-            }
+                roomList[i].SetGroundHegihtRandomly(floorlength, groundlength);
         }
     }
-
     
     /// <summary>
     /// NOTE : 생성 된 방들의 레벨 설정
@@ -217,18 +215,18 @@ public class BoardManagerByTile : MonoBehaviour
             GameObject backgroundob = new GameObject("BackGround", typeof(SpriteRenderer));
             backgroundob.transform.localPosition = Vector3.zero;
             backgroundob.transform.localRotation = Quaternion.identity;
+            backgroundob.GetComponent<SpriteRenderer>().sortingLayerName = "BackGround";
             backgroundob.GetComponent<SpriteRenderer>().drawMode = SpriteDrawMode.Sliced;
             backgroundob.GetComponent<SpriteRenderer>().sprite = tileReferenceArray[_roomtype].tileType[0].tile[0].sprite;
-            backgroundob.GetComponent<SpriteRenderer>().size = new Vector2(_room.roomRect.xMax-1, _room.roomRect.yMax-1);
+            backgroundob.GetComponent<SpriteRenderer>().size = _room.roomRect.size - Vector2.one;
             backgroundob.transform.SetParent(tmpParent.transform);
             
             //Ground TileMap 오브젝트 생성
             var tmpgroundtilemap = CreateTileMap("TileMap_Ground");
             tmpgroundtilemap.transform.SetParent(tmpParent.transform);
             tmpgroundtilemap.GetComponent<TilemapRenderer>().sortingLayerName = "Ground";
-            Debug.Log(tileReferenceArray[_roomtype].tileType[0].tile[0].sprite.rect);
             
-            //배열을 통한 타일 설정 및 오브젝트들 생성
+            //설정한 방의 배열정보를 통하여 타일 설정 및 출입문 오브젝트 생성
             for (int i = 0; i < _room.roomRect.xMax; i++)
             {
                 for (int j = 0; j < _room.roomRect.yMax; j++)
@@ -240,6 +238,7 @@ public class BoardManagerByTile : MonoBehaviour
                             case (int)TileType.Entrance:
                                 GameObject tmpob = Instantiate(entranceModel, new Vector3(i, j+1f, 0), Quaternion.identity);
                                 tmpob.GetComponent<SpriteRenderer>().sprite = tileReferenceArray[_roomtype].tileType[_room.roomArray[i, j].tileType].tile[_room.roomArray[i, j].tileNumber].sprite;
+                                tmpob.GetComponent<SpriteRenderer>().sortingLayerName = "Entrance";
                                 tmpob.transform.SetParent(tmpParent.transform);
                                 foreach(EntranceConnectRoom nroom in _room.neighborRooms)
                                 {
@@ -357,17 +356,17 @@ public class DungeonRoomByTile
     public void SetGroundNormal(int floortilelength)
     {
         //bottom, top
-        for (int i = 1; i < roomRect.xMax - 1; i++)
+        for (int i = 1; i < roomRect.xMax-1; i++)
         {
             roomArray[i, 0] = new TileInfo((int)TileType.Floor, Random.Range(0, floortilelength));
-            roomArray[i, (int)roomRect.yMax - 1] = new TileInfo((int)TileType.Floor, Random.Range(0, floortilelength));
+            roomArray[i, (int)roomRect.yMax-1] = new TileInfo((int)TileType.Floor, Random.Range(0, floortilelength));
         }
 
         //left, right
         for (int j = 0; j < roomRect.yMax; j++)
         {
             roomArray[0, j] = new TileInfo((int)TileType.Wall, 0);
-            roomArray[(int)roomRect.xMax - 1, j] = new TileInfo((int)TileType.Wall, 0);
+            roomArray[(int)roomRect.xMax-1, j] = new TileInfo((int)TileType.Wall, 0);
         }
     }
 
