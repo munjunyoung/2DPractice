@@ -5,12 +5,12 @@ using System;
 using UnityEngine.Tilemaps;
 
 enum RoomType { Type1 = 0 }
-enum TileType { BackGround = 0, Floor, Entrance, Ground, GroundOutLine }
+enum TileType { BackGround = 0, Floor, Ground, Wall, Entrance}
 public class TileLoadManager : MonoBehaviour
 {
     //Resouces Load Path
     private string[] roomTypePathArray = { "TileType1" };
-    private string[] tileTypePathArray = { "1.BackGround", "2.Floor", "3.Entrance", "4.Ground", "5.GroundOutLine" };
+    private string[] tileTypePathArray = { "0.BackGround","1.Floor","2.Ground", "3.Wall", "4.Entrance" };
     [HideInInspector]
     public TypeOfTileSetType[] loadTileArray;
 
@@ -45,9 +45,9 @@ public struct TypeOfTileSetType
 {
     [Header("0 : BackGround")]
     [Header("1 : Floor")]
-    [Header("2 : Obstacle")]
+    [Header("2 : Ground")]
     [Header("3 : Wall")]
-    [Header("4 : GroundOutLine")]
+    [Header("4 : Entrance")]
     public TypeOfTileSet[] tileType;
 }
 

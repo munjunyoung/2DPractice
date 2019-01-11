@@ -156,8 +156,8 @@ public class DungeonRoom
         //left, right
         for(int j=0; j<room.yMax;j++ )
         {
-            roomArray[0, j] = new TileInfo((int)TileType.GroundOutLine, 0);
-            roomArray[(int)room.xMax-1, j] = new TileInfo((int)TileType.GroundOutLine, 0);
+            roomArray[0, j] = new TileInfo((int)TileType.Wall, 0);
+            roomArray[(int)room.xMax-1, j] = new TileInfo((int)TileType.Wall, 0);
         }
     }
 
@@ -215,7 +215,7 @@ public class DungeonRoom
                                 var currentjvalue = j;
                                 for (; j > (currentjvalue - heightgapcount); j--)
                                 {
-                                    roomArray[i, j] = new TileInfo((int)TileType.GroundOutLine, 0);
+                                    roomArray[i, j] = new TileInfo((int)TileType.Wall, 0);
                                 }
 
                             }
@@ -226,7 +226,7 @@ public class DungeonRoom
                                 var currentjvalue = j;
                                 for (int k = currentjvalue + 1; k <= currentjvalue + heightgapcount; k++)
                                 {
-                                    roomArray[i - 1, k] = new TileInfo((int)TileType.GroundOutLine, 1);
+                                    roomArray[i - 1, k] = new TileInfo((int)TileType.Wall, 1);
                                 }
                             }
                             roomArray[i, j] = new TileInfo((int)TileType.Ground, Random.Range(0, groundtilelength));

@@ -29,7 +29,8 @@ public class BoardManagerByTile : MonoBehaviour
     private int heightMaxSize;
 
     //NOTE : Reference GameObject Model
-    [Header("Reference GameObject Model"), SerializeField]
+    [Header("Reference GameObject Model")]
+    [SerializeField]
     private GameObject entranceModel;
 
     private void Awake()
@@ -81,13 +82,13 @@ public class BoardManagerByTile : MonoBehaviour
         {
             roomList.Add(new DungeonRoomByTile(i, (int)RoomType.Type1, widthMinSize, widthMaxSize, heightMinSize, heightMaxSize));
 
-            int floorlength = tileReferenceArray[roomList[i].roomType].tileType[(int)TileType.Floor].tile.Length;
-            int groundlength = tileReferenceArray[roomList[i].roomType].tileType[(int)TileType.Ground].tile.Length;
+            int floorlength = tileReferenceArray[roomList[i].roomSpriteType].tileType[(int)TileType.Floor].tile.Length;
+            int groundlength = tileReferenceArray[roomList[i].roomSpriteType].tileType[(int)TileType.Ground].tile.Length;
 
             roomList[i].SetGroundNormal(floorlength);
             if(i>0&&i<_numberOfroom)
             {
-                roomList[i].SetGroundHegihtRandomly(floorlength, groundlength);
+               // roomList[i].SetGroundHegihtRandomly(floorlength, groundlength);
             }
         }
     }
@@ -204,21 +205,33 @@ public class BoardManagerByTile : MonoBehaviour
         int countroom = 1;
         foreach (DungeonRoomByTile _room in roomList)
         {
+            int _roomtype = _room.roomSpriteType;
+            //부모가될 오브젝트 생성
             GameObject tmpParent = new GameObject();
             tmpParent.transform.position = Vector3.zero;
             tmpParent.transform.rotation = Quaternion.identity;
             tmpParent.name = "Room" + countroom;
             tmpParent.transform.SetParent(parentModelOfRooms.transform);
 
-            int _roomtype = _room.roomType;
-            //Ground오브젝트 
+            //배경 오브젝트 생성
+            GameObject backgroundob = new GameObject("BackGround", typeof(SpriteRenderer));
+            backgroundob.transform.localPosition = Vector3.zero;
+            backgroundob.transform.localRotation = Quaternion.identity;
+            backgroundob.GetComponent<SpriteRenderer>().drawMode = SpriteDrawMode.Sliced;
+            backgroundob.GetComponent<SpriteRenderer>().sprite = tileReferenceArray[_roomtype].tileType[0].tile[0].sprite;
+            backgroundob.GetComponent<SpriteRenderer>().size = new Vector2(_room.roomRect.xMax-1, _room.roomRect.yMax-1);
+            backgroundob.transform.SetParent(tmpParent.transform);
+            
+            //Ground TileMap 오브젝트 생성
             var tmpgroundtilemap = CreateTileMap("TileMap_Ground");
             tmpgroundtilemap.transform.SetParent(tmpParent.transform);
-
-            //타일 셋
-            for (int i = 0; i < _room.room.xMax; i++)
+            tmpgroundtilemap.GetComponent<TilemapRenderer>().sortingLayerName = "Ground";
+            Debug.Log(tileReferenceArray[_roomtype].tileType[0].tile[0].sprite.rect);
+            
+            //배열을 통한 타일 설정 및 오브젝트들 생성
+            for (int i = 0; i < _room.roomRect.xMax; i++)
             {
-                for (int j = 0; j < _room.room.yMax; j++)
+                for (int j = 0; j < _room.roomRect.yMax; j++)
                 {
                     if (_room.roomArray[i, j] != null)
                     {
@@ -307,8 +320,8 @@ public class DungeonRoomByTile
     //오브젝트
     public GameObject roomModel = null;
     //생성한 방의 정보
-    public Rect room = new Rect(0,0,0,0);
-    public int roomType = -1;
+    public Rect roomRect = new Rect(0,0,0,0);
+    public int roomSpriteType = -1;
     public TileInfo[,] roomArray;
     public int level = -1;
     public bool unLockState = false;
@@ -327,13 +340,13 @@ public class DungeonRoomByTile
     public DungeonRoomByTile(int _roomNumber, int _roomType, int _widthMin, int _widthMax, int _heightMin, int _heightMax)
     {
         roomNumberOfList = _roomNumber;
-        roomType = _roomType;
+        roomSpriteType = _roomType;
 
         var tmpW = Random.Range(_widthMin, _widthMax);
         var tmpH = Random.Range(_heightMin, _heightMax);
-        room = new Rect(0, 0, tmpW, tmpH);
+        roomRect = new Rect(0, 0, tmpW, tmpH);
 
-        roomArray = new TileInfo[(int)room.width, (int)room.height];
+        roomArray = new TileInfo[(int)roomRect.width, (int)roomRect.height];
     }
 
     /// <summary>
@@ -344,17 +357,17 @@ public class DungeonRoomByTile
     public void SetGroundNormal(int floortilelength)
     {
         //bottom, top
-        for (int i = 1; i < room.xMax - 1; i++)
+        for (int i = 1; i < roomRect.xMax - 1; i++)
         {
             roomArray[i, 0] = new TileInfo((int)TileType.Floor, Random.Range(0, floortilelength));
-            roomArray[i, (int)room.yMax - 1] = new TileInfo((int)TileType.Floor, Random.Range(0, floortilelength));
+            roomArray[i, (int)roomRect.yMax - 1] = new TileInfo((int)TileType.Floor, Random.Range(0, floortilelength));
         }
 
         //left, right
-        for (int j = 0; j < room.yMax; j++)
+        for (int j = 0; j < roomRect.yMax; j++)
         {
-            roomArray[0, j] = new TileInfo((int)TileType.GroundOutLine, 0);
-            roomArray[(int)room.xMax - 1, j] = new TileInfo((int)TileType.GroundOutLine, 0);
+            roomArray[0, j] = new TileInfo((int)TileType.Wall, 0);
+            roomArray[(int)roomRect.xMax - 1, j] = new TileInfo((int)TileType.Wall, 0);
         }
     }
 
@@ -370,14 +383,14 @@ public class DungeonRoomByTile
     /// <param name="groundtilelength"></param>
     public void SetGroundHegihtRandomly(int floortilelength, int groundtilelength)
     {
-        int beforeheight = Random.Range(groundMinheight, (int)(room.yMax / 3));
+        int beforeheight = Random.Range(groundMinheight, (int)(roomRect.yMax / 3));
         int currentheight = beforeheight;
         int beforewidth = 5;
         bool changeheight = false; //높이가 바뀔 때 설정
 
         int heightgapcount = 0;
 
-        for (int i = 1; i < room.xMax - 1; i++)
+        for (int i = 1; i < roomRect.xMax - 1; i++)
         {
             for (int j = currentheight; j >= 0; j--)
             {
@@ -412,7 +425,7 @@ public class DungeonRoomByTile
                                 var currentjvalue = j;
                                 for (; j > (currentjvalue - heightgapcount); j--)
                                 {
-                                    roomArray[i, j] = new TileInfo((int)TileType.GroundOutLine, 0);
+                                    roomArray[i, j] = new TileInfo((int)TileType.Wall, 0);
                                 }
 
                             }
@@ -423,7 +436,7 @@ public class DungeonRoomByTile
                                 var currentjvalue = j;
                                 for (int k = currentjvalue + 1; k <= currentjvalue + heightgapcount; k++)
                                 {
-                                    roomArray[i - 1, k] = new TileInfo((int)TileType.GroundOutLine, 1);
+                                    roomArray[i - 1, k] = new TileInfo((int)TileType.Wall, 1);
                                 }
                             }
                             roomArray[i, j] = new TileInfo((int)TileType.Ground, Random.Range(0, groundtilelength));
@@ -459,14 +472,14 @@ public class DungeonRoomByTile
         //Entrance갯수 만큼 x포지션 저장
         for (int i = 0; i < neighborRooms.Count; i++)
         {
-            var tmpvalue = (int)Random.Range(1, room.xMax - 1);
+            var tmpvalue = (int)Random.Range(1, roomRect.xMax - 1);
 
             //같은 값이 있는지 체크?
             for (int j = 0; j < posX.Count; j++)
             {
                 if (posX[j].Equals(tmpvalue))
                 {
-                    tmpvalue = (int)Random.Range(2, room.xMax - 2);
+                    tmpvalue = (int)Random.Range(2, roomRect.xMax - 2);
                     //다시 처음부터 확인하기 위함
                     j = 0;
                 }
@@ -476,7 +489,7 @@ public class DungeonRoomByTile
         //저장한 x포지션을 기준으로 y값을 순회하여 roomarray의 0 값을 검색하여 설정
         foreach (int tmpx in posX)
         {
-            for (int j = 1; j < room.yMax - 1; j++)
+            for (int j = 1; j < roomRect.yMax - 1; j++)
             {
                 if (roomArray[tmpx, j] == null)
                 {
