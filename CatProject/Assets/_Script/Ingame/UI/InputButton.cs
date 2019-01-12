@@ -4,15 +4,16 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class InputButtonManual : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+public class InputButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
-    protected Image modelUIObject;
+    [SerializeField]
+    protected Image modelObjectImage;
     protected Color currentColor;
 
     protected  virtual void Start()
     {
-        modelUIObject = GetComponent<Image>() ? GetComponent<Image>() : modelUIObject;
-        currentColor = modelUIObject.color;
+        modelObjectImage = GetComponent<Image>() ? GetComponent<Image>() : modelObjectImage;
+        currentColor = modelObjectImage.color;
     }
 
     protected virtual void Update()
@@ -21,7 +22,6 @@ public class InputButtonManual : MonoBehaviour, IPointerDownHandler, IPointerUpH
     }
 
     public virtual void OnPointerDown(PointerEventData eventData){ ButtonClickDown(); }
-
     public virtual void OnPointerUp(PointerEventData eventData){ ButtonClickUp(); }
     /// <summary>
     /// 키보드 입력값 처리
@@ -33,7 +33,7 @@ public class InputButtonManual : MonoBehaviour, IPointerDownHandler, IPointerUpH
     protected virtual void ButtonClickDown()
     {
         currentColor.a = 0.5f;
-        modelUIObject.color = currentColor;
+        modelObjectImage.color = currentColor;
     }
     /// <summary>
     /// 버튼이 떼어졌을 경우 처리
@@ -41,6 +41,6 @@ public class InputButtonManual : MonoBehaviour, IPointerDownHandler, IPointerUpH
     protected virtual void ButtonClickUp()
     {
         currentColor.a = 1f;
-        modelUIObject.color = currentColor;
+        modelObjectImage.color = currentColor;
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class JumpButtonSc : PlayerButtonManual
+public class JumpButtonSc : PlayerActionButton
 {
     protected override void SetKeyBoard()
     {
@@ -16,15 +16,13 @@ public class JumpButtonSc : PlayerButtonManual
 
     protected override void ButtonClickDown()
     {
-        if (playerSc.allStop)
-            return;
         base.ButtonClickDown();
-        playerSc.JumpButtonOn = true;
+        playerSc.JumpOn = true;
     }
 
     protected override void ButtonClickUp()
     {
         base.ButtonClickUp();
-        playerSc.JumpButtonOn = false;
+        playerSc.JumpOn = false;
     }
 }

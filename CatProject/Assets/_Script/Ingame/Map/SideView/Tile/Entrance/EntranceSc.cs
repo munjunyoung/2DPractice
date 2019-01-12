@@ -15,13 +15,13 @@ public class EntranceSc : MonoBehaviour
     {
         if(unLockState)
         {
-            if (collision.tag.Equals("Player"))
+            if (collision.CompareTag("Player"))
             {
-                if (collision.GetComponent<PlayerInfo>().AttackButtonOn)
+                if (collision.GetComponent<Player>().AttackOn)
                 {
                     InGameManager.GetInstance().ChangeCurrentRoom(currentRoomNumber, connectedNextEntrance.currentRoomNumber);
                     collision.transform.position = connectedNextEntrance.transform.position;
-                    collision.GetComponent<PlayerInfo>().StopCharacter(1f);
+                    collision.GetComponent<Player>().StopCharacter(1f);
                 }
             }
         }

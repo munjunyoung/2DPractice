@@ -13,19 +13,19 @@ public class GroundCheck : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Ground")
+        if (collision.CompareTag("Ground"))
              player.isGrounded  = true;
     }
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if(collision.tag == "Ground")
+        if(collision.CompareTag("Ground"))
             player.isGrounded = true;
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if(collision.tag=="Ground")
+        if(collision.CompareTag("Ground"))
             player.isGrounded = false;
     }
 }

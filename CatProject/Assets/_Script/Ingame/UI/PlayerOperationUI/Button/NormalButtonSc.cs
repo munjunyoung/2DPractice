@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class NormalButtonSc : PlayerButtonManual
+public class NormalButtonSc : PlayerActionButton
 {
     protected override void SetKeyBoard()
     {
@@ -16,15 +16,13 @@ public class NormalButtonSc : PlayerButtonManual
 
     protected override void ButtonClickDown()
     {
-        if (playerSc.allStop)
-            return;
         base.ButtonClickDown();
-        playerSc.AttackButtonOn = true;
+        playerSc.AttackOn = true;
     }
 
     protected override void ButtonClickUp()
     {
         base.ButtonClickUp();
-        playerSc.AttackButtonOn = false;
+        playerSc.AttackOn = false;
     }
 }

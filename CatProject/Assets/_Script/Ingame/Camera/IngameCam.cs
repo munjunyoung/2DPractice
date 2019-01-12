@@ -18,7 +18,7 @@ public class IngameCam : MonoBehaviour
 
     private void Start()
     {
-        playerTarget = GameObject.Find("Player").transform;
+        playerTarget = GameObject.FindWithTag("Player").transform;
     }
 
     private void LateUpdate()

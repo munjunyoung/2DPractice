@@ -22,7 +22,13 @@ public class InGameManager : MonoBehaviour
     {
         LoadRoomList();
     }
-
+    
+    private void Update()
+    {
+        //방 해제 테스트
+        if (Input.GetKeyDown(KeyCode.F1))
+            UnLockRoom();
+    }
     /// <summary>
     /// Signletone
     /// </summary>

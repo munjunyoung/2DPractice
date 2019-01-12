@@ -31,7 +31,7 @@ public class BoardManagerByTile : MonoBehaviour
     //NOTE : Reference GameObject Model
     [Header("Reference GameObject Model")]
     [SerializeField]
-    private GameObject entranceModel;
+    private GameObject entranceModel = null;
 
     private void Awake()
     {
@@ -272,8 +272,7 @@ public class BoardManagerByTile : MonoBehaviour
     {
         GameObject tmpob = new GameObject(nameoftilemap, typeof(Tilemap));
         tmpob.AddComponent<TilemapRenderer>();
-        tmpob.AddComponent<TilemapCollider2D>();
-        tmpob.GetComponent<TilemapCollider2D>().usedByComposite = true;
+        tmpob.AddComponent<TilemapCollider2D>().usedByComposite = true;
         tmpob.AddComponent<CompositeCollider2D>();
         tmpob.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
         tmpob.tag = "Ground";
@@ -501,7 +500,7 @@ public class DungeonRoomByTile
 }
 
 /// <summary>
-/// NOTE : 출입구 클래스 연결된 방과 해당 오브젝트 (struct으로 구현하였다가 foreach문에서 반복 변수 초기화가 불가하여 class로 변경)
+/// NOTE : 출입구 클래스 연결된 방과 해당 오브젝트 (struct으로 구현하였다가 foreach문에서 반복 변수 초기화가 불가하여 class로 변경(구조체 : 값복사, 클래스 : 참조복사)
 /// </summary>
 public class EntranceConnectRoom
 {

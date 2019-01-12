@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum CHARACTER_STATE { Idle = 0, Walk, Jump, Fall, Attack }
+public enum CHARACTER_STATE { Idle = 0, Walk, Jump, Fall, Attack}
 
 /// <summary>
 /// NOTE : 재활용성이 높은 타입들
@@ -14,12 +14,12 @@ public class CharacterInfo : MonoBehaviour
 {
     /// <summary>
     /// CHARACTER STATE 
-    /// NOTE : 애니매이션 속도 설정
+    /// NOTE : 애니매이션 파라미터 상태 설정 (속성은 animation 속도 설정)
     /// WALK : 이동 중일 경우 이동 하는 속도에 맞춰서 발걸음을 느려지게 하기 위함
     /// ATTACK : 공격 속도 설정
     /// TODO : 위 2개 말고는 아직은 필요성을 느끼지 못함
     private CHARACTER_STATE InstanceState;
-    protected CHARACTER_STATE CurrentPlayerState
+    protected CHARACTER_STATE CurrentCharcterState
     {
         get{ return InstanceState; }
         set
@@ -39,27 +39,23 @@ public class CharacterInfo : MonoBehaviour
             }
         }
     }
-    protected float currentSpeed;
-
-    /// <summary>
-    /// Require Component
-    /// </summary>
+    
     protected Rigidbody2D rb2D;
     protected Animator anim;
-
-    [HideInInspector]
-    public bool isGrounded, isAlive = false;
     
     [HideInInspector]
-    public float currentMoveInputValue;
-    protected float prevMoveInputValue = 0;
-
-    private bool isRunningJumpCoroutine = false;
-    private bool isRunningAttackCoroutine = false;
-
+    public bool isGrounded, isAlive = false;
     [HideInInspector]
-    public bool JumpButtonOn, AttackButtonOn, allStop = false;
+    public bool JumpOn, AttackOn, StopOn = false;
+    
+    protected float currentSpeed;
+    
+    protected bool attackPossible = true;
 
+    protected bool isRunningStopCoroutine = false;
+    protected bool isRunningJumpCoroutine = false;
+    protected bool isRunningAttackCoroutine = false;
+    
     #region EXCEL DATA
     [Header("HEALTH OPTION")]
     protected int MaxHealth;
@@ -127,72 +123,71 @@ public class CharacterInfo : MonoBehaviour
         rb2D = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
     }
-    //JUMP - 해당 함수 추가
-    //ATTACK - 이펙트 추가시
-    //SET CAHRACTERSTATE 
-    //SET ANIMATION
+
+    protected virtual void FixedUpdate()
+    {
+        if (StopOn)
+            return;
+    }
+
+    private void LateUpdate()
+    {
+        SetCharacterState();
+        SetAnimation();
+    }
+    
+    /// <summary>
+    /// NOTE : STOP코루틴 함수 실행
+    /// NOTE : 외부 함수에서 실행하는 경우가 있어서 public 선언
+    /// </summary>
+    /// <param name="stoptime"></param>
+    public void StopCharacter(float stoptime)
+    {
+        JumpOn = false;
+        AttackOn = false;
+        currentSpeed = 0;
+        StartCoroutine(StopCoroutine(stoptime));
+    }
 
     /// <summary>
-    /// NOTE : 플레이어 캐릭터 이동 함수
-    /// NOTE : 최대 속도 - 키 입력값 * maxSpeedValue (프레임당 키입력 값은 (0~1))
-    /// FIXME : rb2D.velocity.y 플레이어가 떨어지면서 땅에 안착했을때 0이 되지않고 -5.0938같은 값으로 처리될 때가 있어서 임시 방편으로 (int)형으로 캐스팅 수정
+    /// NOTE : 파라미터 시간 만큼 TIME STOP
     /// </summary>
-    protected virtual void Move(float xinputvalue)
+    /// <param name="stoptime"></param>
+    /// <returns></returns>
+    private IEnumerator StopCoroutine(float stoptime)
     {
-        float maxspeed = xinputvalue * maxSpeedValue;
-        currentSpeed += (xinputvalue * accelerationValue);
+        isRunningStopCoroutine = true;
+        StopOn = true;
+        yield return new WaitForSeconds(stoptime);
+        StopOn = false;
+        isRunningStopCoroutine = false;
+    }
 
-
-        //우측방향 가속
-        if (xinputvalue > 0)
-        {
-            //이전 프레임 값과 비교하여 증감
-            if (prevMoveInputValue <= xinputvalue && currentSpeed >= maxspeed)
-                currentSpeed = maxspeed;
-        }
-        //좌측방향 가속
-        else if (xinputvalue < 0)
-        {
-            if (prevMoveInputValue >= xinputvalue && currentSpeed <= maxspeed)
-                currentSpeed = maxspeed;
-        }
-        //감속
+    /// <summary>
+    /// 캐릭터 상태 설정
+    /// NOTE : STATE
+    /// 1. ATTACK 2. JUMP 3. FALL 4. MOVE
+    /// </summary>
+    protected virtual void SetCharacterState()
+    {
+        //캐릭터 상태 설정(애니매이션 상태 설정)
+        if ((int)rb2D.velocity.y > 0)
+            CurrentCharcterState = CHARACTER_STATE.Jump;
+        else if ((int)rb2D.velocity.y < 0)
+            CurrentCharcterState = CHARACTER_STATE.Fall;
         else
-        {
-            currentSpeed = Mathf.Lerp(currentSpeed, 0, Time.deltaTime * decelerationValue);
-        }
-        transform.position += new Vector3(currentSpeed, 0, 0) * Time.deltaTime;
-        prevMoveInputValue = xinputvalue;
+            CurrentCharcterState = (int)(currentSpeed * 10) == 0 ? CHARACTER_STATE.Idle : CHARACTER_STATE.Walk;
 
-        //캐릭터의 방향 설정
-        if (!xinputvalue.Equals(0f))
-            transform.localEulerAngles = xinputvalue > 0 ? new Vector3(0, 0, 0) : new Vector3(0, 180, 0);
+        if (AttackOn && attackPossible)
+            CurrentCharcterState = CHARACTER_STATE.Attack;
     }
 
     /// <summary>
-    /// NOTE : 코루틴 함수가 현재 실행중인지 체크한 후 실행
-    /// NOTE : IsGrounded는 캐릭터 오브젝트의 자식오브젝트의 트리거함수로 설정됨
+    /// NOTE : 애니매이션 설정, enum 상태를 그대로 대입 하여 사용
     /// </summary>
-    protected virtual void Jump()
+    protected virtual void SetAnimation()
     {
-        if(isGrounded && isRunningJumpCoroutine)
-            StartCoroutine(JumpCoroutine());
+        anim.SetFloat("StateFloat", (int)CurrentCharcterState);
     }
 
-    /// <summary>
-    /// NOTE : JUMP()함수 실행되는 Coroutine
-    /// TODO : 버튼이나 해당 키가 눌려있음을 체크하여 JumpCount만큼 실행, 다른 방법으로도 구현할 가능성이 있음
-    /// </summary>
-    protected virtual IEnumerator JumpCoroutine()
-    {
-        isRunningJumpCoroutine = true;
-        float jumpCount = 0;
-        while (JumpButtonOn && jumpCount <= jumpMaxCount)
-        {
-            jumpCount++;
-            rb2D.AddForce(Vector2.up * jumpPowerPerCount, ForceMode2D.Impulse);
-            yield return new WaitForSeconds(addForceFrameIntervalTime);
-        }
-        isRunningJumpCoroutine = false;
-    }
 }
