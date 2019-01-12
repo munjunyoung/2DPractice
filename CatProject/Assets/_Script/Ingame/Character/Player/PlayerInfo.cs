@@ -2,12 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// NOTE : 실제 플레이어캐릭터 정보들
+/// </summary>
 public class PlayerInfo : CharacterInfo
 {
-    [HideInInspector]
-    public bool JumpButtonOn, AttackButtonOn, allStop = false;
 
     private bool isRunningStopCoroutine = false;
+
+    protected virtual void FixedUpdate()
+    {
+        Move(currentMoveInputValue);
+        Jump();
+    }
+
     /// <summary>
     /// NOTE : STOP코루틴 함수 실행
     /// </summary>
