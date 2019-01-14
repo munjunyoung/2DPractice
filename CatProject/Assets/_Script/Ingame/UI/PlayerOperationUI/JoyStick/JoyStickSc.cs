@@ -16,12 +16,6 @@ public class JoyStickSc : PlayerActionButton, IDragHandler
     [HideInInspector]
     public Vector2 inputVector;
 
-    protected override void Update()
-    {
-        base.Update();
-        SetInputVector();
-    }
-
     #region joyStick
     /// <summary>
     /// Drag
@@ -70,25 +64,26 @@ public class JoyStickSc : PlayerActionButton, IDragHandler
     /// </summary>
     protected override void SetKeyBoard()
     {
-        if (stickOn)
-            return;
+        if (!stickOn)
+        {
+            float a = Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A) ? -0.1f : 0;
+            float d = Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D) ? 0.1f : 0;
 
-        float a = Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A) ? -0.1f : 0;
-        float d = Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D) ? 0.1f : 0;
-        
-        keyinputX = !(a + d).Equals(0) ? keyinputX + (a + d) : 0;
+            keyinputX = !(a + d).Equals(0) ? keyinputX + (a + d) : 0;
 
-        if (!a.Equals(0.0f) || !d.Equals(0.0f))
-            ButtonClickDown();
-        else
-            ButtonClickUp();
-        //키보드 플레이어 가속 설정
-        if (Mathf.Abs(keyinputX) > 1f)
-            keyinputX = (a + d) > 0 ? 1f : -1f;
-        
-         Vector2 keyboardVector = new Vector2(keyinputX, 0);
+            if (!a.Equals(0.0f) || !d.Equals(0.0f))
+                ButtonClickDown();
+            else
+                ButtonClickUp();
+            //키보드 플레이어 가속 설정
+            if (Mathf.Abs(keyinputX) > 1f)
+                keyinputX = (a + d) > 0 ? 1f : -1f;
 
-         modelObjectImage.GetComponent<RectTransform>().anchoredPosition = keyboardVector * (bgImg.sizeDelta * 0.5f);
+            Vector2 keyboardVector = new Vector2(keyinputX, 0);
+
+            modelObjectImage.GetComponent<RectTransform>().anchoredPosition = keyboardVector * (bgImg.sizeDelta * 0.5f);
+        }
+         SetInputVector();
     }
 
     /// <summary>

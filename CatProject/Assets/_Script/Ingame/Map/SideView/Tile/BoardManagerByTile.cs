@@ -46,8 +46,6 @@ public class BoardManagerByTile : MonoBehaviour
         SetRoomLevel();
         //Rooms 연결
         RandomEdgeConnect();
-        //Rooms 연결 log print
-        PrintLogRoomNeighbors();
         //Rooms Entrance 오브젝트 생성
         foreach(DungeonRoomByTile room in roomList)
             room.SetEntrance();
@@ -87,7 +85,7 @@ public class BoardManagerByTile : MonoBehaviour
             //테두리 설정
             roomList[i].SetGroundNormal(floorlength);
             //시작방과 끝방을 제외한 나머지는 높낮이 랜덤 Ground설정
-            if(i>0&&i<_numberOfroom)
+            if(i>-1&&i<_numberOfroom)
                 roomList[i].SetGroundHegihtRandomly(floorlength, groundlength);
         }
     }
@@ -222,10 +220,9 @@ public class BoardManagerByTile : MonoBehaviour
             backgroundob.transform.SetParent(tmpParent.transform);
             
             //Ground TileMap 오브젝트 생성
-            var tmpgroundtilemap = CreateTileMap("TileMap_Ground");
-            tmpgroundtilemap.transform.SetParent(tmpParent.transform);
-            tmpgroundtilemap.GetComponent<TilemapRenderer>().sortingLayerName = "Ground";
-            
+            var tmpFloortilemap = CreateTileMap("Floor","Floor","Ground",tmpParent);
+            var tmpGroundtilemap = CreateTileMap("Ground","Ground","Ground",tmpParent);
+
             //설정한 방의 배열정보를 통하여 타일 설정 및 출입문 오브젝트 생성
             for (int i = 0; i < _room.roomRect.xMax; i++)
             {
@@ -235,9 +232,9 @@ public class BoardManagerByTile : MonoBehaviour
                     {
                         switch(_room.roomArray[i,j].tileType)
                         {
-                            case (int)TileType.Entrance:
+                            case TileType.Entrance:
                                 GameObject tmpob = Instantiate(entranceModel, new Vector3(i, j+1f, 0), Quaternion.identity);
-                                tmpob.GetComponent<SpriteRenderer>().sprite = tileReferenceArray[_roomtype].tileType[_room.roomArray[i, j].tileType].tile[_room.roomArray[i, j].tileNumber].sprite;
+                                tmpob.GetComponent<SpriteRenderer>().sprite = tileReferenceArray[_roomtype].tileType[(int)_room.roomArray[i, j].tileType].tile[_room.roomArray[i, j].tileNumber].sprite;
                                 tmpob.GetComponent<SpriteRenderer>().sortingLayerName = "Entrance";
                                 tmpob.transform.SetParent(tmpParent.transform);
                                 foreach(EntranceConnectRoom nroom in _room.neighborRooms)
@@ -250,8 +247,15 @@ public class BoardManagerByTile : MonoBehaviour
                                     }
                                 }
                                 break;
+                            case TileType.Floor:
+                                tmpFloortilemap.SetTile(new Vector3Int(i, j, 0), tileReferenceArray[_roomtype].tileType[(int)_room.roomArray[i, j].tileType].tile[_room.roomArray[i, j].tileNumber]);
+                                break;
+                            case TileType.Ground:
+                            case TileType.Wall:
+                                tmpGroundtilemap.SetTile(new Vector3Int(i, j, 0), tileReferenceArray[_roomtype].tileType[(int)_room.roomArray[i, j].tileType].tile[_room.roomArray[i, j].tileNumber]);
+                                break;
                             default:
-                                tmpgroundtilemap.SetTile(new Vector3Int(i, j, 0), tileReferenceArray[_roomtype].tileType[_room.roomArray[i, j].tileType].tile[_room.roomArray[i, j].tileNumber]);
+                                
                                 break;
                         }   
                     }
@@ -262,21 +266,24 @@ public class BoardManagerByTile : MonoBehaviour
             tmpParent.SetActive(false);
         }
     }
-    
+
     /// <summary>
     /// NOTE : TileMap Object 동적 생성
     /// </summary>
     /// <param name="nameoftilemap"></param>
+    /// <param name="tagname"></param>
+    /// <param name="layername"></param>
+    /// <param name="parentob"></param>
     /// <returns></returns>
-    private Tilemap CreateTileMap(string nameoftilemap)
+    private Tilemap CreateTileMap(string nameoftilemap,string tagname, string layername, GameObject parentob)
     {
         GameObject tmpob = new GameObject(nameoftilemap, typeof(Tilemap));
-        tmpob.AddComponent<TilemapRenderer>();
+        tmpob.AddComponent<TilemapRenderer>().sortingLayerName = layername;
         tmpob.AddComponent<TilemapCollider2D>().usedByComposite = true;
         tmpob.AddComponent<CompositeCollider2D>();
         tmpob.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
-        tmpob.tag = "Ground";
-
+        tmpob.tag = tagname;
+        tmpob.transform.SetParent(parentob.transform);
         Tilemap tmptilemap = tmpob.GetComponent<Tilemap>();
 
         return tmptilemap;
@@ -357,15 +364,15 @@ public class DungeonRoomByTile
         //bottom, top
         for (int i = 1; i < roomRect.xMax-1; i++)
         {
-            roomArray[i, 0] = new TileInfo((int)TileType.Floor, Random.Range(0, floortilelength));
-            roomArray[i, (int)roomRect.yMax-1] = new TileInfo((int)TileType.Floor, Random.Range(0, floortilelength));
+            roomArray[i, 0] = new TileInfo(TileType.Floor, Random.Range(0, floortilelength));
+            roomArray[i, (int)roomRect.yMax-1] = new TileInfo(TileType.Floor, Random.Range(0, floortilelength));
         }
 
         //left, right
         for (int j = 0; j < roomRect.yMax; j++)
         {
-            roomArray[0, j] = new TileInfo((int)TileType.Wall, 0);
-            roomArray[(int)roomRect.xMax-1, j] = new TileInfo((int)TileType.Wall, 0);
+            roomArray[0, j] = new TileInfo(TileType.Wall, 0);
+            roomArray[(int)roomRect.xMax-1, j] = new TileInfo(TileType.Wall, 0);
         }
     }
 
@@ -395,14 +402,14 @@ public class DungeonRoomByTile
                 //제일 위일 경우 floor를 생성 
                 if (j.Equals(currentheight))
                 {
-                    roomArray[i, j] = new TileInfo((int)TileType.Floor, Random.Range(0, floortilelength));
+                    roomArray[i, j] = new TileInfo(TileType.Floor, Random.Range(0, floortilelength));
                 }
                 else
                 {
                     //높이가 바뀌지 않을 경우 
                     if (!changeheight)
                     {
-                        roomArray[i, j] = new TileInfo((int)TileType.Ground, Random.Range(0, groundtilelength));
+                        roomArray[i, j] = new TileInfo(TileType.Ground, Random.Range(0, groundtilelength));
                     }
                     //높이 바뀔 경우
                     else
@@ -411,7 +418,7 @@ public class DungeonRoomByTile
                         //gap count가 1이하면 그대로 생성
                         if (heightgapcount < 1)
                         {
-                            roomArray[i, j] = new TileInfo((int)TileType.Ground, Random.Range(0, groundtilelength));
+                            roomArray[i, j] = new TileInfo(TileType.Ground, Random.Range(0, groundtilelength));
                         }
                         //gap count가 2이상일 경우 생성
                         else
@@ -423,7 +430,7 @@ public class DungeonRoomByTile
                                 var currentjvalue = j;
                                 for (; j > (currentjvalue - heightgapcount); j--)
                                 {
-                                    roomArray[i, j] = new TileInfo((int)TileType.Wall, 0);
+                                    roomArray[i, j] = new TileInfo(TileType.Wall, 0);
                                 }
 
                             }
@@ -434,10 +441,10 @@ public class DungeonRoomByTile
                                 var currentjvalue = j;
                                 for (int k = currentjvalue + 1; k <= currentjvalue + heightgapcount; k++)
                                 {
-                                    roomArray[i - 1, k] = new TileInfo((int)TileType.Wall, 1);
+                                    roomArray[i - 1, k] = new TileInfo(TileType.Wall, 1);
                                 }
                             }
-                            roomArray[i, j] = new TileInfo((int)TileType.Ground, Random.Range(0, groundtilelength));
+                            roomArray[i, j] = new TileInfo(TileType.Ground, Random.Range(0, groundtilelength));
                             changeheight = false;
                         }
                     }
@@ -491,7 +498,7 @@ public class DungeonRoomByTile
             {
                 if (roomArray[tmpx, j] == null)
                 {
-                    roomArray[tmpx, j] = new TileInfo((int)TileType.Entrance, 0);
+                    roomArray[tmpx, j] = new TileInfo(TileType.Entrance, 0);
                     break;
                 }
             }

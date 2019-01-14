@@ -8,11 +8,18 @@ using UnityEngine.EventSystems;
 /// </summary>
 public class PlayerActionButton : InputButton
 {
-    protected Player playerSc;
+    protected Player playerSc = null;
 
     protected override void Start()
     {
         base.Start();
         playerSc = GameObject.FindWithTag("Player").GetComponent<CatType1>();
+    }
+
+    protected override void Update()
+    {
+        if (!playerSc)
+            return;
+        base.Update();
     }
 }

@@ -12,6 +12,13 @@ public class CatType1 : Player
     /// </summary>
     protected void SetDATA()
     {
+        //..
+    }
+    /// <summary>
+    /// TODO : 캣종류에 따른 스킬?
+    /// </summary>
+    protected void Skill()
+    {
 
     }
 }

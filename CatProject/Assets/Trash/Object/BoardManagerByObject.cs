@@ -92,7 +92,7 @@ public class BoardManagerSideView : MonoBehaviour
                     {
                         //해당 타일의 랜덤 설정
                         GameObject tmpTileObj = Instantiate(tileArray[_roomType].
-                            tileType[_room.roomArray[i, j].tileType].sprite[_room.roomArray[i, j].tileNumber],
+                            tileType[(int)_room.roomArray[i, j].tileType].sprite[_room.roomArray[i, j].tileNumber],
                             new Vector3(i, j, 0f), Quaternion.identity);
                         //부모 설정
                         tmpTileObj.transform.SetParent(tmpParent.transform);
@@ -149,15 +149,15 @@ public class DungeonRoom
         //bottom, top
         for (int i = 1; i < room.xMax-1; i++)
         {
-            roomArray[i, 0] = new TileInfo((int)TileType.Floor, Random.Range(0, floortilelength));
-            roomArray[i, (int)room.yMax-1] = new TileInfo((int)TileType.Floor, Random.Range(0, floortilelength));
+            roomArray[i, 0] = new TileInfo(TileType.Floor, Random.Range(0, floortilelength));
+            roomArray[i, (int)room.yMax-1] = new TileInfo(TileType.Floor, Random.Range(0, floortilelength));
         }
 
         //left, right
         for(int j=0; j<room.yMax;j++ )
         {
-            roomArray[0, j] = new TileInfo((int)TileType.Wall, 0);
-            roomArray[(int)room.xMax-1, j] = new TileInfo((int)TileType.Wall, 0);
+            roomArray[0, j] = new TileInfo(TileType.Wall, 0);
+            roomArray[(int)room.xMax-1, j] = new TileInfo(TileType.Wall, 0);
         }
     }
 
@@ -187,14 +187,14 @@ public class DungeonRoom
                 //제일 위일 경우 floor를 생성 
                 if (j.Equals(currentheight))
                 {
-                    roomArray[i, j] = new TileInfo((int)TileType.Floor, Random.Range(0, floortilelength));
+                    roomArray[i, j] = new TileInfo(TileType.Floor, Random.Range(0, floortilelength));
                 }
                 else
                 {
                     //높이가 바뀌지 않을 경우 
                     if (!changeheight)
                     {
-                        roomArray[i, j] = new TileInfo((int)TileType.Ground, Random.Range(0, groundtilelength));
+                        roomArray[i, j] = new TileInfo(TileType.Ground, Random.Range(0, groundtilelength));
                     }
                     //높이 바뀔 경우
                     else
@@ -203,7 +203,7 @@ public class DungeonRoom
                         //gap count가 1이하면 그대로 생성
                         if (heightgapcount < 1)
                         {
-                            roomArray[i, j] = new TileInfo((int)TileType.Ground, Random.Range(0, groundtilelength));
+                            roomArray[i, j] = new TileInfo(TileType.Ground, Random.Range(0, groundtilelength));
                         }
                         //gap count가 2이상일 경우 생성
                         else
@@ -215,7 +215,7 @@ public class DungeonRoom
                                 var currentjvalue = j;
                                 for (; j > (currentjvalue - heightgapcount); j--)
                                 {
-                                    roomArray[i, j] = new TileInfo((int)TileType.Wall, 0);
+                                    roomArray[i, j] = new TileInfo(TileType.Wall, 0);
                                 }
 
                             }
@@ -226,10 +226,10 @@ public class DungeonRoom
                                 var currentjvalue = j;
                                 for (int k = currentjvalue + 1; k <= currentjvalue + heightgapcount; k++)
                                 {
-                                    roomArray[i - 1, k] = new TileInfo((int)TileType.Wall, 1);
+                                    roomArray[i - 1, k] = new TileInfo(TileType.Wall, 1);
                                 }
                             }
-                            roomArray[i, j] = new TileInfo((int)TileType.Ground, Random.Range(0, groundtilelength));
+                            roomArray[i, j] = new TileInfo(TileType.Ground, Random.Range(0, groundtilelength));
                             changeheight = false;
                         }
                     }
@@ -255,10 +255,10 @@ public class DungeonRoom
 
 public class TileInfo
 {
-    public int tileType;
+    public TileType tileType;
     public int tileNumber;
 
-    public TileInfo(int _tiletype, int _tilenumber)
+    public TileInfo(TileType _tiletype, int _tilenumber)
     {
         tileType = _tiletype;
         tileNumber = _tilenumber;
