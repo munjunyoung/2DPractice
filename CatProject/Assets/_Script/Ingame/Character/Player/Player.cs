@@ -16,7 +16,7 @@ public class Player : MonoBehaviour
     /// ATTACK : 공격 속도 설정
     /// TODO : 위 2개 말고는 아직은 필요성을 느끼지 못함
     private ANIMATION_STATE InstanceState;
-    private ANIMATION_STATE CurrentPlayerState
+    private ANIMATION_STATE CurrentPlayerAnimState
     {
         get { return InstanceState; }
         set
@@ -44,16 +44,16 @@ public class Player : MonoBehaviour
     private Animator anim;
     
     [HideInInspector]
-    public bool isAlive = false;
-    [HideInInspector]
-    public bool JumpOn, AttackOn, StopOn = false;
+    public bool MoveOn, JumpOn, AttackOn, StopOn = false;
 
     private bool isRunningJumpCoroutine = false;
     private bool isRunningAttackCoroutine = false;
     private bool isRunningStopCoroutine = false;
-
-    private FloorCheckSc floorCheckPrefab;
-    private bool IsGrounded{ get { return floorCheckPrefab.isGrounded; } }
+    
+    //TODO : floorDetectionob 는 추후에 몬스터와 합쳐지게되면 floordetectionsc에서 모두 처리하는걸로 변경예정
+    private FloorDetectionSc floorDetectionChildOb;
+    private Transform frontDetectionChildOb;
+    private bool IsGrounded{ get { return floorDetectionChildOb.isGrounded; } }
     private bool isHitWall = false;
 
     //가속 감속 처리하기 위함
@@ -64,17 +64,18 @@ public class Player : MonoBehaviour
     private float currentMoveSpeed;
 
     private bool attackPossibleOn = true;
-
+    
     protected void Awake()
     {
-        floorCheckPrefab = transform.GetComponentInChildren<FloorCheckSc>();
+        floorDetectionChildOb = transform.GetComponentInChildren<FloorDetectionSc>();
+        frontDetectionChildOb = transform.GetChild(1);
         rb2D = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
     }
 
     protected void Update()
     {
-        HitWallCheck();
+        IsHitWallCheck();
     }
 
     protected void FixedUpdate()
@@ -87,13 +88,19 @@ public class Player : MonoBehaviour
 
     private void LateUpdate()
     {
-        SetCharacterState();
-        SetAnimation();
+        SetAnimationState();
     }
 
-    private void HitWallCheck()
+    /// <summary>
+    /// NOTE : 벽에 부딪혔는지 체크 
+    /// TODO : 다른 방법으로도 체크 할 수 있을 것 같다. 현재는 캐릭터마나 RAY값이 다를수도 있을 수 있음
+    /// </summary>
+    private void IsHitWallCheck()
     {
-        RaycastHit2D hitwallinfo = Physics2D.Raycast(transform.position + (transform.right*1.3f) + (Vector3.down*-0.5f), transform.right, 0.2f);
+        if (!MoveOn)
+            return;
+
+        RaycastHit2D hitwallinfo = Physics2D.Raycast(frontDetectionChildOb.position, frontDetectionChildOb.right, 0.2f);
         
         if (hitwallinfo.collider == null)
             isHitWall = false;
@@ -105,8 +112,7 @@ public class Player : MonoBehaviour
                 isHitWall = false;
         }
     }
-
-
+    
     /// <summary>
     /// NOTE : 플레이어 캐릭터 이동 함수
     /// NOTE : 최대 속도 - 키 입력값 * maxSpeedValue (프레임당 키입력 값은 (0~1))
@@ -240,29 +246,35 @@ public class Player : MonoBehaviour
 
     /// <summary>
     /// 캐릭터 상태 설정
-    /// NOTE : STATE
+    /// NOTE : STATE 우선 순위
     /// 1. ATTACK 2. JUMP 3. FALL 4. MOVE
     /// </summary>
-    protected void SetCharacterState()
+    protected void SetAnimationState()
     {
         //캐릭터 상태 설정(애니매이션 상태 설정)
         if ((int)rb2D.velocity.y > 0)
-            CurrentPlayerState = ANIMATION_STATE.Jump;
+            CurrentPlayerAnimState = ANIMATION_STATE.Jump;
         else if ((int)rb2D.velocity.y < 0)
-            CurrentPlayerState = ANIMATION_STATE.Fall;
+            CurrentPlayerAnimState = ANIMATION_STATE.Fall;
         else
-            CurrentPlayerState = (int)(currentMoveSpeed * 10) == 0 ? ANIMATION_STATE.Idle : ANIMATION_STATE.Walk;
+            CurrentPlayerAnimState = (int)(currentMoveSpeed * 10) == 0 ? ANIMATION_STATE.Idle : ANIMATION_STATE.Walk;
 
         if (AttackOn && attackPossibleOn)
-            CurrentPlayerState = ANIMATION_STATE.Attack;
+            CurrentPlayerAnimState = ANIMATION_STATE.Attack;
+
+        anim.SetFloat("StateFloat", (int)CurrentPlayerAnimState);
     }
 
     /// <summary>
-    /// NOTE : 애니매이션 설정, enum 상태를 그대로 대입 하여 사용
+    /// NOTE : 몬스터와 부딪혔을경우 TAKE DAMAGE 구현에 좋을것같다.
     /// </summary>
-    protected void SetAnimation()
+    /// <param name="collision"></param>
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        anim.SetFloat("StateFloat", (int)CurrentPlayerState);
+        if (collision.transform.CompareTag("Enemy"))
+        {
+            Debug.Log("Take Damage");
+        }
     }
 }
 

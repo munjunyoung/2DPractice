@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FloorCheckSc : MonoBehaviour
+public class FloorDetectionSc : MonoBehaviour
 {
     [HideInInspector]
     public bool isGrounded;

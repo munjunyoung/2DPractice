@@ -233,7 +233,7 @@ public class BoardManagerByTile : MonoBehaviour
                         switch(_room.roomArray[i,j].tileType)
                         {
                             case TileType.Entrance:
-                                GameObject tmpob = Instantiate(entranceModel, new Vector3(i, j+1f, 0), Quaternion.identity);
+                                GameObject tmpob = Instantiate(entranceModel, new Vector3(i+0.5f, j+1f, 0), Quaternion.identity);
                                 tmpob.GetComponent<SpriteRenderer>().sprite = tileReferenceArray[_roomtype].tileType[(int)_room.roomArray[i, j].tileType].tile[_room.roomArray[i, j].tileNumber].sprite;
                                 tmpob.GetComponent<SpriteRenderer>().sortingLayerName = "Entrance";
                                 tmpob.transform.SetParent(tmpParent.transform);

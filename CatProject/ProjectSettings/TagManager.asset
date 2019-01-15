@@ -7,6 +7,7 @@ TagManager:
   - Ground
   - Floor
   - Entrance
+  - Enemy
   layers:
   - Default
   - TransparentFX
