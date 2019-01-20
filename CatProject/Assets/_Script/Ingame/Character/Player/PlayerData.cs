@@ -9,9 +9,16 @@ using UnityEngine;
 public class PlayerData : MonoBehaviour
 {
     #region EXCEL DATA
-    [Header("HEALTH OPTION")]
-    public int MaxHealth;
+    [Header("HEALTH OPTION"),Range(0,250)]
+    public int maxHP;
 
+    [Header("TP OPTION"), Range(0, 150)]
+    public int maxTP;
+    [Range(0f,1f)]
+    public float recoveryTPRate;
+    [Range(0f,10f)]
+    public int recoveryTPAmount;
+    
     /// <summary>
     /// Move :  플레이어 캐릭터 이동 함수 
     /// maxSpeedValue
@@ -60,7 +67,7 @@ public class PlayerData : MonoBehaviour
     [Header("ATTACK OPTION")]
     [SerializeField]
     public GameObject attackEffectModel;
-    [Range(1, 5)]
+    [Range(1f, 5f)]
     public float attackRange;
     [Range(1f, 10f)]
     public int attackDamage;
@@ -68,5 +75,15 @@ public class PlayerData : MonoBehaviour
     public float attackCoolTime;
     [Range(0f,5f)]
     public float attackAnimSpeed;
+    [Range(0, 100)]
+    public int attackTPAmount;
     #endregion
+
+    [Header("TAKE DAMAGE")]
+    [Range(0f,10f)]
+    public float invincibleTime;
+    [Range(0f, 1f)]
+    public float flashRate;
+    [Range(0f, 500f)]
+    public float knockBackPower;
 }

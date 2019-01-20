@@ -17,12 +17,12 @@ public class JumpButtonSc : PlayerActionButton
     protected override void ButtonClickDown()
     {
         base.ButtonClickDown();
-        playerSc.JumpOn = true;
+        playerSc.jumpButtonPress = true;
     }
 
     protected override void ButtonClickUp()
     {
         base.ButtonClickUp();
-        playerSc.JumpOn = false;
+        playerSc.jumpButtonPress = false;
     }
 }

@@ -6,26 +6,27 @@ public class MonsterData : MonoBehaviour
 {
     [Header("HEALTH OPTION")]
     public int MaxHealth;
-
-    /// </summary>
+    
     [Header("MOVE OPTION")]
     [Range(1f, 10f)]
     public float patrollSpeed;
     [Range(1f, 100f)]
     public float traceSpeed;
-
-    /// </summary>
+    
     [Header("JUMP OPTION")]
-    [Range(1, 30)]
+    [Range(1f, 30f)]
     public float jumpPower;
 
     [Header("ATTACK OPTION")]
+    [Range(1, 50)]
+    public int bodyAttacktDamage;
     [SerializeField]
     public GameObject attackEffectModel;
-    [Range(1, 5)]
+    [Range(1f, 5f)]
     public float attackRange;
-    [Range(1f, 10f)]
+    [Range(1, 50)]
     public int attackDamage;
+    //캐릭터와 몸이 겹쳤을때 데미지
     [Range(0f, 5f)]
     public float attackCoolTime;
     [Range(0f, 5f)]

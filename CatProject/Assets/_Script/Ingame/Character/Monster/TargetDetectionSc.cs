@@ -15,13 +15,13 @@ public class TargetDetectionSc : MonoBehaviour
     /// <param name="collision"></param>
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (parentOb.orderState.Equals(ORDER_STATE.Trace))
+        if (parentOb.OrderState.Equals(ORDER_STATE.Trace))
             return;
 
         if (collision.CompareTag("Player"))
         {
             Debug.Log("Player! TargetOn");
-            parentOb.orderState = ORDER_STATE.Trace;
+            parentOb.OrderState = ORDER_STATE.Trace;
             parentOb.targetOb = collision.transform;
         }
     }

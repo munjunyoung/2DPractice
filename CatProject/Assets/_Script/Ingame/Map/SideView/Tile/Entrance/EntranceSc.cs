@@ -17,7 +17,7 @@ public class EntranceSc : MonoBehaviour
         {
             if (collision.CompareTag("Player"))
             {
-                if (collision.GetComponent<Player>().AttackOn)
+                if (collision.GetComponent<Player>().attackButtonPress)
                 {
                     InGameManager.GetInstance().ChangeCurrentRoom(currentRoomNumber, connectedNextEntrance.currentRoomNumber);
                     collision.transform.position = connectedNextEntrance.transform.position;

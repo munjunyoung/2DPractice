@@ -92,6 +92,6 @@ public class JoyStickSc : PlayerActionButton, IDragHandler
     private void SetInputVector()
     {
         inputVector = modelObjectImage.GetComponent<RectTransform>().anchoredPosition / (bgImg.sizeDelta.x * 0.5f);
-        playerSc.currentMoveInputValue = inputVector.x;
+        playerSc.moveInputValue = inputVector.x;
     }
 }

@@ -17,12 +17,12 @@ public class NormalButtonSc : PlayerActionButton
     protected override void ButtonClickDown()
     {
         base.ButtonClickDown();
-        playerSc.AttackOn = true;
+        playerSc.attackButtonPress = true;
     }
 
     protected override void ButtonClickUp()
     {
         base.ButtonClickUp();
-        playerSc.AttackOn = false;
+        playerSc.attackButtonPress = false;
     }
 }

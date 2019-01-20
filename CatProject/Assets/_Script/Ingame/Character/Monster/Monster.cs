@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum ORDER_STATE {Idle, Patroll, Trace }
+public enum ORDER_STATE { Idle, Patroll, Trace, Attack }
 public class Monster : MonoBehaviour
 {
     /// <summary>
@@ -38,7 +38,7 @@ public class Monster : MonoBehaviour
     /// </summary>
     
     private ORDER_STATE InstanceOrderState;
-    public ORDER_STATE orderState
+    public ORDER_STATE OrderState
     {
         get { return InstanceOrderState; }
         set
@@ -57,17 +57,20 @@ public class Monster : MonoBehaviour
 
     }
 
-    [Header("MONSTER DATA SET"), SerializeField]
-    private MonsterData mDATA;
+    [Header("MONSTER DATA SET")]
+    public MonsterData mDATA;
 
     private Rigidbody2D rb2D;
     private Animator anim;
 
     [HideInInspector]
     public bool isAlive = false;
-    private bool isGrounded;
+    private bool isGrounded = false;
+
+    private bool attackOn = false;
 
     private float currentMoveSpeed;
+    //Raycast
     private LayerMask tileLayer;
 
     [HideInInspector]
@@ -77,17 +80,20 @@ public class Monster : MonoBehaviour
     { 
         rb2D = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
+
+        tileLayer = LayerMask.GetMask("Tile");
+        tileLayer = LayerMask.GetMask("BlockingLayer");
     }
 
     private void Start()
     {
-        tileLayer = LayerMask.GetMask("Tile");
-        orderState = Random.Range(0,100)>99? ORDER_STATE.Idle : ORDER_STATE.Patroll;   
+        OrderState = Random.Range(0,100)>0? ORDER_STATE.Idle : ORDER_STATE.Patroll;   
+        
     }
 
     private void FixedUpdate()
     {
-        switch (orderState)
+        switch (OrderState)
         {
             case ORDER_STATE.Idle:
                 currentMoveSpeed = 0;
@@ -96,9 +102,17 @@ public class Monster : MonoBehaviour
                 Patroll();
                 break;
             case ORDER_STATE.Trace:
-                Trace();
+                //Trace();
+                break;
+            case ORDER_STATE.Attack:
+                Attack();
+                break;
+            default:
+                Debug.Log("Enemy Default State !");
                 break;
         }
+
+        Debug.Log(rb2D.velocity);
     }
 
     private void LateUpdate()
@@ -115,13 +129,14 @@ public class Monster : MonoBehaviour
         if (!isGrounded)
             return;
 
+        //벽 Raycast
         RaycastHit2D wallCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -0.5f, 0), transform.right, 1.5f, tileLayer);
         if (wallCheckInfo.collider != null)
         {
             if (wallCheckInfo.collider.CompareTag("Ground") || wallCheckInfo.collider.CompareTag("Floor"))
-                transform.localEulerAngles = transform.localEulerAngles.y.Equals(0f) ? new Vector3(0, 180, 0) : Vector3.zero;
+                transform.localEulerAngles = transform.localEulerAngles.y.Equals(0f) ? new Vector3(0, 180f, 0) : Vector3.zero;
         }
-
+        //Null Raycast
         RaycastHit2D nullCheckInfo = Physics2D.Raycast(transform.position, transform.right + new Vector3(0,-1f,0), 1.5f, tileLayer);
         if(nullCheckInfo.collider==null)
             transform.localEulerAngles = transform.localEulerAngles.y.Equals(0f) ? new Vector3(0, 180, 0) : Vector3.zero;
@@ -134,6 +149,7 @@ public class Monster : MonoBehaviour
     /// </summary>
     private void Trace()
     {
+        //벽 Raycast
         RaycastHit2D wallCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -0.5f, 0), transform.right, 1.5f, tileLayer);
         if (wallCheckInfo.collider != null)
         {
@@ -144,7 +160,23 @@ public class Monster : MonoBehaviour
         transform.localEulerAngles = transform.position.x > targetOb.position.x ? new Vector3(0, 180, 0) : Vector3.zero;
         rb2D.velocity = new Vector2(transform.right.x * currentMoveSpeed, rb2D.velocity.y);
 
-        Debug.Log(wallCheckInfo.collider);
+        float dis = Vector2.Distance(transform.position, targetOb.position);
+        if (dis < 1f)
+            OrderState = ORDER_STATE.Attack;
+
+            
+    }
+
+    private void Attack()
+    {
+        //..Attack
+
+    }
+
+    IEnumerator AttackCoroutine()
+    {
+
+        yield return new WaitForSeconds(0.1f);
     }
 
     private void Jump()
@@ -175,6 +207,12 @@ public class Monster : MonoBehaviour
         anim.SetFloat("StateFloat", (int)CurrentAnimState);
     }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.collider.CompareTag("Player"))
+            rb2D.isKinematic = true;
+    }
+
     /// <summary>
     /// NOTE : FloorCheck
     /// </summary>
@@ -192,5 +230,8 @@ public class Monster : MonoBehaviour
     private void OnCollisionExit2D(Collision2D collision)
     {
         isGrounded = false;
+
+        if (collision.collider.CompareTag("Player"))
+            rb2D.isKinematic = false;
     }
 }
