@@ -282,6 +282,7 @@ public class BoardManagerByTile : MonoBehaviour
         tmpob.AddComponent<TilemapCollider2D>().usedByComposite = true;
         tmpob.AddComponent<CompositeCollider2D>();
         tmpob.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
+        tmpob.layer = 9;
         tmpob.tag = tagname;
         tmpob.transform.SetParent(parentob.transform);
         Tilemap tmptilemap = tmpob.GetComponent<Tilemap>();

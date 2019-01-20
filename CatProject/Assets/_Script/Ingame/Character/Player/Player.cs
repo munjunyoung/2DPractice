@@ -6,7 +6,7 @@ enum ANIMATION_STATE { Idle = 0, Walk, Jump, Fall, Attack, Die }
 /// <summary>
 /// NOTE : 플레이어캐릭터 공격 점프 이동
 /// </summary>
-[RequireComponent(typeof(Rigidbody2D),typeof(Animator))]
+[RequireComponent(typeof(Rigidbody2D), typeof(Animator))]
 public class Player : MonoBehaviour
 {
     /// <summary>
@@ -39,43 +39,48 @@ public class Player : MonoBehaviour
 
     [Header("PLAYER DATA SET"), SerializeField]
     private PlayerData pDATA;
-    
+
     private Rigidbody2D rb2D;
     private Animator anim;
-    
+
     [HideInInspector]
     public bool MoveOn, JumpOn, AttackOn, StopOn = false;
 
     private bool isRunningJumpCoroutine = false;
     private bool isRunningAttackCoroutine = false;
     private bool isRunningStopCoroutine = false;
-    
-    //TODO : floorDetectionob 는 추후에 몬스터와 합쳐지게되면 floordetectionsc에서 모두 처리하는걸로 변경예정
-    private FloorDetectionSc floorDetectionChildOb;
-    private Transform frontDetectionChildOb;
-    private bool IsGrounded{ get { return floorDetectionChildOb.isGrounded; } }
-    private bool isHitWall = false;
+
+    private int instanceHealth;
+    public int CurrentHealth
+    {
+        get { return instanceHealth; }
+        set
+        {
+            instanceHealth = value;
+            if (instanceHealth >= pDATA.MaxHealth)
+                instanceHealth = pDATA.MaxHealth;
+            else if (instanceHealth < 0)
+                instanceHealth = 0;
+
+        }
+    }
 
     //가속 감속 처리하기 위함
     [HideInInspector]
     public float currentMoveInputValue;
-    
     protected float prevMoveInputValue = 0;
     private float currentMoveSpeed;
 
+    private bool isGrounded = false;
+
     private bool attackPossibleOn = true;
-    
+
     protected void Awake()
     {
-        floorDetectionChildOb = transform.GetComponentInChildren<FloorDetectionSc>();
-        frontDetectionChildOb = transform.GetChild(1);
         rb2D = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
-    }
 
-    protected void Update()
-    {
-        IsHitWallCheck();
+        Debug.Log(Mathf.Sign(-1));
     }
 
     protected void FixedUpdate()
@@ -92,67 +97,37 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// NOTE : 벽에 부딪혔는지 체크 
-    /// TODO : 다른 방법으로도 체크 할 수 있을 것 같다. 현재는 캐릭터마나 RAY값이 다를수도 있을 수 있음
-    /// </summary>
-    private void IsHitWallCheck()
-    {
-        if (!MoveOn)
-            return;
-
-        RaycastHit2D hitwallinfo = Physics2D.Raycast(frontDetectionChildOb.position, frontDetectionChildOb.right, 0.2f);
-        
-        if (hitwallinfo.collider == null)
-            isHitWall = false;
-        else
-        {
-            if (hitwallinfo.collider.CompareTag("Ground") || hitwallinfo.collider.CompareTag("Floor"))
-                isHitWall = true;
-            else
-                isHitWall = false;
-        }
-    }
-    
-    /// <summary>
     /// NOTE : 플레이어 캐릭터 이동 함수
-    /// NOTE : 최대 속도 - 키 입력값 * maxSpeedValue (프레임당 키입력 값은 (0~1))
+    /// NOTE : 최대 속도 -> 키 입력값 * maxSpeedValue (프레임당 키입력 값은 (0~1))
     /// FIXME : rb2D.velocity.y 플레이어가 떨어지면서 땅에 안착했을때 0이 되지않고 -5.0938같은 값으로 처리될 때가 있어서 임시 방편으로 (int)형으로 캐스팅 수정
     /// </summary>
     protected void Move()
     {
         float maxspeed = currentMoveInputValue * pDATA.maxSpeedValue;
-        currentMoveSpeed += (currentMoveInputValue * pDATA.accelerationValue);
-        
-        //우측방향 가속
-        if (currentMoveInputValue > 0)
-        {
-            //이전 프레임 값과 비교하여 증감
-            if (prevMoveInputValue <= currentMoveInputValue && currentMoveSpeed >= maxspeed)
-                currentMoveSpeed = maxspeed;
-        }
-        //좌측방향 가속
-        else if (currentMoveInputValue < 0)
-        {
-            if (prevMoveInputValue >= currentMoveInputValue && currentMoveSpeed <= maxspeed)
-                currentMoveSpeed = maxspeed;
-        }
-        //감속
-        else
-        {
-            currentMoveSpeed = Mathf.Lerp(currentMoveSpeed, 0, Time.deltaTime * pDATA.decelerationValue);
-        }
-        if (isHitWall)
-            currentMoveSpeed = 0;
-
-        Vector3 dirvector = new Vector3(currentMoveSpeed, 0, 0);
-        transform.position += dirvector * Time.deltaTime;
-        prevMoveInputValue = currentMoveInputValue;
-        
+        currentMoveSpeed = AccelerationCalc(currentMoveSpeed, maxspeed);
+        rb2D.velocity = new Vector2(currentMoveSpeed, rb2D.velocity.y);
         //캐릭터의 방향 설정
         if (!currentMoveInputValue.Equals(0f))
             transform.localEulerAngles = currentMoveInputValue > 0 ? new Vector3(0, 0, 0) : new Vector3(0, 180, 0);
     }
 
+    /// <summary>
+    /// NOTE : 가속도 [ 현재속도 = 현재속도 + 가속값 * 방향 * Time]
+    /// NOTE : 가속할떄 가속력과 감속할때 감속력이 다르다
+    /// </summary>
+    /// <param name="currentspeed"></param>
+    /// <param name="maxspeed"></param>
+    /// <returns></returns>
+    protected float AccelerationCalc(float currentspeed, float maxspeed)
+    {
+        if (currentspeed.Equals(maxspeed))
+            return currentspeed;
+        
+        float dir = Mathf.Sign(maxspeed - currentspeed);
+        float accelrate = maxspeed.Equals(0) ? pDATA.decelerationValue : pDATA.accelerationValue;
+        currentspeed += dir * accelrate * Time.deltaTime;
+        return (dir.Equals(Mathf.Sign(maxspeed - currentspeed))) ? currentspeed : maxspeed;
+    }
     /// <summary>
     /// NOTE : 코루틴 함수가 현재 실행중인지 체크한 후 실행
     /// NOTE : IsGrounded는 캐릭터 오브젝트의 자식오브젝트의 트리거함수로 설정됨
@@ -161,11 +136,12 @@ public class Player : MonoBehaviour
     {
         if (JumpOn)
         {
-            if (IsGrounded)
+            if (isGrounded)
             {
-                //GroundCheck && isrunningjumpcoroutine의 경우에는 2번 점프 되는경우가 생겨서 묶음)
-                if (!isRunningJumpCoroutine)
-                    StartCoroutine(JumpCoroutine());
+                if (((int)rb2D.velocity.y).Equals(0))
+                    //GroundCheck && isrunningjumpcoroutine의 경우에는 2번 점프 되는경우가 생겨서 묶음)
+                    if (!isRunningJumpCoroutine)
+                        StartCoroutine(JumpCoroutine());
             }
         }
     }
@@ -266,15 +242,28 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// NOTE : 몬스터와 부딪혔을경우 TAKE DAMAGE 구현에 좋을것같다.
+    /// NOTE : FloorCheck
     /// </summary>
     /// <param name="collision"></param>
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnCollisionStay2D(Collision2D collision)
     {
-        if (collision.transform.CompareTag("Enemy"))
-        {
-            Debug.Log("Take Damage");
-        }
+        Vector2 contactnormalSum = Vector2.zero;
+        for (int i = 0; i < collision.contactCount; i++)
+            contactnormalSum += collision.contacts[i].normal;
+
+        if (contactnormalSum.y > 0)
+            isGrounded = true;
+    }
+
+    /// <summary>
+    /// Exit처리가 하나라도되면 IsGrounded 체크
+    /// TODO : EXIT되는 contact가 표시되지 않고 collider tag는 체크되나
+    /// floor태그에 isgrounded를 false하게되면 옆면에서 부딪힌 floor에서 떨어질떄도 체크가 해제됨
+    /// 또한 floor뿐만아니라 다른 오브젝트에서도 점프를 가능하게 해야하기때문에 현재 무언가 위에 존재하고있는지 체크가 가능하다.
+    /// </summary>
+    /// <param name="collision"></param>
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        isGrounded = false;
     }
 }
-

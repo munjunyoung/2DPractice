@@ -65,32 +65,28 @@ public class Monster : MonoBehaviour
 
     [HideInInspector]
     public bool isAlive = false;
+    private bool isGrounded;
 
     private float currentMoveSpeed;
-
-    private FloorDetectionSc floorDetectionChildOb;
-    private Transform frontDetectionChildOb;
-    private bool IsGrounded { get { return floorDetectionChildOb.isGrounded; } }
+    private LayerMask tileLayer;
 
     [HideInInspector]
     public Transform targetOb = null;
 
     private void Awake()
-    {
-        floorDetectionChildOb = transform.GetComponentInChildren<FloorDetectionSc>();
-        frontDetectionChildOb = transform.GetChild(1);
+    { 
         rb2D = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
     }
 
     private void Start()
     {
-        orderState = Random.Range(0,100)>70? ORDER_STATE.Idle : ORDER_STATE.Patroll;   
+        tileLayer = LayerMask.GetMask("Tile");
+        orderState = Random.Range(0,100)>99? ORDER_STATE.Idle : ORDER_STATE.Patroll;   
     }
 
     private void FixedUpdate()
     {
-        //Jump();
         switch (orderState)
         {
             case ORDER_STATE.Idle:
@@ -112,49 +108,51 @@ public class Monster : MonoBehaviour
     
     /// <summary>
     /// NOTE : 구조물에서 길이 없거나 벽에 부딪혔을경우 방향 순회 (속도는 maxspeed의 절반)
-    /// TODO : 벽에 부딪혔을 경우네는 점프를 하도록 구현 여지
+    /// TODO : 벽에 부딪혔을 경우에는 점프를 하도록 구현 여지
     /// </summary>
     private void Patroll()
     {
-        if (!IsGrounded)
+        if (!isGrounded)
             return;
-        transform.Translate(Vector2.right * currentMoveSpeed * Time.deltaTime);
 
-        RaycastHit2D groundInfo = Physics2D.Raycast(frontDetectionChildOb.position, new Vector2(1,-1) , 0.5f);
-        if (groundInfo.collider == null)
-            transform.localEulerAngles = transform.localEulerAngles.y.Equals(0f) ? new Vector3(0, 180, 0) : Vector3.zero;
-        else
+        RaycastHit2D wallCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -0.5f, 0), transform.right, 1.5f, tileLayer);
+        if (wallCheckInfo.collider != null)
         {
-            if(groundInfo.collider.CompareTag("Ground"))
+            if (wallCheckInfo.collider.CompareTag("Ground") || wallCheckInfo.collider.CompareTag("Floor"))
                 transform.localEulerAngles = transform.localEulerAngles.y.Equals(0f) ? new Vector3(0, 180, 0) : Vector3.zero;
         }
-        Debug.Log(groundInfo.collider);
+
+        RaycastHit2D nullCheckInfo = Physics2D.Raycast(transform.position, transform.right + new Vector3(0,-1f,0), 1.5f, tileLayer);
+        if(nullCheckInfo.collider==null)
+            transform.localEulerAngles = transform.localEulerAngles.y.Equals(0f) ? new Vector3(0, 180, 0) : Vector3.zero;
+
+        rb2D.velocity = new Vector2(transform.right.x * currentMoveSpeed, rb2D.velocity.y);
     }
 
     /// <summary>
-    /// NOTE : 추적
+    /// NOTE : 추적 벽에 부딪힐 경우 점프
     /// </summary>
     private void Trace()
     {
-        RaycastHit2D groundInfo = Physics2D.Raycast(frontDetectionChildOb.position, new Vector2(1, -1), 0.5f);
-
-        if (groundInfo.collider!=null)
+        RaycastHit2D wallCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -0.5f, 0), transform.right, 1.5f, tileLayer);
+        if (wallCheckInfo.collider != null)
         {
-            if (groundInfo.collider.CompareTag("Ground"))
+            if (wallCheckInfo.collider.CompareTag("Ground") || wallCheckInfo.collider.CompareTag("Floor"))
                 Jump();
         }
-        Debug.Log(groundInfo.collider);
 
         transform.localEulerAngles = transform.position.x > targetOb.position.x ? new Vector3(0, 180, 0) : Vector3.zero;
-        transform.Translate(Vector2.right * currentMoveSpeed * Time.deltaTime);
+        rb2D.velocity = new Vector2(transform.right.x * currentMoveSpeed, rb2D.velocity.y);
+
+        Debug.Log(wallCheckInfo.collider);
     }
 
     private void Jump()
     {
-        if (IsGrounded)
+        if (isGrounded)
         {
-            if(rb2D.velocity.y.Equals(0))
-            rb2D.AddForce(Vector2.up * mDATA.jumpPower, ForceMode2D.Impulse);
+            if (((int)rb2D.velocity.y).Equals(0))
+                rb2D.AddForce(Vector2.up * mDATA.jumpPower, ForceMode2D.Impulse);
         }
     }
 
@@ -177,7 +175,22 @@ public class Monster : MonoBehaviour
         anim.SetFloat("StateFloat", (int)CurrentAnimState);
     }
 
+    /// <summary>
+    /// NOTE : FloorCheck
+    /// </summary>
+    /// <param name="collision"></param>
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        Vector2 contactnormalSum = Vector2.zero;
+        for (int i = 0; i < collision.contactCount; i++)
+            contactnormalSum += collision.contacts[i].normal;
+
+        if (contactnormalSum.y > 0)
+            isGrounded = true;
+    }
     
-
-
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        isGrounded = false;
+    }
 }

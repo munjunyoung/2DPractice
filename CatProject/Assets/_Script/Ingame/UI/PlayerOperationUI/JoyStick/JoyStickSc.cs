@@ -85,19 +85,7 @@ public class JoyStickSc : PlayerActionButton, IDragHandler
         }
          SetInputVector();
     }
-
-    protected override void ButtonClickDown()
-    {
-        base.ButtonClickDown();
-        playerSc.MoveOn = true;
-    }
-
-    protected override void ButtonClickUp()
-    {
-        base.ButtonClickUp();
-        playerSc.MoveOn = false;
-    }
-
+    
     /// <summary>
     /// Button On일경우 InputVector 값 설정
     /// </summary>

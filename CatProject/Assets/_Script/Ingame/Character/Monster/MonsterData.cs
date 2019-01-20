@@ -11,7 +11,7 @@ public class MonsterData : MonoBehaviour
     [Header("MOVE OPTION")]
     [Range(1f, 10f)]
     public float patrollSpeed;
-    [Range(5f, 100f)]
+    [Range(1f, 100f)]
     public float traceSpeed;
 
     /// </summary>

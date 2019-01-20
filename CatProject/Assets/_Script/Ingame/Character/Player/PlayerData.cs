@@ -24,7 +24,7 @@ public class PlayerData : MonoBehaviour
     [Header("MOVE OPTION")]
     [Range(10f, 100f)]
     public float maxSpeedValue;
-    [Range(0.1f, 3f)]
+    [Range(5, 50f)]
     public float accelerationValue, decelerationValue;
 
     /// <summary>

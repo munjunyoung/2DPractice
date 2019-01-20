@@ -15,6 +15,9 @@ public class TargetDetectionSc : MonoBehaviour
     /// <param name="collision"></param>
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (parentOb.orderState.Equals(ORDER_STATE.Trace))
+            return;
+
         if (collision.CompareTag("Player"))
         {
             Debug.Log("Player! TargetOn");
