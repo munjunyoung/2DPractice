@@ -24,9 +24,9 @@ public class PlayerData : MonoBehaviour
     /// maxSpeedValue
     /// NOTE : 최대 속도 값 설정 (키 입력값 * maxSpeedValue (프레임당 키입력 값은 (0~1)))
     /// accelerationValue
-    /// NOTE : 최대 속도 가속 값 (실제 속도 += 키입력값 * accelerationValue)
+    /// NOTE : 최대 속도 가속 값 
     /// decelerationValue
-    /// NOTE : 정지 상태 감속 값 (Lerp함수 Time.deltaTime * decelerationValue)
+    /// NOTE : 정지 상태 감속 값 
     /// </summary>
     [Header("MOVE OPTION")]
     [Range(10f, 100f)]

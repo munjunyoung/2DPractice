@@ -112,6 +112,8 @@ public class Player : MonoBehaviour
     {
         if (stopOn)
             return;
+        if (isInvincible)
+            return;
 
         Move();
         Jump();
@@ -122,7 +124,6 @@ public class Player : MonoBehaviour
 
     private void LateUpdate()
     {
-        Debug.Log(rb2D.velocity);
         SetAnimationState();
     }
 
@@ -358,10 +359,10 @@ public class Player : MonoBehaviour
         SetHPUI();
 
         //Knockback Action
-        float xdir = Mathf.Sign(transform.position.x - target.transform.position.x);
+        rb2D.velocity = Vector2.zero;
+        float xdir = Mathf.Sign(transform.position.x - target.position.x);
         Vector2 dir = new Vector2(xdir, 1f);
-        rb2D.velocity = new Vector2(xdir * 30f, 0f);
-        //rb2D.AddForce(dir * pDATA.knockBackPower, ForceMode2D.Impulse);
+        rb2D.AddForce(dir * pDATA.knockBackPower, ForceMode2D.Impulse);
         //무적상태 시작
         StartCoroutine(InvincibilityCoroutine());
     }
