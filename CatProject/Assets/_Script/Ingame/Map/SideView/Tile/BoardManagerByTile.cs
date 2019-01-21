@@ -521,3 +521,24 @@ public class EntranceConnectRoom
         entrance = null;
     }
 }
+
+/// <summary>
+/// NOTE : Map class info
+/// </summary>
+public class TileInfo
+{
+    public TileType tileType;
+    public int tileNumber;
+
+    public TileInfo(TileType _tiletype, int _tilenumber)
+    {
+        tileType = _tiletype;
+        tileNumber = _tilenumber;
+    }
+
+    public TileInfo()
+    {
+        tileType = 0;
+        tileNumber = 0;
+    }
+}

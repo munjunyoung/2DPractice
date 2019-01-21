@@ -52,12 +52,6 @@ public class Player : MonoBehaviour
 
     [HideInInspector]
     public bool jumpButtonPress, attackButtonPress = false;
-    private bool stopOn, attackOn;
-
-    private bool isRunningJumpCoroutine = false;
-    private bool isRunningAttackCoroutine = false;
-    private bool isRunningStopCoroutine = false;
-    private bool isRunningRecoverTPCoroutine = false;
     
     private bool isAlive = true;
     private bool isInvincible = false;
@@ -90,14 +84,21 @@ public class Player : MonoBehaviour
                 instanceTP = 0;
         }
     }
+    private bool isRunningRecoverTPCoroutine = false;
     //Move
     [HideInInspector]
     public float moveInputValue;
     private float currentMoveSpeed;
     //Jump
     private bool isGrounded;
+    private bool isRunningJumpCoroutine = false;
     //Attack
     private bool attackCooltimeState = false;
+    private bool attackOn;
+    private bool isRunningAttackCoroutine = false;
+    //Stop
+    private bool stopOn;
+    private bool isRunningStopCoroutine = false;
 
     private void Awake()
     {
@@ -198,6 +199,9 @@ public class Player : MonoBehaviour
     #endregion
 
     #region ATTACK 
+    /// <summary>
+    /// NOTE : 버튼 누름 확인 -> COOLTIME 상태확인 -> TP상태 확인후 ATTACK ON 
+    /// </summary>
     private void Attack()
     {
         //버튼 입력
@@ -433,15 +437,7 @@ public class Player : MonoBehaviour
     }
 
     #region COLLISION
-    /// <summary>
-    /// EnterDamage
-    /// </summary>
-    /// <param name="collision"></param>
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-
-    }
-
+    
     /// <summary>
     /// NOTE : FloorCheck
     /// </summary>

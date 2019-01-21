@@ -82,14 +82,16 @@ AnimationClip:
   - time: 0.25
     functionName: AttackEffectOff
     data: 
-    objectReferenceParameter: {fileID: 0}
+    objectReferenceParameter: {fileID: 11500000, guid: 13c5409ebfb8f1742b80e96613b66510,
+      type: 3}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
   - time: 0.33333334
     functionName: AttackCoroutine
     data: 
-    objectReferenceParameter: {fileID: 0}
+    objectReferenceParameter: {fileID: 11500000, guid: 13c5409ebfb8f1742b80e96613b66510,
+      type: 3}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
