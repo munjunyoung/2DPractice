@@ -53,7 +53,6 @@ public class BoardManagerByTile : MonoBehaviour
         DrawRoom();
         //출입문 진입시 출현할 포지션 설정
         SetConnectedEntrance();
-        
     }
     
     /// <summary>

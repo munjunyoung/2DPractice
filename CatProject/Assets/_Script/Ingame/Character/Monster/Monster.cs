@@ -36,7 +36,6 @@ public class Monster : MonoBehaviour
     /// <summary>
     /// NOTE : PATROLL SPEED, TRACESPEED 속성 설정
     /// </summary>
-    
     private ORDER_STATE InstanceOrderState;
     public ORDER_STATE OrderState
     {
@@ -62,8 +61,7 @@ public class Monster : MonoBehaviour
 
     private Rigidbody2D rb2D;
     private Animator anim;
-    //Raycast
-    
+    //Raycast    
     public int raycastLayerMask;
     [HideInInspector]
     public Transform targetOb = null;
@@ -76,7 +74,7 @@ public class Monster : MonoBehaviour
     private float currentMoveSpeed;
     //Attack
     private bool isRunningAttackCoroutine = false;
-    private bool attackCooltimeState = true;
+    private bool attackCooltimeState = false;
     private bool attackOn = false;
     private bool isFrontTarget = false;
 
@@ -90,7 +88,7 @@ public class Monster : MonoBehaviour
 
     private void Start()
     {
-        OrderState = Random.Range(0,100)>0? ORDER_STATE.Idle : ORDER_STATE.Patroll;   
+        OrderState = Random.Range(0,100)>99? ORDER_STATE.Idle : ORDER_STATE.Patroll;   
     }
 
     private void FixedUpdate()
@@ -186,8 +184,9 @@ public class Monster : MonoBehaviour
     {
         if (!((int)rb2D.velocity.x).Equals(0))
             rb2D.velocity = new Vector2(0, rb2D.velocity.y);
-
+        if(!attackCooltimeState)
             attackOn = true;
+
         RaycastHit2D targetCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -0.5f, 0), transform.right, 1.5f, raycastLayerMask);
 
         if (targetCheckInfo.collider != null)

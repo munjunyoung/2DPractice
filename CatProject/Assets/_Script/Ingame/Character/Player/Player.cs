@@ -37,7 +37,7 @@ public class Player : MonoBehaviour
             }
         }
     }
-
+    
     [Header("PLAYER DATA SET"), SerializeField]
     private PlayerData pDATA;
 
@@ -273,6 +273,7 @@ public class Player : MonoBehaviour
         jumpButtonPress = false;
         attackButtonPress = false;
         currentMoveSpeed = 0f;
+        attackOn = false;
         rb2D.velocity = new Vector2(0f, 0f);
         StartCoroutine(StopCoroutine(stoptime));
     }

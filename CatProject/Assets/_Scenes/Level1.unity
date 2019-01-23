@@ -1717,6 +1717,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Fox
       objectReference: {fileID: 0}
+    - target: {fileID: 894300984345410732, guid: 2c718b077e3d8d245b46fdf114446aa3,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2710669145177793082, guid: 2c718b077e3d8d245b46fdf114446aa3,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1775,7 +1780,7 @@ PrefabInstance:
     - target: {fileID: 2710669145177793082, guid: 2c718b077e3d8d245b46fdf114446aa3,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 10
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 2710669145177793082, guid: 2c718b077e3d8d245b46fdf114446aa3,
         type: 3}
@@ -1825,6 +1830,11 @@ PrefabInstance:
     - target: {fileID: 894300984345410769, guid: 2c718b077e3d8d245b46fdf114446aa3,
         type: 3}
       propertyPath: attackAnimSpeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 894300984345410769, guid: 2c718b077e3d8d245b46fdf114446aa3,
+        type: 3}
+      propertyPath: attackCoolTime
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
