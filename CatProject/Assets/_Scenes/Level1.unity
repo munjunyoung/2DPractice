@@ -1214,6 +1214,16 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 894300984345410769, guid: 2c718b077e3d8d245b46fdf114446aa3,
+        type: 3}
+      propertyPath: knockBackPower
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 894300984345410769, guid: 2c718b077e3d8d245b46fdf114446aa3,
+        type: 3}
+      propertyPath: knockbackTime
+      value: 0.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2c718b077e3d8d245b46fdf114446aa3, type: 3}
 --- !u!1 &1285331770
@@ -1294,6 +1304,10 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Cat1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2105089177, guid: db7fd549b468c8942aeede02e5084d14, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8713665101977329990, guid: db7fd549b468c8942aeede02e5084d14,
         type: 3}
@@ -1403,7 +1417,7 @@ PrefabInstance:
     - target: {fileID: 7871937579615917146, guid: db7fd549b468c8942aeede02e5084d14,
         type: 3}
       propertyPath: attackDamage
-      value: 50
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 5844019777274396625, guid: db7fd549b468c8942aeede02e5084d14,
         type: 3}
@@ -1414,6 +1428,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_SortingLayer
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8142451551186304021, guid: db7fd549b468c8942aeede02e5084d14,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8142451551186304021, guid: db7fd549b468c8942aeede02e5084d14,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 1.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: db7fd549b468c8942aeede02e5084d14, type: 3}

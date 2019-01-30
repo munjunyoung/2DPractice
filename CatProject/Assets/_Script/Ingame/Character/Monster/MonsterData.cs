@@ -31,4 +31,10 @@ public class MonsterData : MonoBehaviour
     public float attackCoolTime;
     [Range(0f, 5f)]
     public float attackAnimSpeed;
+
+    [Header("KNOCKBACK OPTION")]
+    [Range(1, 20)]
+    public float knockBackPower;
+    [Range(0f, 10f)]
+    public float knockbackTime;
 }

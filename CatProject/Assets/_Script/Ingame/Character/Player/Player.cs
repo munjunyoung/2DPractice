@@ -334,7 +334,7 @@ public class Player : MonoBehaviour
     /// NOTE : 데미지
     /// </summary>
     /// <param name="damage"></param>
-    private void TakeDamage(int damage, Transform target)
+    private void TakeDamage(int damage, Transform targetpos)
     {
         if (isInvincible)
             return;
@@ -343,8 +343,9 @@ public class Player : MonoBehaviour
 
         //Knockback Action
         rb2D.velocity = Vector2.zero;
-        float xdir = Mathf.Sign(transform.position.x - target.position.x);
-        Vector2 dir = new Vector2(xdir, 1f);
+        float xdir = Mathf.Sign(transform.position.x - targetpos.position.x);
+        float ydir = Mathf.Sign(transform.position.y - targetpos.position.y).Equals(1) ? 1f : -1f;
+        Vector2 dir = new Vector2(xdir, ydir);
         rb2D.AddForce(dir * pDATA.knockBackPower, ForceMode2D.Impulse);
         //무적상태 시작
         StartCoroutine(InvincibilityCoroutine());
@@ -412,8 +413,9 @@ public class Player : MonoBehaviour
         //적과 인접했을때
         if (collision.collider.CompareTag("Enemy"))
         {
-            if(collision.collider.GetComponent<Monster>().isAlive)
-            TakeDamage(collision.collider.GetComponent<Monster>().mDATA.bodyAttacktDamage, collision.transform);
+            if (collision.collider.GetComponent<Monster>().isAlive)
+                TakeDamage(collision.collider.GetComponent<Monster>().mDATA.bodyAttacktDamage, collision.transform);
+             
         }
     }
 

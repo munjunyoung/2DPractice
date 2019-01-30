@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum ORDER_STATE { Idle, Patroll, Trace, Attack, KnockBack }
+public enum ORDER_STATE { Idle, Patroll, Trace, Attack }
 public enum MONSTER_TYPE { FOX };
 public class Monster : MonoBehaviour
 {
@@ -86,6 +86,7 @@ public class Monster : MonoBehaviour
     [HideInInspector]
     public bool isAlive;
     private bool isGrounded = false;
+    private bool isKnockbackState = false;
 
     //Move
     private float currentMoveSpeed;
@@ -123,6 +124,9 @@ public class Monster : MonoBehaviour
     private void FixedUpdate()
     {
         if (!isAlive)
+            return;
+        
+        if (isKnockbackState)
             return;
 
         switch (OrderState)
@@ -189,16 +193,12 @@ public class Monster : MonoBehaviour
             if (frontCheckInfo.collider.CompareTag("Ground") || frontCheckInfo.collider.CompareTag("Floor"))
                 Jump();
             else if (frontCheckInfo.collider.CompareTag("Player"))
-            {
                 OrderState = ORDER_STATE.Attack;
-                return;
-            }
         }
 
         sR.flipX = transform.position.x > targetOb.position.x ? true : false;
-
-        float dis = transform.position.x - targetOb.position.x;
-        rb2D.velocity = Mathf.Abs(dis) >= 2f ? new Vector2(dir.x * currentMoveSpeed, rb2D.velocity.y) : new Vector2(0, rb2D.velocity.y);
+        
+        rb2D.velocity = new Vector2(dir.x * currentMoveSpeed, rb2D.velocity.y);
     }
 
     /// <summary>
@@ -254,7 +254,7 @@ public class Monster : MonoBehaviour
     /// NOTE : 데미지를 입었을때 처리
     /// </summary>
     /// <param name="damage"></param>
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, Transform targetpos)
     {
         if (!isAlive)
             return;
@@ -263,8 +263,33 @@ public class Monster : MonoBehaviour
         anim.SetTrigger("TakeDamage");
         hpSliderUI.SetHPValue(CurrentHP);
 
+        KnockBack(targetpos);
         if (CurrentHP <= 0)
             Die();
+    }
+    
+    /// <summary>
+    /// NOTE : 넉백, 플레이어와 부딪혔을 때나 공격 당했을 때
+    /// </summary>
+    /// <param name="targetpos"></param>
+    private void KnockBack(Transform targetpos)
+    {
+        isKnockbackState = true;
+
+        //KncokBack Action
+        rb2D.velocity = Vector2.zero;
+        float xdir = Mathf.Sign(transform.position.x - targetpos.position.x);
+        float ydir = Mathf.Sign(transform.position.y - targetpos.position.y).Equals(1)? 1f : -1f;
+        Vector2 dir = new Vector2(xdir, ydir);
+        rb2D.AddForce(dir * mDATA.knockBackPower, ForceMode2D.Impulse);
+
+        StartCoroutine(KnockbackCoroutine());
+    }
+
+    IEnumerator KnockbackCoroutine()
+    {
+        yield return new WaitForSeconds(mDATA.knockbackTime);
+        isKnockbackState = false;
     }
 
     /// <summary>
@@ -274,8 +299,7 @@ public class Monster : MonoBehaviour
     {
         isAlive = false;
         anim.SetTrigger("Die");
-        rb2D.simulated = false;
-        //anim.GetComponent<BoxCollider2D>().isTrigger = true;
+        anim.GetComponent<BoxCollider2D>().isTrigger = true;
         StartCoroutine(ActiveOff());
     }
     /// <summary>
@@ -320,6 +344,16 @@ public class Monster : MonoBehaviour
 
         if (contactnormalSum.y > 0)
             isGrounded = true;
+
+        if(collision.collider.CompareTag("Player"))
+        {
+            if (isAlive)
+                KnockBack(collision.transform);
+        }
+
+        if(collision.collider.CompareTag("Enemy"))
+        {
+        }
     }
     
     private void OnCollisionExit2D(Collision2D collision)
