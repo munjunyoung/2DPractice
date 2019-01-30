@@ -5,7 +5,7 @@ using UnityEngine;
 public class MonsterData : MonoBehaviour
 {
     [Header("HEALTH OPTION")]
-    public int MaxHealth;
+    public int maxHP;
     
     [Header("MOVE OPTION")]
     [Range(1f, 10f)]

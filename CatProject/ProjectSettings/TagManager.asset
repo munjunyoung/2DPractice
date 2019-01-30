@@ -57,9 +57,15 @@ TagManager:
   - name: Entrance
     uniqueID: 1010700307
     locked: 0
-  - name: Unit
+  - name: Monster
     uniqueID: 3126272891
+    locked: 0
+  - name: Player
+    uniqueID: 3633898023
     locked: 0
   - name: Effect
     uniqueID: 2842450915
+    locked: 0
+  - name: UI
+    uniqueID: 276492541
     locked: 0

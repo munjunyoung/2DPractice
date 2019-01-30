@@ -69,7 +69,7 @@ public class PlayerData : MonoBehaviour
     public GameObject attackEffectModel;
     [Range(1f, 5f)]
     public float attackRange;
-    [Range(1f, 10f)]
+    [Range(1f, 100f)]
     public int attackDamage;
     [Range(0f, 5f)]
     public float attackCoolTime;

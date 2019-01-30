@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum ORDER_STATE { Idle, Patroll, Trace, Attack }
+public enum ORDER_STATE { Idle, Patroll, Trace, Attack, KnockBack }
+public enum MONSTER_TYPE { FOX };
 public class Monster : MonoBehaviour
 {
     /// <summary>
@@ -56,20 +57,36 @@ public class Monster : MonoBehaviour
 
     }
 
+    public MONSTER_TYPE mType;
     [Header("MONSTER DATA SET")]
     public MonsterData mDATA;
 
     private Rigidbody2D rb2D;
     private Animator anim;
+    private SpriteRenderer sR;
     //Raycast    
-    public int raycastLayerMask;
+    private int raycastLayerMask;
     [HideInInspector]
     public Transform targetOb = null;
+    //HP
+    private int instanceHP;
+    public int CurrentHP
+    {
+        get { return instanceHP; }
+        set
+        {
+            instanceHP = value;
+            if (instanceHP >= mDATA.maxHP)
+                instanceHP = mDATA.maxHP;
+            else if (instanceHP < 0)
+                instanceHP = 0;
+        }
+    }
 
     [HideInInspector]
-    public bool isAlive = false;
+    public bool isAlive;
     private bool isGrounded = false;
-  
+
     //Move
     private float currentMoveSpeed;
     //Attack
@@ -78,21 +95,36 @@ public class Monster : MonoBehaviour
     private bool attackOn = false;
     private bool isFrontTarget = false;
 
+    //HP UI
+    [SerializeField]
+    private EnemyHPSliderSc hpSliderUI;
+
     private void Awake()
-    { 
+    {
+        isAlive = true;
+
         rb2D = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
-        //8 - tile, 9 - player
+        sR = GetComponent<SpriteRenderer>();
+
+        //Set Layer 8 - tile, 9 - player
         raycastLayerMask = (1 << LayerMask.NameToLayer("Player")) | (1 << LayerMask.NameToLayer("Tile"));
     }
 
     private void Start()
     {
-        OrderState = Random.Range(0,100)>99? ORDER_STATE.Idle : ORDER_STATE.Patroll;   
+        OrderState = Random.Range(0, 100) > 99 ? ORDER_STATE.Idle : ORDER_STATE.Patroll;
+        //Set HP
+        CurrentHP = mDATA.maxHP;
+        hpSliderUI = transform.GetComponentInChildren<EnemyHPSliderSc>();
+        hpSliderUI.SetSliderStartValue(mDATA.maxHP, CurrentHP);
     }
 
     private void FixedUpdate()
     {
+        if (!isAlive)
+            return;
+
         switch (OrderState)
         {
             case ORDER_STATE.Idle:
@@ -118,7 +150,6 @@ public class Monster : MonoBehaviour
         SetAnimationState();
     }
 
-
     /// <summary>
     /// NOTE : 구조물에서 길이 없거나 벽에 부딪혔을경우 방향 순회 (속도는 maxspeed의 절반)
     /// TODO : 벽에 부딪혔을 경우에는 점프를 하도록 구현 여지
@@ -127,20 +158,21 @@ public class Monster : MonoBehaviour
     {
         if (!isGrounded)
             return;
-
+        //flip을 통한 dir 설정
+        Vector2 dir = sR.flipX.Equals(true) ? -Vector2.right : Vector2.right;
         //벽 Raycast
-        RaycastHit2D wallCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -0.5f, 0), transform.right, 1.5f, raycastLayerMask);
+        RaycastHit2D wallCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -0.5f, 0), dir, 1.5f, raycastLayerMask);
         if (wallCheckInfo.collider != null)
         {
             if (wallCheckInfo.collider.CompareTag("Ground") || wallCheckInfo.collider.CompareTag("Floor"))
-                transform.localEulerAngles = transform.localEulerAngles.y.Equals(0f) ? new Vector3(0, 180f, 0) : Vector3.zero;
+                sR.flipX = sR.flipX.Equals(true) ? false : true;
         }
-        //Null Raycast
-        RaycastHit2D nullCheckInfo = Physics2D.Raycast(transform.position, transform.right + new Vector3(0,-1f,0), 1.5f, raycastLayerMask);
-        if(nullCheckInfo.collider==null)
-            transform.localEulerAngles = transform.localEulerAngles.y.Equals(0f) ? new Vector3(0, 180, 0) : Vector3.zero;
+        //길 끊김 Null Raycast
+        RaycastHit2D nullCheckInfo = Physics2D.Raycast(transform.position, dir + new Vector2(0, -1f), 1.5f, raycastLayerMask);
+        if (nullCheckInfo.collider == null)
+            sR.flipX = sR.flipX.Equals(true) ? false : true;
 
-        rb2D.velocity = new Vector2(transform.right.x * currentMoveSpeed, rb2D.velocity.y);
+        rb2D.velocity = new Vector2(dir.x * currentMoveSpeed, rb2D.velocity.y);
     }
 
     /// <summary>
@@ -148,8 +180,10 @@ public class Monster : MonoBehaviour
     /// </summary>
     private void Trace()
     {
+        //flip을 통한 dir 설정
+        Vector2 dir = sR.flipX.Equals(true) ? -Vector2.right : Vector2.right;
         //벽 Raycast
-        RaycastHit2D frontCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -0.5f, 0), transform.right, 1.5f, raycastLayerMask);
+        RaycastHit2D frontCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -0.5f, 0), dir, 1.5f, raycastLayerMask);
         if (frontCheckInfo.collider != null)
         {
             if (frontCheckInfo.collider.CompareTag("Ground") || frontCheckInfo.collider.CompareTag("Floor"))
@@ -161,8 +195,10 @@ public class Monster : MonoBehaviour
             }
         }
 
-        transform.localEulerAngles = transform.position.x > targetOb.position.x ? new Vector3(0, 180, 0) : Vector3.zero;
-        rb2D.velocity = new Vector2(transform.right.x * currentMoveSpeed, rb2D.velocity.y);
+        sR.flipX = transform.position.x > targetOb.position.x ? true : false;
+
+        float dis = transform.position.x - targetOb.position.x;
+        rb2D.velocity = Mathf.Abs(dis) >= 2f ? new Vector2(dir.x * currentMoveSpeed, rb2D.velocity.y) : new Vector2(0, rb2D.velocity.y);
     }
 
     /// <summary>
@@ -184,7 +220,7 @@ public class Monster : MonoBehaviour
     {
         if (!((int)rb2D.velocity.x).Equals(0))
             rb2D.velocity = new Vector2(0, rb2D.velocity.y);
-        if(!attackCooltimeState)
+        if (!attackCooltimeState)
             attackOn = true;
 
         RaycastHit2D targetCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -0.5f, 0), transform.right, 1.5f, raycastLayerMask);
@@ -214,12 +250,43 @@ public class Monster : MonoBehaviour
         attackCooltimeState = false;
         isRunningAttackCoroutine = false;
     }
-
-    public void TakeDamage()
+    /// <summary>
+    /// NOTE : 데미지를 입었을때 처리
+    /// </summary>
+    /// <param name="damage"></param>
+    public void TakeDamage(int damage)
     {
+        if (!isAlive)
+            return;
 
+        CurrentHP -= damage;
+        anim.SetTrigger("TakeDamage");
+        hpSliderUI.SetHPValue(CurrentHP);
+
+        if (CurrentHP <= 0)
+            Die();
     }
 
+    /// <summary>
+    /// NOTE : 애니매이션 Die실행
+    /// </summary>
+    private void Die()
+    {
+        isAlive = false;
+        anim.SetTrigger("Die");
+        rb2D.simulated = false;
+        //anim.GetComponent<BoxCollider2D>().isTrigger = true;
+        StartCoroutine(ActiveOff());
+    }
+    /// <summary>
+    /// 해당 시간 후에 삭제
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator ActiveOff()
+    {
+        yield return new WaitForSeconds(2f);
+        gameObject.SetActive(false);
+    }
     /// <summary>
     /// 캐릭터 상태 설정
     /// NOTE : STATE 우선 순위
@@ -241,12 +308,6 @@ public class Monster : MonoBehaviour
         anim.SetFloat("StateFloat", (int)CurrentAnimState);
     }
     
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.collider.CompareTag("Player"))
-            rb2D.isKinematic = true;
-    }
-
     /// <summary>
     /// NOTE : FloorCheck
     /// </summary>
@@ -264,8 +325,5 @@ public class Monster : MonoBehaviour
     private void OnCollisionExit2D(Collision2D collision)
     {
         isGrounded = false;
-
-        if (collision.collider.CompareTag("Player"))
-            rb2D.isKinematic = false;
     }
 }

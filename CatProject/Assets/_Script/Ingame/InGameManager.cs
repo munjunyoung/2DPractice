@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(BoardManagerByTile))]
+[RequireComponent(typeof(BoardManager))]
 public class InGameManager : MonoBehaviour
 {
-    private static InGameManager instance;
+    public static InGameManager instance;
 
-    [Header("BoardManager for CreatedRoomList"), SerializeField]
-    private BoardManagerByTile boardmanagerSc;
+    [Header("BoardManager for CreatedRoomList")]
+    public BoardManager boardmanagerSc;
 
-    private List<DungeonRoomByTile> roomList = new List<DungeonRoomByTile>();
-    private DungeonRoomByTile currentRoom;
+    private List<DungeonRoom> roomList = new List<DungeonRoom>();
+    public DungeonRoom currentRoom;
 
     private void Awake()
     {
@@ -20,7 +20,7 @@ public class InGameManager : MonoBehaviour
 
     private void Start()
     {
-        LoadRoomList();
+        StartSetting();
     }
     
     private void Update()
@@ -39,10 +39,11 @@ public class InGameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// NOTE : BoardManager에서 RoomList들을 가져옴
+    /// NOTE : BoardManager에서 RoomList들을 가져옴 시작 방인 0번방을 active On
+    /// NOTE : 방 LIST들을 순회하여 각 방의 몬스터들의 숫자를 체크하여 가장 많은 몬스터 숫자만큼 HP SLIDER 생성
     /// TODO : 씬을 넘길때 재활용성이 있으므로 함수로 처리
     /// </summary>
-    private void LoadRoomList()
+    private void StartSetting()
     {
         roomList = boardmanagerSc.roomList;
         roomList[0].roomModel.SetActive(true);

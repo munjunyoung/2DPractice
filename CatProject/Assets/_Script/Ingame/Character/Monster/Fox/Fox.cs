@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class Fox : Monster
 {
+    
     /// <summary>
     /// NOTE : SET Data
     /// </summary>
-    private void SetData()
+    private Fox()
     {
-
+        mType = MONSTER_TYPE.FOX;
     }
 }

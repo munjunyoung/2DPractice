@@ -5,7 +5,7 @@ using System;
 using UnityEngine.Tilemaps;
 
 enum RoomType { Type1 = 0 }
-public enum TileType { BackGround = 0, Floor, Ground, Wall, Entrance}
+public enum TileType { BackGround = 0, Floor, Ground, Wall, Entrance }
 public class TileLoadManager : MonoBehaviour
 {
     //Resouces Load Path

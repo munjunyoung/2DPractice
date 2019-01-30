@@ -38,22 +38,18 @@ public class Player : MonoBehaviour
         }
     }
     
-    [Header("PLAYER DATA SET"), SerializeField]
-    private PlayerData pDATA;
+    [Header("PLAYER DATA SET")]
+    public PlayerData pDATA;
 
     private Rigidbody2D rb2D;
     private Animator anim;
     private SpriteRenderer characterSprite;
-    //UI
-    private Slider HPSlider;
-    private Text HPText;
-    private Slider TPSlider;
-    private Text TPText;
 
     [HideInInspector]
     public bool jumpButtonPress, attackButtonPress = false;
     
-    private bool isAlive = true;
+    [HideInInspector]
+    public bool isAlive = true;
     private bool isInvincible = false;
     //HP
     private int instanceHP;
@@ -64,7 +60,9 @@ public class Player : MonoBehaviour
         {
             instanceHP = value;
             if (instanceHP >= pDATA.maxHP)
+            {
                 instanceHP = pDATA.maxHP;
+            }
             else if (instanceHP < 0)
                 instanceHP = 0;
 
@@ -105,8 +103,9 @@ public class Player : MonoBehaviour
         rb2D = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         characterSprite = GetComponent<SpriteRenderer>();
-        
-        SetStartUpSetting();
+
+        CurrentHP = pDATA.maxHP;
+        CurrentTP = pDATA.maxTP;
     }
     
     private void FixedUpdate()
@@ -239,7 +238,7 @@ public class Player : MonoBehaviour
     /// </summary>
     public void AttackEffectOn()
     {
-        UseUpTP(pDATA.attackTPAmount);
+        UseTP(pDATA.attackTPAmount);
         pDATA.attackEffectModel.SetActive(true);
     }
     public void AttackEffectOff()
@@ -293,31 +292,12 @@ public class Player : MonoBehaviour
     }
     #endregion
     
-    #region POINT UI
-    /// <summary>
-    /// NOTE : HP UI UPDATE
-    /// </summary>
-    private void SetHPUI()
-    {
-        HPSlider.value = CurrentHP;
-        HPText.text = CurrentHP.ToString();
-    }
-    /// <summary>
-    /// NOTE : TP UI UPDATE
-    /// </summary>
-    private void SetTPUI()
-    {
-        TPSlider.value = CurrentTP;
-        TPText.text = CurrentTP.ToString();
-    }
-    #endregion
-
     #region TP
     /// <summary>
     /// NOTE : 파라미터값만큼 tp 감소
     /// </summary>
     /// <param name="amount"></param>
-    private void UseUpTP(int amount)
+    private void UseTP(int amount)
     {
         CurrentTP -= amount;
     }
@@ -343,7 +323,6 @@ public class Player : MonoBehaviour
         while (CurrentTP < pDATA.maxTP)
         {
             CurrentTP += pDATA.recoveryTPAmount;
-            SetTPUI();
             yield return new WaitForSeconds(pDATA.recoveryTPRate);
         }
         isRunningRecoverTPCoroutine = false;
@@ -361,7 +340,6 @@ public class Player : MonoBehaviour
             return;
 
         CurrentHP -= damage;
-        SetHPUI();
 
         //Knockback Action
         rb2D.velocity = Vector2.zero;
@@ -414,29 +392,7 @@ public class Player : MonoBehaviour
 
         anim.SetFloat("StateFloat", (int)CurrentPlayerAnimState);
     }
-
-    /// <summary>
-    /// NOTE : HP, TP UI의 경우에는 자신이 참조하지 않고 player에서 참조 
-    /// TODO : HP, TP 자체에서 해결하게 되면 스크립트가 추가될 뿐만 아니라 PLAYER 를 참조하고 UPDATE함수에서 지속적으로 검색해주어야 하기 떄문
-    /// </summary>
-    private void SetStartUpSetting()
-    {
-        HPSlider = GameObject.Find("HPSlider").GetComponent<Slider>();
-        HPText = GameObject.Find("HPText").GetComponent<Text>();
-        TPSlider = GameObject.Find("TPSlider").GetComponent<Slider>();
-        TPText = GameObject.Find("TPText").GetComponent<Text>();
-
-        HPSlider.maxValue = pDATA.maxHP;
-        TPSlider.maxValue = pDATA.maxTP;
-
-        CurrentHP = pDATA.maxHP;
-        CurrentTP = pDATA.maxTP;
-
-        SetHPUI();
-        SetTPUI();
-
-    }
-
+    
     #region COLLISION
     
     /// <summary>
@@ -455,7 +411,10 @@ public class Player : MonoBehaviour
 
         //적과 인접했을때
         if (collision.collider.CompareTag("Enemy"))
+        {
+            if(collision.collider.GetComponent<Monster>().isAlive)
             TakeDamage(collision.collider.GetComponent<Monster>().mDATA.bodyAttacktDamage, collision.transform);
+        }
     }
 
     /// <summary>
