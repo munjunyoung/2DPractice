@@ -197,6 +197,8 @@ MonoBehaviour:
   attackDamage: 0
   attackCoolTime: 1
   attackAnimSpeed: 1
+  knockBackPower: 5
+  knockbackTime: 0.5
 --- !u!114 &1040374984849873519
 MonoBehaviour:
   m_ObjectHideFlags: 0

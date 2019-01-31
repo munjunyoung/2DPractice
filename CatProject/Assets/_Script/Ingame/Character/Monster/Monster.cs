@@ -64,6 +64,7 @@ public class Monster : MonoBehaviour
     private Rigidbody2D rb2D;
     private Animator anim;
     private SpriteRenderer sR;
+
     //Raycast    
     private int raycastLayerMask;
     [HideInInspector]
@@ -82,12 +83,6 @@ public class Monster : MonoBehaviour
                 instanceHP = 0;
         }
     }
-
-    [HideInInspector]
-    public bool isAlive;
-    private bool isGrounded = false;
-    private bool isKnockbackState = false;
-
     //Move
     private float currentMoveSpeed;
     //Attack
@@ -95,6 +90,13 @@ public class Monster : MonoBehaviour
     private bool attackCooltimeState = false;
     private bool attackOn = false;
     private bool isFrontTarget = false;
+    //KnockBack
+    private bool isRunningKncokbackCoroutine = false;
+    private bool isKnockbackState = false;
+
+    [HideInInspector]
+    public bool isAlive;
+    private bool isGrounded = false;
 
     //HP UI
     [SerializeField]
@@ -107,9 +109,9 @@ public class Monster : MonoBehaviour
         rb2D = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         sR = GetComponent<SpriteRenderer>();
-
+        
         //Set Layer 8 - tile, 9 - player
-        raycastLayerMask = (1 << LayerMask.NameToLayer("Player")) | (1 << LayerMask.NameToLayer("Tile"));
+        raycastLayerMask = (1 << LayerMask.NameToLayer("Player")) | (1 << LayerMask.NameToLayer("Tile")) | (1<<LayerMask.NameToLayer("Monster"));
     }
 
     private void Start()
@@ -160,16 +162,19 @@ public class Monster : MonoBehaviour
     /// </summary>
     private void Patroll()
     {
+
         if (!isGrounded)
             return;
         //flip을 통한 dir 설정
         Vector2 dir = sR.flipX.Equals(true) ? -Vector2.right : Vector2.right;
+
         //벽 Raycast
         RaycastHit2D wallCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -0.5f, 0), dir, 1.5f, raycastLayerMask);
         if (wallCheckInfo.collider != null)
         {
-            if (wallCheckInfo.collider.CompareTag("Ground") || wallCheckInfo.collider.CompareTag("Floor"))
+            if (wallCheckInfo.collider.CompareTag("Ground") || wallCheckInfo.collider.CompareTag("Floor")||wallCheckInfo.collider.CompareTag("Enemy"))
                 sR.flipX = sR.flipX.Equals(true) ? false : true;
+            
         }
         //길 끊김 Null Raycast
         RaycastHit2D nullCheckInfo = Physics2D.Raycast(transform.position, dir + new Vector2(0, -1f), 1.5f, raycastLayerMask);
@@ -194,9 +199,11 @@ public class Monster : MonoBehaviour
                 Jump();
             else if (frontCheckInfo.collider.CompareTag("Player"))
                 OrderState = ORDER_STATE.Attack;
+            else if (frontCheckInfo.collider.CompareTag("Enemy"))
+                dir = Vector2.zero;
         }
 
-        sR.flipX = transform.position.x > targetOb.position.x ? true : false;
+        sR.flipX = (int)(transform.position.x) > (int)(targetOb.position.x) ? true : false;
         
         rb2D.velocity = new Vector2(dir.x * currentMoveSpeed, rb2D.velocity.y);
     }
@@ -274,22 +281,30 @@ public class Monster : MonoBehaviour
     /// <param name="targetpos"></param>
     private void KnockBack(Transform targetpos)
     {
-        isKnockbackState = true;
+        if(!isRunningKncokbackCoroutine)
+            StartCoroutine(KnockbackCoroutine(targetpos));
+    }
 
+    /// <summary>
+    /// NOTE : 넉백 물리 실행 및 설정 시간 이후 상태 변경
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator KnockbackCoroutine(Transform targetpos)
+    {
+        Debug.Log("Knockback !");
+        //상태 변경
+        isRunningKncokbackCoroutine = true;
+        isKnockbackState = true;
         //KncokBack Action
         rb2D.velocity = Vector2.zero;
         float xdir = Mathf.Sign(transform.position.x - targetpos.position.x);
-        float ydir = Mathf.Sign(transform.position.y - targetpos.position.y).Equals(1)? 1f : -1f;
+        float ydir = Mathf.Sign(transform.position.y - targetpos.position.y).Equals(1) ? 1f : -1f;
         Vector2 dir = new Vector2(xdir, ydir);
         rb2D.AddForce(dir * mDATA.knockBackPower, ForceMode2D.Impulse);
-
-        StartCoroutine(KnockbackCoroutine());
-    }
-
-    IEnumerator KnockbackCoroutine()
-    {
         yield return new WaitForSeconds(mDATA.knockbackTime);
+        //상태 리셋
         isKnockbackState = false;
+        isRunningKncokbackCoroutine = false;
     }
 
     /// <summary>
@@ -350,10 +365,7 @@ public class Monster : MonoBehaviour
             if (isAlive)
                 KnockBack(collision.transform);
         }
-
-        if(collision.collider.CompareTag("Enemy"))
-        {
-        }
+        
     }
     
     private void OnCollisionExit2D(Collision2D collision)
