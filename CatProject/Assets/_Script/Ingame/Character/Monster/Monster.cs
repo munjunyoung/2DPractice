@@ -192,7 +192,7 @@ public class Monster : MonoBehaviour
         //flip을 통한 dir 설정
         Vector2 dir = sR.flipX.Equals(true) ? -Vector2.right : Vector2.right;
         //벽 Raycast
-        RaycastHit2D frontCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -0.5f, 0), dir, 1.5f, raycastLayerMask);
+        RaycastHit2D frontCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -0.5f, 0), dir, 1f, raycastLayerMask);
         if (frontCheckInfo.collider != null)
         {
             if (frontCheckInfo.collider.CompareTag("Ground") || frontCheckInfo.collider.CompareTag("Floor"))
@@ -324,6 +324,7 @@ public class Monster : MonoBehaviour
     IEnumerator ActiveOff()
     {
         yield return new WaitForSeconds(2f);
+        InGameManager.GetInstance().CheckUnLockRoom();
         gameObject.SetActive(false);
     }
     /// <summary>
@@ -346,7 +347,8 @@ public class Monster : MonoBehaviour
 
         anim.SetFloat("StateFloat", (int)CurrentAnimState);
     }
-    
+
+    #region COLLISION
     /// <summary>
     /// NOTE : FloorCheck
     /// </summary>
@@ -368,8 +370,13 @@ public class Monster : MonoBehaviour
         
     }
     
+    /// <summary>
+    /// NOTE : GROUND CHECK FALSE
+    /// </summary>
+    /// <param name="collision"></param>
     private void OnCollisionExit2D(Collision2D collision)
     {
         isGrounded = false;
     }
+    #endregion
 }

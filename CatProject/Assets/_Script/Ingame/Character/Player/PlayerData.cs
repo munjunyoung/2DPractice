@@ -52,7 +52,7 @@ public class PlayerData : MonoBehaviour
     public float addForceFrameIntervalTime;
 
     /// <summary>
-    /// ATTACK 관련 함수 
+    /// ATTACK : ATTACK 관련 함수 
     /// attackEffectModel
     /// NOTE : 해당 이펙트 오브젝트 저장
     /// attackRange
@@ -79,6 +79,15 @@ public class PlayerData : MonoBehaviour
     public int attackTPAmount;
     #endregion
 
+    /// <summary>
+    /// HIT : TAKE DAMAGE 함수
+    /// invincibleTime
+    /// NOTE : 무적 시간 설정
+    /// flashRate 
+    /// NOTE : 점멸 주기 설정 
+    /// knockbackPower
+    /// NOTE : 뒤로 밀려나는 힘 설정(ADDFORCE)
+    /// </summary>
     [Header("TAKE DAMAGE")]
     [Range(0f,10f)]
     public float invincibleTime;

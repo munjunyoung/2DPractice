@@ -20,15 +20,9 @@ public class InGameManager : MonoBehaviour
 
     private void Start()
     {
-        StartSetting();
+        StartSettingInGM();
     }
     
-    private void Update()
-    {
-        //방 해제 테스트
-        if (Input.GetKeyDown(KeyCode.F1))
-            UnLockRoom();
-    }
     /// <summary>
     /// Signletone
     /// </summary>
@@ -43,7 +37,7 @@ public class InGameManager : MonoBehaviour
     /// NOTE : 방 LIST들을 순회하여 각 방의 몬스터들의 숫자를 체크하여 가장 많은 몬스터 숫자만큼 HP SLIDER 생성
     /// TODO : 씬을 넘길때 재활용성이 있으므로 함수로 처리
     /// </summary>
-    private void StartSetting()
+    private void StartSettingInGM()
     {
         roomList = boardmanagerSc.roomList;
         roomList[0].roomModel.SetActive(true);
@@ -68,12 +62,30 @@ public class InGameManager : MonoBehaviour
     /// NOTE : 적을 모두 죽이거나 방에 저장되어있는 해당 요건을 만족했을경우 해제
     /// </summary>
     /// <param name="num"></param>
-    public void UnLockRoom()
+    private void UnLockRoom()
     {
         roomList[currentRoom.roomNumberOfList].unLockState = true;
         foreach (EntranceConnectRoom tmpentrance in roomList[currentRoom.roomNumberOfList].neighborRooms)
-            tmpentrance.entrance.GetComponent<EntranceSc>().unLockState = true;
+            tmpentrance.entrance.GetComponent<EntranceSc>().UnLockEntrance();
 
         Debug.Log("UNLOCK ROOM [" + currentRoom.roomNumberOfList + "]");
+    }
+
+    /// <summary>
+    /// NOTE : ROOM CHECK UN LOCK
+    /// TODO : 현재는 몬스터의 존재 유무로만 LOCK 해제, 이후에 추가적으로 방의 타입에 따라 룸을 해제하는 방식을 변경 해야한다.
+    /// </summary>
+    public void CheckUnLockRoom()
+    {
+        bool checkmonsterisAlive = false;
+        foreach(var monster in currentRoom.monsterList)
+        {
+            if (monster.isAlive)
+                checkmonsterisAlive = true;
+        }
+
+        //모두 죽었을 경우 방 해제
+        if (!checkmonsterisAlive)
+            UnLockRoom();
     }
 }

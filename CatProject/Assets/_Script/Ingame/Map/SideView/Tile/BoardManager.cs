@@ -265,6 +265,7 @@ public class BoardManager : MonoBehaviour
                                 GameObject tmpob = Instantiate(entranceModel, new Vector3(i + 0.5f, j + 1f, 0), Quaternion.identity);
                                 tmpob.GetComponent<SpriteRenderer>().sprite = tileReferenceArray[_roomtype].tileType[(int)_room.roomArray[i, j].tileType].tile[_room.roomArray[i, j].tileNumber].sprite;
                                 tmpob.GetComponent<SpriteRenderer>().sortingLayerName = "Entrance";
+                                tmpob.GetComponent<EntranceSc>().doorOpenSprite = tileReferenceArray[_roomtype].tileType[(int)_room.roomArray[i, j].tileType].tile[_room.roomArray[i, j].tileNumber+1].sprite;
                                 tmpob.transform.SetParent(tmpParent.transform);
                                 foreach (EntranceConnectRoom nroom in _room.neighborRooms)
                                 {
@@ -329,7 +330,7 @@ public class BoardManager : MonoBehaviour
             room.SetMonster();
             foreach(SpawnMonsterInfo monsterinfo in room.monsterInfoList)
             {
-                Monster tmpm = Instantiate(monsterPrefabList[(int)monsterinfo.mType], monsterinfo.startPos, Quaternion.identity, room.roomModel.transform);
+                Monster tmpm = Instantiate(monsterPrefabList[(int)monsterinfo.mType], monsterinfo.startPos, Quaternion.identity, room.roomModel.transform);              
                 room.monsterList.Add(tmpm);
             }
         }
@@ -353,7 +354,6 @@ public class DungeonRoom
     public bool unLockState = false;
     //connectrooms
     public List<EntranceConnectRoom> neighborRooms = new List<EntranceConnectRoom>();
-
     //Enemy
     public int numberOfMonster = -1;
     public List<SpawnMonsterInfo> monsterInfoList = new List<SpawnMonsterInfo>();
@@ -592,6 +592,7 @@ public struct SpawnMonsterInfo
         startPos = _startpos;
     }
 }
+
 /// <summary>
 /// NOTE : 출입구 클래스 연결된 방과 해당 오브젝트 (struct으로 구현하였다가 foreach문에서 반복 변수 초기화가 불가하여 class로 변경(구조체 : 값복사, 클래스 : 참조복사)
 /// </summary>
