@@ -81,7 +81,7 @@ public class BoardManager : MonoBehaviour
     {
         for (int i = 0; i < _numberOfroom; i++)
         {
-            roomList.Add(new DungeonRoom(i, (int)RoomType.Type1, widthMinSize, widthMaxSize, heightMinSize, heightMaxSize));
+            roomList.Add(new DungeonRoom(i, (int)RoomType.Type2, widthMinSize, widthMaxSize, heightMinSize, heightMaxSize));
 
             int floorlength = tileReferenceArray[roomList[i].roomSpriteType].tileType[(int)TileType.Floor].tile.Length;
             int groundlength = tileReferenceArray[roomList[i].roomSpriteType].tileType[(int)TileType.Ground].tile.Length;
@@ -238,15 +238,16 @@ public class BoardManager : MonoBehaviour
             tmpParent.name = "Room" + countroom;
             tmpParent.transform.SetParent(parentModelOfRooms.transform);
 
-            //배경 오브젝트 생성
-            GameObject backgroundob = new GameObject("BackGround", typeof(SpriteRenderer));
-            backgroundob.transform.localPosition = Vector3.zero;
-            backgroundob.transform.localRotation = Quaternion.identity;
-            backgroundob.GetComponent<SpriteRenderer>().sortingLayerName = "BackGround";
-            backgroundob.GetComponent<SpriteRenderer>().drawMode = SpriteDrawMode.Sliced;
-            backgroundob.GetComponent<SpriteRenderer>().sprite = tileReferenceArray[_roomtype].tileType[0].tile[0].sprite;
-            backgroundob.GetComponent<SpriteRenderer>().size = _room.roomRect.size - Vector2.one;
-            backgroundob.transform.SetParent(tmpParent.transform);
+            ////배경 오브젝트 생성
+            //GameObject backgroundob = new GameObject("BackGround", typeof(SpriteRenderer));
+            //backgroundob.transform.localPosition = Vector3.zero;
+            //backgroundob.transform.localRotation = Quaternion.identity;
+            //backgroundob.GetComponent<SpriteRenderer>().sortingLayerName = "BackGround";
+            //backgroundob.GetComponent<SpriteRenderer>().drawMode = SpriteDrawMode.Sliced;
+            //backgroundob.GetComponent<SpriteRenderer>().sprite = tileReferenceArray[_roomtype].tileType[0].tile[0].sprite;
+            //backgroundob.GetComponent<SpriteRenderer>().size = _room.roomRect.size - Vector2.one;
+            //backgroundob.transform.SetParent(tmpParent.transform);
+            CreateBackGround(_room).transform.SetParent(tmpParent.transform);
 
             //Ground TileMap 오브젝트 생성
             var tmpFloortilemap = CreateTileMap("Floor", "Floor", "Ground", tmpParent);
@@ -296,6 +297,26 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    private GameObject CreateBackGround(DungeonRoom room)
+    {
+        GameObject tmpParent = new GameObject("BackGroundParent");
+        int count = 0;
+        //배경 오브젝트 생성
+        foreach (var tmptile in tileReferenceArray[room.roomSpriteType].tileType[0].tile)
+        {
+            GameObject backgroundob = new GameObject("BackGround", typeof(SpriteRenderer));
+            backgroundob.transform.localPosition = Vector3.zero;
+            backgroundob.transform.localRotation = Quaternion.identity;
+            backgroundob.GetComponent<SpriteRenderer>().sortingLayerName = "BackGround";
+            backgroundob.GetComponent<SpriteRenderer>().drawMode = SpriteDrawMode.Sliced;
+            backgroundob.GetComponent<SpriteRenderer>().sprite = tmptile.sprite;
+            backgroundob.GetComponent<SpriteRenderer>().size = room.roomRect.size - Vector2.one;
+            backgroundob.GetComponent<SpriteRenderer>().sortingOrder = count;
+            count++;
+            backgroundob.transform.SetParent(tmpParent.transform);
+        }
+        return tmpParent;
+    }
     /// <summary>
     /// NOTE : TileMap Object 동적 생성
     /// </summary>
@@ -398,7 +419,7 @@ public class DungeonRoom
         //left, right
         for (int j = 0; j < roomRect.yMax; j++)
         {
-            roomArray[0, j] = new TileInfo(TileType.Wall, 0);
+            roomArray[0, j] = new TileInfo(TileType.Wall, 1);
             roomArray[(int)roomRect.xMax - 1, j] = new TileInfo(TileType.Wall, 0);
         }
     }

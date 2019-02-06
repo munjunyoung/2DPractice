@@ -4,13 +4,13 @@ using UnityEngine;
 using System;
 using UnityEngine.Tilemaps;
 
-enum RoomType { Type1 = 0 }
+enum RoomType { Type1 = 0 , Type2}
 public enum TileType { BackGround = 0, Floor, Ground, Wall, Entrance }
 public class TileLoadManager : MonoBehaviour
 {
     //Resouces Load Path
-    private readonly string[] roomTypePathArray = { "TileType1" };
-    private readonly string[] tileTypePathArray = { "0.BackGround","1.Floor","2.Ground", "3.Wall", "4.Entrance" };
+    private readonly string[] roomTypePathArray = { "TileType1" , "TileType2" };
+    private readonly string[] tileTypePathArray = { "0.BackGround", "1.Floor", "2.Ground", "3.Wall", "4.Entrance" };
     [HideInInspector]
     public TypeOfTileSetType[] loadTileArray;
 
