@@ -42,6 +42,8 @@ public class InGameManager : MonoBehaviour
         roomList = boardmanagerSc.roomList;
         roomList[0].roomModel.SetActive(true);
         currentRoom = roomList[0];
+        //시작할땐 0번 방이므로 체크
+        CheckUnLockRoom();
     }
 
     /// <summary>

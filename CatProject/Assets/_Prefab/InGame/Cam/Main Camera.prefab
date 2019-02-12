@@ -95,6 +95,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18356ec6323444141b4e69d28e2ef805, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camSmoothing: 7
-  camDistanceOffset: 1
+  cam: {fileID: 3846223833714211071}
   camUpOffset: 5
+  camDistanceOffset: 11.8

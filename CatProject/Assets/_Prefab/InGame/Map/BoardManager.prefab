@@ -57,11 +57,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0a111057ed294445b86ca5d0f096927, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ground:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  wall:
-  - {fileID: 0}
-  - {fileID: 0}
-  map: {fileID: 0}
+  monsterPrefabList:
+  - {fileID: 894300984345410735, guid: 2c718b077e3d8d245b46fdf114446aa3, type: 3}
+  numberOfRoom: 10
+  widthMinSize: 60
+  widthMaxSize: 100
+  heightMinSize: 30
+  heightMaxSize: 50
+  entranceModel: {fileID: 6360658713944490580, guid: 3c2820c4ab46ec940a376ed80f7b36d8,
+    type: 3}

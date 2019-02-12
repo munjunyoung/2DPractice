@@ -406,24 +406,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 672549911}
   m_CullTransparentMesh: 0
---- !u!1 &679968715 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2105089177, guid: db7fd549b468c8942aeede02e5084d14,
-    type: 3}
-  m_PrefabInstance: {fileID: 1655477763}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &679968720
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 679968715}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d9297325c6cd274881f7f58f85c3837, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &698992908
 GameObject:
   m_ObjectHideFlags: 0
@@ -1166,10 +1148,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cat1
       objectReference: {fileID: 0}
-    - target: {fileID: 2105089177, guid: db7fd549b468c8942aeede02e5084d14, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 8713665101977329990, guid: db7fd549b468c8942aeede02e5084d14,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1274,31 +1252,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7871937579615917146, guid: db7fd549b468c8942aeede02e5084d14,
-        type: 3}
-      propertyPath: attackDamage
-      value: 50
-      objectReference: {fileID: 0}
-    - target: {fileID: 5844019777274396625, guid: db7fd549b468c8942aeede02e5084d14,
-        type: 3}
-      propertyPath: m_SortingLayerID
-      value: -661069273
-      objectReference: {fileID: 0}
-    - target: {fileID: 5844019777274396625, guid: db7fd549b468c8942aeede02e5084d14,
-        type: 3}
-      propertyPath: m_SortingLayer
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 8142451551186304021, guid: db7fd549b468c8942aeede02e5084d14,
-        type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 8142451551186304021, guid: db7fd549b468c8942aeede02e5084d14,
-        type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 1.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: db7fd549b468c8942aeede02e5084d14, type: 3}
@@ -1677,59 +1630,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: BoardManager
       objectReference: {fileID: 0}
-    - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
-      propertyPath: monsterList.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
-      propertyPath: monsterPrefabList.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
-      propertyPath: widthMinSize
-      value: 60
-      objectReference: {fileID: 0}
-    - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
-      propertyPath: numberOfRoom
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
-      propertyPath: widthMaxSize
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
-      propertyPath: heightMinSize
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
-      propertyPath: heightMaxSize
-      value: 50
-      objectReference: {fileID: 0}
-    - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
-      propertyPath: entrance
-      value: 
-      objectReference: {fileID: 6360658713944490580, guid: 3c2820c4ab46ec940a376ed80f7b36d8,
-        type: 3}
-    - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
-      propertyPath: entranceModel
-      value: 
-      objectReference: {fileID: 6360658713944490580, guid: 3c2820c4ab46ec940a376ed80f7b36d8,
-        type: 3}
-    - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
-      propertyPath: backgroundModel
-      value: 
-      objectReference: {fileID: 4878281185721444158, guid: 9e66573f44293434baa9f09337337f00,
-        type: 3}
-    - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
-      propertyPath: monsterList.Array.data[0]
-      value: 
-      objectReference: {fileID: 894300984345410735, guid: 2c718b077e3d8d245b46fdf114446aa3,
-        type: 3}
-    - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
-      propertyPath: monsterPrefabList.Array.data[0]
-      value: 
-      objectReference: {fileID: 894300984345410735, guid: 2c718b077e3d8d245b46fdf114446aa3,
-        type: 3}
     - target: {fileID: 324500466300686044, guid: 3bce843e0745d1a4a8cec1f131ac6654,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1799,11 +1699,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Main Camera
       objectReference: {fileID: 0}
-    - target: {fileID: 3846223833714211071, guid: b01bcb764f4a73947b8d8201276cbfd1,
-        type: 3}
-      propertyPath: orthographic size
-      value: 10
-      objectReference: {fileID: 0}
     - target: {fileID: 3846223833714210816, guid: b01bcb764f4a73947b8d8201276cbfd1,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1858,16 +1753,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3846223833714211070, guid: b01bcb764f4a73947b8d8201276cbfd1,
-        type: 3}
-      propertyPath: cam
-      value: 
-      objectReference: {fileID: 1432288388}
-    - target: {fileID: 3846223833714211070, guid: b01bcb764f4a73947b8d8201276cbfd1,
-        type: 3}
-      propertyPath: camDistanceOffset
-      value: 11.8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b01bcb764f4a73947b8d8201276cbfd1, type: 3}

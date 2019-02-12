@@ -237,20 +237,11 @@ public class BoardManager : MonoBehaviour
             tmpParent.transform.rotation = Quaternion.identity;
             tmpParent.name = "Room" + countroom;
             tmpParent.transform.SetParent(parentModelOfRooms.transform);
-
-            ////배경 오브젝트 생성
-            //GameObject backgroundob = new GameObject("BackGround", typeof(SpriteRenderer));
-            //backgroundob.transform.localPosition = Vector3.zero;
-            //backgroundob.transform.localRotation = Quaternion.identity;
-            //backgroundob.GetComponent<SpriteRenderer>().sortingLayerName = "BackGround";
-            //backgroundob.GetComponent<SpriteRenderer>().drawMode = SpriteDrawMode.Sliced;
-            //backgroundob.GetComponent<SpriteRenderer>().sprite = tileReferenceArray[_roomtype].tileType[0].tile[0].sprite;
-            //backgroundob.GetComponent<SpriteRenderer>().size = _room.roomRect.size - Vector2.one;
-            //backgroundob.transform.SetParent(tmpParent.transform);
+            
             CreateBackGround(_room).transform.SetParent(tmpParent.transform);
 
             //Ground TileMap 오브젝트 생성
-            var tmpFloortilemap = CreateTileMap("Floor", "Floor", "Ground", tmpParent);
+            //var tmpFloortilemap = CreateTileMap("Floor", "Floor", "Ground", tmpParent);
             var tmpGroundtilemap = CreateTileMap("Ground", "Ground", "Ground", tmpParent);
 
             //설정한 방의 배열정보를 통하여 타일 설정 및 출입문 오브젝트 생성
@@ -279,7 +270,7 @@ public class BoardManager : MonoBehaviour
                                 }
                                 break;
                             case TileType.Floor:
-                                tmpFloortilemap.SetTile(new Vector3Int(i, j, 0), tileReferenceArray[_roomtype].tileType[(int)_room.roomArray[i, j].tileType].tile[_room.roomArray[i, j].tileNumber]);
+                                tmpGroundtilemap.SetTile(new Vector3Int(i, j, 0), tileReferenceArray[_roomtype].tileType[(int)_room.roomArray[i, j].tileType].tile[_room.roomArray[i, j].tileNumber]);
                                 break;
                             case TileType.Ground:
                             case TileType.Wall:
@@ -564,7 +555,8 @@ public class DungeonRoom
         //각 방의 몬스터 숫자설정
         //..level에따른 설정 
         //Test를 위해 1로만 설정
-        int numberofmonster = 1;
+        //현재는 레벨만큼 몬스터 생성
+        int numberofmonster = level;
         
         //몬스터 숫자만큼 x포지션 저장
         List<int> posX = new List<int>();
