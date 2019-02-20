@@ -1,5 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using UnityEngine.Tilemaps;
+
 
 public class MapTool : EditorWindow
 {
@@ -7,28 +9,20 @@ public class MapTool : EditorWindow
     static void Open()
     {
         GetWindow<MapTool>();
-        
-        
     }
 
     private void OnEnable()
     {
         position = new Rect(0, 0, 320, 320);
-        Debug.Log(position);
     }
 
     private void OnGUI()
     {
-        Debug.Log("tEST");
         if (GUILayout.Button("Create TileMap", GUILayout.Height(50)))
-        {
             GetWindow<TilemapEditor>();
-        }
 
         if (GUILayout.Button("Show Palette",GUILayout.Height(50)))
-        {
-            
-        }
+           EditorApplication.ExecuteMenuItem("Window/2D/Tile Palette");
 
     }
 }
