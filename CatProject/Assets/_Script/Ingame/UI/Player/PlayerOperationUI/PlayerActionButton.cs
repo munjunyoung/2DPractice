@@ -18,7 +18,7 @@ public class PlayerActionButton : InputButton
 
     protected override void Update()
     {
-        if (!playerSc)
+        if (playerSc == null)
             return;
         base.Update();
     }

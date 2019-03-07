@@ -412,7 +412,7 @@ public class Player : MonoBehaviour
             isGrounded = true;
 
         //적과 인접했을때
-        if (collision.collider.CompareTag("Enemy"))
+        if (collision.collider.CompareTag("Monster"))
         {
             if (collision.collider.GetComponent<Monster>().isAlive)
                 TakeDamage(collision.collider.GetComponent<Monster>().mDATA.bodyAttacktDamage, collision.transform);

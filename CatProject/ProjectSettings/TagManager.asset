@@ -7,7 +7,7 @@ TagManager:
   - Ground
   - Floor
   - Entrance
-  - Enemy
+  - Monster
   layers:
   - Default
   - TransparentFX
@@ -47,6 +47,9 @@ TagManager:
     locked: 0
   - name: BackGround
     uniqueID: 748513025
+    locked: 0
+  - name: EdgeGround
+    uniqueID: 1898111643
     locked: 0
   - name: Ground
     uniqueID: 2177671213

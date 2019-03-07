@@ -100,7 +100,7 @@ public class Monster : MonoBehaviour
 
     //HP UI
     [SerializeField]
-    private EnemyHPSliderSc hpSliderUI;
+    private MonsterHPSliderSc hpSliderUI;
 
     private void Awake()
     {
@@ -119,7 +119,7 @@ public class Monster : MonoBehaviour
         OrderState = Random.Range(0, 100) > 99 ? ORDER_STATE.Idle : ORDER_STATE.Patroll;
         //Set HP
         CurrentHP = mDATA.maxHP;
-        hpSliderUI = transform.GetComponentInChildren<EnemyHPSliderSc>();
+        hpSliderUI = transform.GetComponentInChildren<MonsterHPSliderSc>();
         hpSliderUI.SetSliderStartValue(mDATA.maxHP, CurrentHP);
     }
 
@@ -146,7 +146,7 @@ public class Monster : MonoBehaviour
                 Attack();
                 break;
             default:
-                Debug.Log("Enemy Default State !");
+                Debug.Log("Monster Default State !");
                 break;
         }
     }
@@ -172,9 +172,8 @@ public class Monster : MonoBehaviour
         RaycastHit2D wallCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -0.5f, 0), dir, 1.5f, raycastLayerMask);
         if (wallCheckInfo.collider != null)
         {
-            if (wallCheckInfo.collider.CompareTag("Ground") || wallCheckInfo.collider.CompareTag("Floor")||wallCheckInfo.collider.CompareTag("Enemy"))
+            if (wallCheckInfo.collider.CompareTag("Ground") || wallCheckInfo.collider.CompareTag("Floor")||wallCheckInfo.collider.CompareTag("Monster"))
                 sR.flipX = sR.flipX.Equals(true) ? false : true;
-            
         }
         //길 끊김 Null Raycast
         RaycastHit2D nullCheckInfo = Physics2D.Raycast(transform.position, dir + new Vector2(0, -1f), 1.5f, raycastLayerMask);
@@ -199,7 +198,7 @@ public class Monster : MonoBehaviour
                 Jump();
             else if (frontCheckInfo.collider.CompareTag("Player"))
                 OrderState = ORDER_STATE.Attack;
-            else if (frontCheckInfo.collider.CompareTag("Enemy"))
+            else if (frontCheckInfo.collider.CompareTag("Monster"))
                 dir = Vector2.zero;
         }
 

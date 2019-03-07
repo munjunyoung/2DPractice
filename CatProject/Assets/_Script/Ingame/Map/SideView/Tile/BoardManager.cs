@@ -323,7 +323,7 @@ public class BoardManager : MonoBehaviour
         tmpob.AddComponent<TilemapCollider2D>().usedByComposite = true;
         tmpob.AddComponent<CompositeCollider2D>();
         tmpob.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
-        tmpob.layer = 9;
+        tmpob.layer = 8;
         tmpob.tag = tagname;
         tmpob.transform.SetParent(parentob.transform);
         Tilemap tmptilemap = tmpob.GetComponent<Tilemap>();
@@ -366,7 +366,7 @@ public class DungeonRoom
     public bool unLockState = false;
     //connectrooms
     public List<EntranceConnectRoom> neighborRooms = new List<EntranceConnectRoom>();
-    //Enemy
+    //Monster
     public int numberOfMonster = -1;
     public List<SpawnMonsterInfo> monsterInfoList = new List<SpawnMonsterInfo>();
     public List<Monster> monsterList = new List<Monster>();

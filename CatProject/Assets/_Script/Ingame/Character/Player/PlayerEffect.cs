@@ -14,7 +14,7 @@ public class PlayerEffect : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Enemy"))
+        if (collision.CompareTag("Monster"))
             collision.GetComponent<Monster>().TakeDamage(Damage, transform);
     }
 }

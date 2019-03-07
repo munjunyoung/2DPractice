@@ -9,31 +9,34 @@ public enum TileType { BackGround = 0, Floor, Ground, Wall, Entrance }
 public class TileLoadManager : MonoBehaviour
 {
     //Resouces Load Path
-    private readonly string[] roomTypePathArray = { "TileType1" , "TileType2" };
-    private readonly string[] tileTypePathArray = { "0.BackGround", "1.Floor", "2.Ground", "3.Wall", "4.Entrance" };
+    public static readonly string[] roomTypePathArray = { "TileType1" , "TileType2" };
+    public static readonly string[] tileTypePathArray = { "0.BackGround", "1.Floor", "2.Ground", "3.Wall", "4.Entrance" };
     [HideInInspector]
     public TypeOfTileSetType[] loadTileArray;
 
     public void Awake()
     {
-        LoadTile();
+        loadTileArray = LoadTile();
     }
     
     /// <summary>
     /// NOTE : Resource Load를 통하여 모든 타일들을 불러옴
+    /// NOTE : 에디터에서도 사용하기위하여 STATIC으로 선언(Path 포함)
     /// </summary>
-    private void LoadTile()
+    public static TypeOfTileSetType[] LoadTile()
     {
-        loadTileArray = new TypeOfTileSetType[roomTypePathArray.Length];
+        TypeOfTileSetType[] tmptilearray;
+        tmptilearray = new TypeOfTileSetType[roomTypePathArray.Length];
         for (int i = 0; i < roomTypePathArray.Length; i++)
         {
-            loadTileArray[i].tileType = new TypeOfTileSet[tileTypePathArray.Length];
+            tmptilearray[i].tileType = new TypeOfTileSet[tileTypePathArray.Length];
             for (int j = 0; j < tileTypePathArray.Length; j++)
             {
                 Tile[] tmp = Resources.LoadAll<Tile>(roomTypePathArray[i] + "/" + tileTypePathArray[j]);
-                loadTileArray[i].tileType[j].tile = tmp;
+                tmptilearray[i].tileType[j].tile = tmp;
             }
         }
+        return tmptilearray;
     }
 }
 
