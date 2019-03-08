@@ -151,6 +151,10 @@ class TestSettingWindow : EditorWindow
             var tmpplayerob = AssetDatabase.LoadAssetAtPath(playerPath + pType.ToString() + ".prefab",typeof(Object));
             playerOb = PrefabUtility.InstantiatePrefab(tmpplayerob) as GameObject;
             playerOb.transform.position = characterpos;
+
+            Selection.activeGameObject = playerOb;
+            EditorGUIUtility.PingObject(playerOb);
+
         }
         GUILayout.Space(10);
     }
@@ -180,6 +184,9 @@ class TestSettingWindow : EditorWindow
             Object tmpmonsterob = AssetDatabase.LoadAssetAtPath(monsterPath + mType.ToString() + ".prefab", typeof(Object));
             GameObject insmonsterob = PrefabUtility.InstantiatePrefab(tmpmonsterob) as GameObject;
             insmonsterob.transform.position = monsterPos;
+
+            Selection.activeGameObject = insmonsterob;
+            EditorGUIUtility.PingObject(insmonsterob);
         }
         GUILayout.Space(10);
     }
