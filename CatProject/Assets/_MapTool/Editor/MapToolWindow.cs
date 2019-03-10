@@ -6,7 +6,7 @@ using UnityEngine.Tilemaps;
 public class MapToolWindow : EditorWindow
 {
     public static GUIStyle titleFont = new GUIStyle();
-    private int buttonHeight = 30;
+    private int buttonHeight = 35;
 
     private static string beforesSceneName = null;
 
