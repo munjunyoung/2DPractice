@@ -45,6 +45,7 @@ class NewTileMapWindow : EditorWindow
                 if (gridob == null)
                     gridob = ObjectFactory.CreateGameObject("Grid", typeof(Grid)); // new GameObject("Grid", typeof(Grid));
             }
+            gridob.GetComponent<Grid>().cellGap = new Vector3(-0.01f, -0.01f, 0f);
 
             if (tilemapName == null)
                 tilemapName = "Tilemap";

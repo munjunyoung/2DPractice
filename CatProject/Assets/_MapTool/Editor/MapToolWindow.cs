@@ -50,6 +50,14 @@ public class MapToolWindow : EditorWindow
         {
             GetWindow<NewTileMapWindow>();
         }
+        //타일팔레트 관련 내용으로 룰타일 생성
+        if (GUILayout.Button("New RuleTile", GUILayout.Height(buttonHeight)))
+        {
+            SelectionInFolder(type2Path);
+            EditorApplication.ExecuteMenuItem("Assets/Create/Tiles/Rule Tile");
+        }
+        GUILayout.EndHorizontal();
+        GUILayout.BeginHorizontal("Box");
         // 기존 타일맵 로드
         if (GUILayout.Button("Load TileMap", GUILayout.Height(buttonHeight)))
         {
@@ -60,8 +68,10 @@ public class MapToolWindow : EditorWindow
         {
             GetWindow<SaveObjectWindow>();
         }
+        GUILayout.EndHorizontal();
+
         // 현재 씬에 만들어둔 타일맵 제거
-        
+
         if (GUILayout.Button("Clear All TileMap", GUILayout.Height(buttonHeight)))
         {
             if (EditorUtility.DisplayDialog("All Delete", "All Delete TileMap in Hierarchy, Really?", "Yes", "No"))
@@ -76,23 +86,18 @@ public class MapToolWindow : EditorWindow
                 Object.DestroyImmediate(tmpgridob);
             }
         }
-        //타일팔레트 관련 내용으로 룰타일 생성
-        if (GUILayout.Button("New RuleTile", GUILayout.Height(buttonHeight)))
-        {
-            SelectionInFolder(type2Path);
-            EditorApplication.ExecuteMenuItem("Assets/Create/Tiles/Rule Tile");
-        }
-        GUILayout.EndHorizontal();
+       
         GUILayout.EndVertical();
 
         GUILayout.BeginVertical("Box");
         GUILayout.Label("  TEST SETTING", titleFont);
-        GUILayout.BeginHorizontal("Box");
         //Test 환경 설정
+
         if (GUILayout.Button("Set Test Environment", GUILayout.Height(buttonHeight)))
         {
             GetWindow<TestSettingWindow>();
         }
+
         if(GUILayout.Button("Clear All Character",GUILayout.Height(buttonHeight)))
         {
             if (EditorUtility.DisplayDialog("All Delete", "All Delete Player and Monster in Hierarchy, Really?", "Yes", "No"))
@@ -104,11 +109,12 @@ public class MapToolWindow : EditorWindow
                     DestroyImmediate(m);
             }
         }
-        GUILayout.EndHorizontal();
         GUILayout.EndVertical();
+
         GUILayout.BeginVertical("Box");
+        GUILayout.Label("  ETC", titleFont);
         //에디터 종료 
-        if(GUILayout.Button("MAP TOOL EXIT", GUILayout.Height(buttonHeight)))
+        if (GUILayout.Button("MAP TOOL EXIT", GUILayout.Height(buttonHeight)))
         {
             EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo();
             LayoutUtility.LoadLayout(layoutPath + "SaveLayout.wlt");
@@ -151,6 +157,7 @@ public class MapToolWindow : EditorWindow
             if (gridob == null)
                 gridob = new GameObject("Grid", typeof(Grid));
 
+            gridob.GetComponent<Grid>().cellGap = new Vector3(-0.01f, -0.01f, 0f);
             tmpob.transform.SetParent(gridob.transform);
             
             SetActiveTilemap(tmpob);
