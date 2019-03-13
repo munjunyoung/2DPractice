@@ -5,6 +5,7 @@ using UnityEngine.Tilemaps;
 public class TestTilemap : MonoBehaviour
 {
     public Tilemap generatedTilemap;
+    public Tile testrule;
     public RuleTile testRuleTile;
 
     List<TileInfo[,]> mapdataList = new List<TileInfo[,]>();
@@ -23,7 +24,6 @@ public class TestTilemap : MonoBehaviour
 
     private void Test()
     {
-
         generatedTilemap.SetTile(new Vector3Int(0,0,0), testRuleTile);
         generatedTilemap.SetTile(new Vector3Int(0, 1, 0), testRuleTile);
         generatedTilemap.SetTile(new Vector3Int(0, 2, 0), testRuleTile);

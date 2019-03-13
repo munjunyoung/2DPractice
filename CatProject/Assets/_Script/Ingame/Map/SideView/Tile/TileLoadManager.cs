@@ -8,15 +8,18 @@ enum RoomType { Type1 = 0 , Type2}
 public enum TileType { BackGround = 0, Floor, Ground, Wall, Entrance }
 public class TileLoadManager : MonoBehaviour
 {
+    
     //Resouces Load Path
     public static readonly string[] roomTypePathArray = { "TileType1" , "TileType2" };
     public static readonly string[] tileTypePathArray = { "0.BackGround", "1.Floor", "2.Ground", "3.Wall", "4.Entrance" };
     [HideInInspector]
     public TypeOfTileSetType[] loadTileArray;
+    public TypeOfRuleTile[] loadRuleTileArray;
 
     public void Awake()
     {
         loadTileArray = LoadTile();
+        loadRuleTileArray = LoadRuleTile();
     }
     
     /// <summary>
@@ -35,6 +38,21 @@ public class TileLoadManager : MonoBehaviour
                 Tile[] tmp = Resources.LoadAll<Tile>(roomTypePathArray[i] + "/" + tileTypePathArray[j]);
                 tmptilearray[i].tileType[j].tile = tmp;
             }
+        }
+        return tmptilearray;
+    }
+
+    /// <summary>
+    /// NOTE : RuleTile Load타일
+    /// </summary>
+    /// <returns></returns>
+    public static TypeOfRuleTile[] LoadRuleTile()
+    {
+        TypeOfRuleTile[] tmptilearray;
+        tmptilearray = new TypeOfRuleTile[roomTypePathArray.Length];
+        foreach (string type in roomTypePathArray)
+        {
+            Resources.Load<RuleTile>(type + "/RuleTile/RuleTile_Ground");
         }
         return tmptilearray;
     }
@@ -61,5 +79,13 @@ public struct TypeOfTileSetType
 public struct TypeOfTileSet
 {
     public Tile[] tile;
+}
 
+/// <summary>
+/// NOTE : 땅종류의 RuleTile저장
+/// </summary>
+[Serializable]
+public struct TypeOfRuleTile
+{
+    public RuleTile GroundTile;
 }

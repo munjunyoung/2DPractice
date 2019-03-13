@@ -11,6 +11,7 @@ public class BoardManager : MonoBehaviour
     private Dictionary<int, List<DungeonRoom>> LevelRoomDic = new Dictionary<int, List<DungeonRoom>>();
 
     private TypeOfTileSetType[] tileReferenceArray;
+    private TypeOfRuleTile[] ruleTileRefernceArray;
 
     [Header("MONSTER PREFAB"),SerializeField]
     private List<Monster> monsterPrefabList = new List<Monster>();
@@ -41,6 +42,7 @@ public class BoardManager : MonoBehaviour
         CreateParentGridObject();
         //오브젝트 타일 참조
         tileReferenceArray = GetComponent<TileLoadManager>().loadTileArray;
+        ruleTileRefernceArray = GetComponent<TileLoadManager>().loadRuleTileArray;
         //Rooms 생성
         CreateRooms(numberOfRoom);
         //Rooms 레벨 설정
@@ -270,11 +272,11 @@ public class BoardManager : MonoBehaviour
                                 }
                                 break;
                             case TileType.Floor:
-                                tmpGroundtilemap.SetTile(new Vector3Int(i, j, 0), tileReferenceArray[_roomtype].tileType[(int)_room.roomArray[i, j].tileType].tile[_room.roomArray[i, j].tileNumber]);
-                                break;
+                                //tmpGroundtilemap.SetTile(new Vector3Int(i, j, 0), tileReferenceArray[_roomtype].tileType[(int)_room.roomArray[i, j].tileType].tile[_room.roomArray[i, j].tileNumber]);
+                                //break;
                             case TileType.Ground:
                             case TileType.Wall:
-                                tmpGroundtilemap.SetTile(new Vector3Int(i, j, 0), tileReferenceArray[_roomtype].tileType[(int)_room.roomArray[i, j].tileType].tile[_room.roomArray[i, j].tileNumber]);
+                                tmpGroundtilemap.SetTile(new Vector3Int(i, j, 0), ruleTileRefernceArray[_roomtype].GroundTile);
                                 break;
                             default:
                                 break;
