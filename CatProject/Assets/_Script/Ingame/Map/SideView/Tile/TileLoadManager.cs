@@ -50,9 +50,12 @@ public class TileLoadManager : MonoBehaviour
     {
         TypeOfRuleTile[] tmptilearray;
         tmptilearray = new TypeOfRuleTile[roomTypePathArray.Length];
+
+        int count = 0;
         foreach (string type in roomTypePathArray)
         {
-            Resources.Load<RuleTile>(type + "/RuleTile/RuleTile_Ground");
+            tmptilearray[count].GroundTile = Resources.Load<RuleTile>(type + "/RuleTile/RuleTile_Ground");
+            count++;
         }
         return tmptilearray;
     }

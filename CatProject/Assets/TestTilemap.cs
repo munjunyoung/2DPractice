@@ -12,7 +12,6 @@ public class TestTilemap : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Test();
         //ProcessTilemapData(generatedTilemap);
     }
 
@@ -21,23 +20,7 @@ public class TestTilemap : MonoBehaviour
     {
         
     }
-
-    private void Test()
-    {
-        generatedTilemap.SetTile(new Vector3Int(0,0,0), testRuleTile);
-        generatedTilemap.SetTile(new Vector3Int(0, 1, 0), testRuleTile);
-        generatedTilemap.SetTile(new Vector3Int(0, 2, 0), testRuleTile);
-        generatedTilemap.SetTile(new Vector3Int(0, 3, 0), testRuleTile);
-        generatedTilemap.SetTile(new Vector3Int(1, 0, 0), testRuleTile);
-        generatedTilemap.SetTile(new Vector3Int(1, 1, 0), testRuleTile);
-        generatedTilemap.SetTile(new Vector3Int(1, 2, 0), testRuleTile);
-        generatedTilemap.SetTile(new Vector3Int(1, 3, 0), testRuleTile);
-        generatedTilemap.SetTile(new Vector3Int(2, 0, 0), testRuleTile);
-        generatedTilemap.SetTile(new Vector3Int(2, 1, 0), testRuleTile);
-        generatedTilemap.SetTile(new Vector3Int(2, 1, 0), testRuleTile);
-
-    }
-
+    
     private void ProcessTilemapData(Tilemap _generatedTilemap)
     {
         TileInfo[,] tilearray = new TileInfo[_generatedTilemap.cellBounds.xMax, _generatedTilemap.cellBounds.yMax];
@@ -47,8 +30,7 @@ public class TestTilemap : MonoBehaviour
             if (!_generatedTilemap.HasTile(tilepos))
                 continue;
             Debug.Log(_generatedTilemap.GetTile(tilepos));
-
-
+            
         }
     }
 }

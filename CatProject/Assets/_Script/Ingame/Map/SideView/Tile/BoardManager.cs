@@ -362,6 +362,7 @@ public class DungeonRoom
     //Room info
     public int roomNumberOfList = -1;
     public Rect roomRect = new Rect(0, 0, 0, 0);
+    
     public TileInfo[,] roomArray;
     public int roomSpriteType = -1;
     public int level = -1;
@@ -406,14 +407,18 @@ public class DungeonRoom
         for (int i = 1; i < roomRect.xMax - 1; i++)
         {
             roomArray[i, 0] = new TileInfo(TileType.Floor, Random.Range(0, floortilelength));
+            roomArray[i, 1] = new TileInfo(TileType.Floor, Random.Range(0, floortilelength));
             roomArray[i, (int)roomRect.yMax - 1] = new TileInfo(TileType.Floor, Random.Range(0, floortilelength));
+            roomArray[i, (int)roomRect.yMax - 2] = new TileInfo(TileType.Floor, Random.Range(0, floortilelength));
         }
 
         //left, right
         for (int j = 0; j < roomRect.yMax; j++)
         {
             roomArray[0, j] = new TileInfo(TileType.Wall, 1);
+            roomArray[1, j] = new TileInfo(TileType.Wall, 1);
             roomArray[(int)roomRect.xMax - 1, j] = new TileInfo(TileType.Wall, 0);
+            roomArray[(int)roomRect.xMax - 2, j] = new TileInfo(TileType.Wall, 0);
         }
     }
 
