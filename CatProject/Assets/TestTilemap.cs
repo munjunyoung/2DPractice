@@ -21,22 +21,4 @@ public class TestTilemap : MonoBehaviour
         
     }
     
-    private void ProcessTilemapData(Tilemap _generatedTilemap)
-    {
-        TileInfo[,] tilearray = new TileInfo[_generatedTilemap.cellBounds.xMax, _generatedTilemap.cellBounds.yMax];
-
-        foreach (var tilepos in _generatedTilemap.cellBounds.allPositionsWithin)
-        {
-            if (!_generatedTilemap.HasTile(tilepos))
-                continue;
-            Debug.Log(_generatedTilemap.GetTile(tilepos));
-            
-        }
-    }
-}
-
-public struct GeneratedMapData
-{
-    BoundsInt tilemapBound;
-
 }

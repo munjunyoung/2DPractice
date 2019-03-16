@@ -5,21 +5,22 @@ using System;
 using UnityEngine.Tilemaps;
 
 enum RoomType { Type1 = 0 , Type2}
-public enum TileType { BackGround = 0, Floor, Ground, Wall, Entrance }
+public enum TileType { BackGround = 0, Entrance, Terrain }
 public class TileLoadManager : MonoBehaviour
 {
     
     //Resouces Load Path
     public static readonly string[] roomTypePathArray = { "TileType1" , "TileType2" };
-    public static readonly string[] tileTypePathArray = { "0.BackGround", "1.Floor", "2.Ground", "3.Wall", "4.Entrance" };
+    public static readonly string[] tileTypePathArray = { "0.BackGround", "1.Entrance" };
     [HideInInspector]
     public TypeOfTileSetType[] loadTileArray;
-    public TypeOfRuleTile[] loadRuleTileArray;
+    public List<GeneratedTerrainData> loadTerrainDataList = new List<GeneratedTerrainData>();
+    
 
     public void Awake()
     {
         loadTileArray = LoadTile();
-        loadRuleTileArray = LoadRuleTile();
+        loadTerrainDataList = LoadTerrainData();
     }
     
     /// <summary>
@@ -33,9 +34,12 @@ public class TileLoadManager : MonoBehaviour
         for (int i = 0; i < roomTypePathArray.Length; i++)
         {
             tmptilearray[i].tileType = new TypeOfTileSet[tileTypePathArray.Length];
+            //RuleTile 저장
+            tmptilearray[i].terrainRuleTile = Resources.Load<RuleTile>("Tile/"+ roomTypePathArray[i] + "/RuleTile/RuleTile_Terrain");
+            //일반 Tile들 저장
             for (int j = 0; j < tileTypePathArray.Length; j++)
             {
-                Tile[] tmp = Resources.LoadAll<Tile>(roomTypePathArray[i] + "/" + tileTypePathArray[j]);
+                Tile[] tmp = Resources.LoadAll<Tile>("Tile/" + roomTypePathArray[i] + "/" + tileTypePathArray[j]);
                 tmptilearray[i].tileType[j].tile = tmp;
             }
         }
@@ -43,21 +47,32 @@ public class TileLoadManager : MonoBehaviour
     }
 
     /// <summary>
-    /// NOTE : RuleTile Load타일
+    /// NOTE : 미리 생성해둔 지형 데이터 TileInfo 배열로 전환
     /// </summary>
-    /// <returns></returns>
-    public static TypeOfRuleTile[] LoadRuleTile()
+    public List<GeneratedTerrainData> LoadTerrainData()
     {
-        TypeOfRuleTile[] tmptilearray;
-        tmptilearray = new TypeOfRuleTile[roomTypePathArray.Length];
+        List<GeneratedTerrainData> tmpterrainlist = new List<GeneratedTerrainData>(); 
 
-        int count = 0;
-        foreach (string type in roomTypePathArray)
+        Tilemap[] tmploadprefab = Resources.LoadAll<Tilemap>("GeneratedMapData");
+        foreach(var tilemapdata in tmploadprefab)
         {
-            tmptilearray[count].GroundTile = Resources.Load<RuleTile>(type + "/RuleTile/RuleTile_Ground");
-            count++;
+            //데이터를 저장할 맵 배열 생성
+            TileInfo[,] tmptileinfoarray = new TileInfo[tilemapdata.cellBounds.xMax, tilemapdata.cellBounds.yMax];
+            
+            //해당 tilemapdata의 모든 포지션을 검색하여 tile이 설정되어있는 부분을 체크
+            foreach(var tilepos in tilemapdata.cellBounds.allPositionsWithin)
+            {
+                //현재 포지션에 타일이 존재하지 않을경우 
+                if (!tilemapdata.HasTile(tilepos))
+                    continue;
+                tmptileinfoarray[tilepos.x, tilepos.y] = new TileInfo(TileType.Terrain);
+            }
+
+            tmpterrainlist.Add(new GeneratedTerrainData(tmptileinfoarray, tilemapdata.cellBounds));
+           
         }
-        return tmptilearray;
+
+        return tmpterrainlist;
     }
 }
 
@@ -68,11 +83,9 @@ public class TileLoadManager : MonoBehaviour
 public struct TypeOfTileSetType
 {
     [Header("0 : BackGround")]
-    [Header("1 : Floor")]
-    [Header("2 : Ground")]
-    [Header("3 : Wall")]
-    [Header("4 : Entrance")]
+    [Header("1 : Entrance")]
     public TypeOfTileSet[] tileType;
+    public RuleTile terrainRuleTile;
 }
 
 /// <summary>
@@ -85,10 +98,16 @@ public struct TypeOfTileSet
 }
 
 /// <summary>
-/// NOTE : 땅종류의 RuleTile저장
+/// 생성된 배열값과 해당 사이즈 나중에 행과 열의 크기를 구하는방법을 사용하는거보다 미리 저장해서 꺼내쓰는게 좋을것 같다)
 /// </summary>
-[Serializable]
-public struct TypeOfRuleTile
+public class GeneratedTerrainData
 {
-    public RuleTile GroundTile;
+    public TileInfo[,] tilearray;
+    public BoundsInt size;
+
+    public GeneratedTerrainData(TileInfo[,] _tilearray, BoundsInt _size)
+    {
+        tilearray = _tilearray;
+        size = _size;
+    }
 }

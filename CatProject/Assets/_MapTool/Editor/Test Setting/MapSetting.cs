@@ -5,7 +5,6 @@ using UnityEngine.Tilemaps;
 public class MapSetting : EditorWindow
 {
     static TypeOfTileSetType[] loadTileArray;
-    static TypeOfRuleTile[] loadRuleTileArray;
     static Tilemap maptile;
     static GameObject backGroundOb;
 
@@ -13,7 +12,6 @@ public class MapSetting : EditorWindow
     private void OnEnable()
     {
         loadTileArray = TileLoadManager.LoadTile();
-        loadRuleTileArray = TileLoadManager.LoadRuleTile();
         maptile = GameObject.Find("TestGround").GetComponent<Tilemap>();
     }
 
@@ -29,18 +27,18 @@ public class MapSetting : EditorWindow
     
         for(int i=0; i<width;i++)
         {
-            maptile.SetTile(new Vector3Int(i, 0, 0), loadRuleTileArray[type].GroundTile);
-            maptile.SetTile(new Vector3Int(i, 1, 0), loadRuleTileArray[type].GroundTile);
-            maptile.SetTile(new Vector3Int(i, height-1, 0), loadRuleTileArray[type].GroundTile);
-            maptile.SetTile(new Vector3Int(i, height-1, 0), loadRuleTileArray[type].GroundTile);
+            maptile.SetTile(new Vector3Int(i, 0, 0), loadTileArray[type].terrainRuleTile);
+            maptile.SetTile(new Vector3Int(i, 1, 0),  loadTileArray[type].terrainRuleTile);
+            maptile.SetTile(new Vector3Int(i, height-1, 0),  loadTileArray[type].terrainRuleTile);
+            maptile.SetTile(new Vector3Int(i, height-2, 0),  loadTileArray[type].terrainRuleTile);
         }
 
         for(int j=1;j<height-1;j++)
         {
-            maptile.SetTile(new Vector3Int(0, j, 0), loadRuleTileArray[type].GroundTile);
-            maptile.SetTile(new Vector3Int(1, j, 0), loadRuleTileArray[type].GroundTile);
-            maptile.SetTile(new Vector3Int(width - 1, j, 0), loadRuleTileArray[type].GroundTile);
-            maptile.SetTile(new Vector3Int(width - 2, j, 0), loadRuleTileArray[type].GroundTile);
+            maptile.SetTile(new Vector3Int(0, j, 0),  loadTileArray[type].terrainRuleTile);
+            maptile.SetTile(new Vector3Int(1, j, 0),  loadTileArray[type].terrainRuleTile);
+            maptile.SetTile(new Vector3Int(width - 1, j, 0),  loadTileArray[type].terrainRuleTile);
+            maptile.SetTile(new Vector3Int(width - 2, j, 0),  loadTileArray[type].terrainRuleTile);
         }
 
         ///배경 생성

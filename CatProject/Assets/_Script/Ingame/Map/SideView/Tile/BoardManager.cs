@@ -10,8 +10,10 @@ public class BoardManager : MonoBehaviour
     public List<DungeonRoom> roomList = new List<DungeonRoom>();
     private Dictionary<int, List<DungeonRoom>> LevelRoomDic = new Dictionary<int, List<DungeonRoom>>();
 
+    //Tile 정보
     private TypeOfTileSetType[] tileReferenceArray;
-    private TypeOfRuleTile[] ruleTileRefernceArray;
+    //이미 생성해둔 지형 데이터
+    private List<GeneratedTerrainData> terrainDataReferenceArray;
 
     [Header("MONSTER PREFAB"),SerializeField]
     private List<Monster> monsterPrefabList = new List<Monster>();
@@ -42,7 +44,8 @@ public class BoardManager : MonoBehaviour
         CreateParentGridObject();
         //오브젝트 타일 참조
         tileReferenceArray = GetComponent<TileLoadManager>().loadTileArray;
-        ruleTileRefernceArray = GetComponent<TileLoadManager>().loadRuleTileArray;
+        //미리 생성해둔 맵 데이터 참조
+        terrainDataReferenceArray = GetComponent<TileLoadManager>().loadTerrainDataList;
         //Rooms 생성
         CreateRooms(numberOfRoom);
         //Rooms 레벨 설정
@@ -59,6 +62,8 @@ public class BoardManager : MonoBehaviour
         SetConnectedEntrance();
         //적생성
         CreateMonster();
+
+        
     }
 
     /// <summary>
@@ -84,14 +89,33 @@ public class BoardManager : MonoBehaviour
         for (int i = 0; i < _numberOfroom; i++)
         {
             roomList.Add(new DungeonRoom(i, (int)RoomType.Type2, widthMinSize, widthMaxSize, heightMinSize, heightMaxSize));
-
-            int floorlength = tileReferenceArray[roomList[i].roomSpriteType].tileType[(int)TileType.Floor].tile.Length;
-            int groundlength = tileReferenceArray[roomList[i].roomSpriteType].tileType[(int)TileType.Ground].tile.Length;
             //테두리 설정
-            roomList[i].SetGroundNormal(floorlength);
+            roomList[i].SetTerrainNormal();
+
+
             //시작방과 끝방을 제외한 나머지는 높낮이 랜덤 Ground설정
-            if (i > -1 && i < _numberOfroom)
-                roomList[i].SetGroundHegihtRandomly(floorlength, groundlength);
+            //if (i > -1 && i < _numberOfroom)
+            //    roomList[i].SetTerrainHegihtRandomly();
+        }
+    }
+
+    /// <summary>
+    /// NOTE
+    /// </summary>
+    private void RandomTerrainRoom(DungeonRoom _tmpRoom)
+    {
+        int startX = 0;
+        int startY = 0;
+        
+        GeneratedTerrainData tmpterrain = terrainDataReferenceArray[Random.Range(0, terrainDataReferenceArray.Count)];
+        
+        for (int i = startX; i < tmpterrain.size.xMax; i++)
+        {
+            for(int j =startY; j< tmpterrain.size.yMax; j++)
+            {
+                if(_tmpRoom.roomArray[i,j]==null)
+                    _tmpRoom.roomArray[i, j] = tmpterrain.tilearray[i, j];
+            }
         }
     }
 
@@ -271,12 +295,8 @@ public class BoardManager : MonoBehaviour
                                     }
                                 }
                                 break;
-                            case TileType.Floor:
-                                //tmpGroundtilemap.SetTile(new Vector3Int(i, j, 0), tileReferenceArray[_roomtype].tileType[(int)_room.roomArray[i, j].tileType].tile[_room.roomArray[i, j].tileNumber]);
-                                //break;
-                            case TileType.Ground:
-                            case TileType.Wall:
-                                tmpGroundtilemap.SetTile(new Vector3Int(i, j, 0), ruleTileRefernceArray[_roomtype].GroundTile);
+                            case TileType.Terrain:
+                                tmpGroundtilemap.SetTile(new Vector3Int(i, j, 0), tileReferenceArray[_roomtype].terrainRuleTile);
                                 break;
                             default:
                                 break;
@@ -362,7 +382,6 @@ public class DungeonRoom
     //Room info
     public int roomNumberOfList = -1;
     public Rect roomRect = new Rect(0, 0, 0, 0);
-    
     public TileInfo[,] roomArray;
     public int roomSpriteType = -1;
     public int level = -1;
@@ -373,6 +392,8 @@ public class DungeonRoom
     public int numberOfMonster = -1;
     public List<SpawnMonsterInfo> monsterInfoList = new List<SpawnMonsterInfo>();
     public List<Monster> monsterList = new List<Monster>();
+    //랜덤 터레인을 생성할때 현재 위치
+    public int currentXPos = 0;
 
     /// <summary>
     /// NOTE : 방의 사이즈 랜덤 설정 생성자
@@ -399,37 +420,32 @@ public class DungeonRoom
     /// <summary>
     /// NOTE : 땅 depth 1 테두리 생성
     /// </summary>
-    /// <param name="floortilelength"></param>
-    /// <param name="groundtilelength"></param>
-    public void SetGroundNormal(int floortilelength)
+    public void SetTerrainNormal()
     {
         //bottom, top
         for (int i = 1; i < roomRect.xMax - 1; i++)
         {
-            roomArray[i, 0] = new TileInfo(TileType.Floor, Random.Range(0, floortilelength));
-            roomArray[i, 1] = new TileInfo(TileType.Floor, Random.Range(0, floortilelength));
-            roomArray[i, (int)roomRect.yMax - 1] = new TileInfo(TileType.Floor, Random.Range(0, floortilelength));
-            roomArray[i, (int)roomRect.yMax - 2] = new TileInfo(TileType.Floor, Random.Range(0, floortilelength));
+            roomArray[i, 0] = new TileInfo(TileType.Terrain);
+            roomArray[i, 1] = new TileInfo(TileType.Terrain);
+            roomArray[i, (int)roomRect.yMax - 1] = new TileInfo(TileType.Terrain);
+            roomArray[i, (int)roomRect.yMax - 2] = new TileInfo(TileType.Terrain);
         }
 
         //left, right
         for (int j = 0; j < roomRect.yMax; j++)
         {
-            roomArray[0, j] = new TileInfo(TileType.Wall, 1);
-            roomArray[1, j] = new TileInfo(TileType.Wall, 1);
-            roomArray[(int)roomRect.xMax - 1, j] = new TileInfo(TileType.Wall, 0);
-            roomArray[(int)roomRect.xMax - 2, j] = new TileInfo(TileType.Wall, 0);
+            roomArray[0, j] = new TileInfo(TileType.Terrain);
+            roomArray[1, j] = new TileInfo(TileType.Terrain);
+            roomArray[(int)roomRect.xMax - 1, j] = new TileInfo(TileType.Terrain);
+            roomArray[(int)roomRect.xMax - 2, j] = new TileInfo(TileType.Terrain);
         }
     }
 
     /// <summary>
     /// NOTE : Ground 높이 랜덤 생성
     /// </summary>
-    /// <param name="floortilelength"></param>
-    /// <param name="groundtilelength"></param>
-    public void SetGroundHegihtRandomly(int floortilelength, int groundtilelength)
+    public void SetTerrainHegihtRandomly()
     {
-
         //가로 세로 랜덤값
         int groundWidthMin = 5;
         int groundWidthMax = 10;
@@ -439,68 +455,18 @@ public class DungeonRoom
         int beforeheight = Random.Range(groundMinheight, (int)(roomRect.yMax / 3));
         int currentheight = beforeheight;
         int beforewidth = 5;
-        bool changeheight = false; //높이가 바뀔 때 설정
-
-        int heightgapcount = 0;
+        
 
         for (int i = 1; i < roomRect.xMax - 1; i++)
         {
             for (int j = currentheight; j >= 0; j--)
             {
-                //제일 위일 경우 floor를 생성 
-                if (j.Equals(currentheight))
-                {
-                    roomArray[i, j] = new TileInfo(TileType.Floor, Random.Range(0, floortilelength));
-                }
-                else
-                {
-                    //높이가 바뀌지 않을 경우 
-                    if (!changeheight)
-                    {
-                        roomArray[i, j] = new TileInfo(TileType.Ground, Random.Range(0, groundtilelength));
-                    }
-                    //높이 바뀔 경우
-                    else
-                    {
-                        heightgapcount = Mathf.Abs(beforeheight - currentheight);
-                        //gap count가 1이하면 그대로 생성
-                        if (heightgapcount < 1)
-                        {
-                            roomArray[i, j] = new TileInfo(TileType.Ground, Random.Range(0, groundtilelength));
-                        }
-                        //gap count가 2이상일 경우 생성
-                        else
-                        {
-                            //땅이 높아질 경우 현재 땅들을 변경
-                            if (beforeheight < currentheight)
-                            {
-                                //현재 j값의 - gapcount만큼 j값을 감소시키면서 셋팅함
-                                var currentjvalue = j;
-                                for (; j > (currentjvalue - heightgapcount); j--)
-                                {
-                                    roomArray[i, j] = new TileInfo(TileType.Wall, 0);
-                                }
-
-                            }
-                            //땅이 낮아질 경우 이전 땅들을 변경 i-1 
-                            else if (beforeheight > currentheight)
-                            {
-                                //현재 j값을 건들지 않고 처리 
-                                var currentjvalue = j;
-                                for (int k = currentjvalue + 1; k <= currentjvalue + heightgapcount; k++)
-                                {
-                                    roomArray[i - 1, k] = new TileInfo(TileType.Wall, 1);
-                                }
-                            }
-                            roomArray[i, j] = new TileInfo(TileType.Ground, Random.Range(0, groundtilelength));
-                            changeheight = false;
-                        }
-                    }
-                }
+                roomArray[i, j] = new TileInfo(TileType.Terrain);
             }
 
             //높이 변경 및 넓이 설정
             beforewidth--;
+
             if (beforewidth <= 0)
             {
                 beforeheight = currentheight;
@@ -509,8 +475,6 @@ public class DungeonRoom
                 currentheight = (currentheight + tmpH >= groundMinheight) ? currentheight + tmpH : groundMinheight;
 
                 beforewidth = Random.Range(groundWidthMin, groundWidthMax);
-
-                changeheight = true;
             }
         }
     }
@@ -532,7 +496,7 @@ public class DungeonRoom
             {
                 if (posX[j].Equals(tmpvalue))
                 {
-                    tmpvalue = (int)Random.Range(2, roomRect.xMax - 2);
+                    tmpvalue = (int)Random.Range(2, roomRect.xMax - 3);
                     //다시 처음부터 확인하기 위함
                     j = 0;
                 }
@@ -542,7 +506,7 @@ public class DungeonRoom
         //저장한 x포지션을 기준으로 y값을 순회하여 roomarray의 0 값을 검색하여 설정
         foreach (int tmpx in posX)
         {
-            for (int j = 1; j < roomRect.yMax - 1; j++)
+            for (int j = 1; j < roomRect.yMax - 3; j++)
             {
                 if (roomArray[tmpx, j] == null)
                 {
@@ -640,6 +604,12 @@ public class TileInfo
     {
         tileType = _tiletype;
         tileNumber = _tilenumber;
+    }
+
+    public TileInfo(TileType _tiletype)
+    {
+        tileType = _tiletype;
+        tileNumber = 0;
     }
 
     public TileInfo()
