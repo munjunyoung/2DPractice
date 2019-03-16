@@ -62,8 +62,6 @@ public class BoardManager : MonoBehaviour
         SetConnectedEntrance();
         //적생성
         CreateMonster();
-
-        
     }
 
     /// <summary>
@@ -92,6 +90,7 @@ public class BoardManager : MonoBehaviour
             //테두리 설정
             roomList[i].SetTerrainNormal();
 
+            RandomTerrainRoom(roomList[i]);
 
             //시작방과 끝방을 제외한 나머지는 높낮이 랜덤 Ground설정
             //if (i > -1 && i < _numberOfroom)
@@ -104,19 +103,33 @@ public class BoardManager : MonoBehaviour
     /// </summary>
     private void RandomTerrainRoom(DungeonRoom _tmpRoom)
     {
-        int startX = 0;
-        int startY = 0;
-        
-        GeneratedTerrainData tmpterrain = terrainDataReferenceArray[Random.Range(0, terrainDataReferenceArray.Count)];
-        
-        for (int i = startX; i < tmpterrain.size.xMax; i++)
+        int startX = _tmpRoom.currentXPos;
+
+        List<GeneratedTerrainData> possibleTerrain = new List<GeneratedTerrainData>();
+        foreach(var tmpt in terrainDataReferenceArray)
         {
-            for(int j =startY; j< tmpterrain.size.yMax; j++)
-            {
-                if(_tmpRoom.roomArray[i,j]==null)
-                    _tmpRoom.roomArray[i, j] = tmpterrain.tilearray[i, j];
-            }
+            //현재 남아있는 Xsize와 ysize를 방에 들어갈수있는지 체크하고 임시 생성한 리스트에 추가
+            if (_tmpRoom.remainXSize > tmpt.size.xMax && (_tmpRoom.roomRect.yMax - 2) > tmpt.size.yMax)
+                possibleTerrain.Add(tmpt);
         }
+
+        if (possibleTerrain.Count > 0)
+        {
+            GeneratedTerrainData selectedTerrain = possibleTerrain[Random.Range(0, terrainDataReferenceArray.Count)];
+            //현재 비어있는Room의 x값 초기화
+            for (int i = 0; i < selectedTerrain.size.xMax; i++)
+            {
+                for (int j = 0; j < selectedTerrain.size.yMax; j++)
+                {
+                    if (_tmpRoom.roomArray[startX + i, j] == null)
+                        _tmpRoom.roomArray[startX + i, j] = selectedTerrain.tilearray[i, j];
+                }
+            }
+            _tmpRoom.currentXPos = _tmpRoom.currentXPos + selectedTerrain.size.xMax;
+
+            RandomTerrainRoom(_tmpRoom);
+        }
+        
     }
 
     /// <summary>
@@ -394,6 +407,9 @@ public class DungeonRoom
     public List<Monster> monsterList = new List<Monster>();
     //랜덤 터레인을 생성할때 현재 위치
     public int currentXPos = 0;
+    //현재 Terrain을 넣을때 체크하기위한 size (-2는 테두리 2줄을 포함하기 떄문)
+    public int remainXSize { get { return ((int)roomRect.xMax - currentXPos - 2); } }
+    
 
     /// <summary>
     /// NOTE : 방의 사이즈 랜덤 설정 생성자

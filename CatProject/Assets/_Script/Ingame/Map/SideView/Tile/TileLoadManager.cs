@@ -49,6 +49,7 @@ public class TileLoadManager : MonoBehaviour
     /// <summary>
     /// NOTE : 미리 생성해둔 지형 데이터 TileInfo 배열로 전환
     /// </summary>
+    /// <returns></returns>
     public List<GeneratedTerrainData> LoadTerrainData()
     {
         List<GeneratedTerrainData> tmpterrainlist = new List<GeneratedTerrainData>(); 
@@ -69,7 +70,6 @@ public class TileLoadManager : MonoBehaviour
             }
 
             tmpterrainlist.Add(new GeneratedTerrainData(tmptileinfoarray, tilemapdata.cellBounds));
-           
         }
 
         return tmpterrainlist;
