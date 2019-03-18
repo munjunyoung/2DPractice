@@ -25,22 +25,22 @@ public class MapSetting : EditorWindow
     {
         maptile.ClearAllTiles();
     
-        for(int i=0; i<width;i++)
+        for(int i= 0; i<width;i++)
         {
-            maptile.SetTile(new Vector3Int(i, 0, 0), loadTileArray[type].terrainRuleTile);
-            maptile.SetTile(new Vector3Int(i, 1, 0),  loadTileArray[type].terrainRuleTile);
-            maptile.SetTile(new Vector3Int(i, height-1, 0),  loadTileArray[type].terrainRuleTile);
-            maptile.SetTile(new Vector3Int(i, height-2, 0),  loadTileArray[type].terrainRuleTile);
+            maptile.SetTile(new Vector3Int(i, -1, 0), loadTileArray[type].terrainRuleTile);
+            maptile.SetTile(new Vector3Int(i, -2, 0),  loadTileArray[type].terrainRuleTile);
+            maptile.SetTile(new Vector3Int(i, height, 0),  loadTileArray[type].terrainRuleTile);
+            maptile.SetTile(new Vector3Int(i, height + 1, 0),  loadTileArray[type].terrainRuleTile);
         }
 
-        for(int j=1;j<height-1;j++)
+        for(int j=-2;j<height+2;j++)
         {
-            maptile.SetTile(new Vector3Int(0, j, 0),  loadTileArray[type].terrainRuleTile);
-            maptile.SetTile(new Vector3Int(1, j, 0),  loadTileArray[type].terrainRuleTile);
-            maptile.SetTile(new Vector3Int(width - 1, j, 0),  loadTileArray[type].terrainRuleTile);
-            maptile.SetTile(new Vector3Int(width - 2, j, 0),  loadTileArray[type].terrainRuleTile);
+            maptile.SetTile(new Vector3Int(-2, j, 0),  loadTileArray[type].terrainRuleTile);
+            maptile.SetTile(new Vector3Int(-1, j, 0),  loadTileArray[type].terrainRuleTile);
+            maptile.SetTile(new Vector3Int(width, j, 0),  loadTileArray[type].terrainRuleTile);
+            maptile.SetTile(new Vector3Int(width + 1, j, 0),  loadTileArray[type].terrainRuleTile);
         }
-
+        Debug.Log(width + height);
         ///배경 생성
         if (backgroundon)
         {
@@ -73,7 +73,7 @@ public class MapSetting : EditorWindow
             backgroundob.GetComponent<SpriteRenderer>().sortingLayerName = "BackGround";
             backgroundob.GetComponent<SpriteRenderer>().drawMode = SpriteDrawMode.Sliced;
             backgroundob.GetComponent<SpriteRenderer>().sprite = tmptile.sprite;
-            backgroundob.GetComponent<SpriteRenderer>().size = new Vector2(width, height) - Vector2.one;
+            backgroundob.GetComponent<SpriteRenderer>().size = new Vector2(width, height);
             backgroundob.GetComponent<SpriteRenderer>().sortingOrder = count;
             count++;
             backgroundob.transform.SetParent(tmpParent.transform);

@@ -28,9 +28,9 @@ public class BoardManager : MonoBehaviour
     private int widthMinSize;
     [SerializeField, Range(60, 100)]
     private int widthMaxSize;
-    [SerializeField, Range(15, 30)]
-    private int heightMinSize;
     [SerializeField, Range(30, 60)]
+    private int heightMinSize;
+    [SerializeField, Range(60, 100)]
     private int heightMaxSize;
 
     //NOTE : Reference GameObject Model
@@ -62,8 +62,10 @@ public class BoardManager : MonoBehaviour
         SetConnectedEntrance();
         //적생성
         CreateMonster();
+
     }
 
+    #region Create Room
     /// <summary>
     /// NOTE : 오브젝트를 생성할때 방들의 상위 오브젝트가 될 부모 설정 함수
     /// TODO : 씬하나에 끝날 경우에는 미리 생성하는 것으로 해당 함수 제거 요망 씬이 넘어갈때마다 필요할 거라고 생각되었기 때문 (방을 남겨두기에는 하위오브젝트들을 destroy함으로써 gc가 돌꺼같나..?)
@@ -87,14 +89,7 @@ public class BoardManager : MonoBehaviour
         for (int i = 0; i < _numberOfroom; i++)
         {
             roomList.Add(new DungeonRoom(i, (int)RoomType.Type2, widthMinSize, widthMaxSize, heightMinSize, heightMaxSize));
-            //테두리 설정
-            roomList[i].SetTerrainNormal();
-
             RandomTerrainRoom(roomList[i]);
-
-            //시작방과 끝방을 제외한 나머지는 높낮이 랜덤 Ground설정
-            //if (i > -1 && i < _numberOfroom)
-            //    roomList[i].SetTerrainHegihtRandomly();
         }
     }
     
@@ -115,7 +110,7 @@ public class BoardManager : MonoBehaviour
 
         if (possibleTerrain.Count > 0)
         {
-            GeneratedTerrainData selectedTerrain = possibleTerrain[Random.Range(0, terrainDataReferenceArray.Count)];
+            GeneratedTerrainData selectedTerrain = possibleTerrain[Random.Range(0, possibleTerrain.Count - 1)];
             //현재 비어있는Room의 x값 초기화
             for (int i = 0; i < selectedTerrain.size.xMax; i++)
             {
@@ -130,7 +125,26 @@ public class BoardManager : MonoBehaviour
             RandomTerrainRoom(_tmpRoom);
         }
     }
+    
+    /// <summary>
+    /// 몬스터 생성
+    /// </summary>
+    private void CreateMonster()
+    {
+        foreach (DungeonRoom room in roomList)
+        {
+            room.SetMonster();
+            foreach (SpawnMonsterInfo monsterinfo in room.monsterInfoList)
+            {
+                Monster tmpm = Instantiate(monsterPrefabList[(int)monsterinfo.mType], monsterinfo.startPos, Quaternion.identity, room.roomModel.transform);
+                room.monsterList.Add(tmpm);
+            }
+        }
+    }
 
+    #endregion
+
+    #region ConnectRoom
     /// <summary>
     /// NOTE : 생성 된 방들의 레벨 설정
     /// XXX : 시작 방은 같은 레벨 여러개 설정, 보스방은 한개만 설정 
@@ -171,7 +185,6 @@ public class BoardManager : MonoBehaviour
         LevelRoomDic[levelCount].Add(roomList[roomList.Count - 1]);
     }
 
-    #region ConnectRoom
     /// <summary>
     /// NOTE : 파라미터로 설정한 방 2개 각각 neighBorRooms 객체 추가 (출입구 연결) 
     /// </summary>
@@ -280,8 +293,8 @@ public class BoardManager : MonoBehaviour
 
             //Ground TileMap 오브젝트 생성
             //var tmpFloortilemap = CreateTileMap("Floor", "Floor", "Ground", tmpParent);
-            var tmpGroundtilemap = CreateTileMap("Ground", "Ground", "Ground", tmpParent);
-
+            var tmpterraintilemapob = CreateTileMap("Ground", "Ground", "Ground", tmpParent);
+            tmpterraintilemapob = DrawRoomEdge(tmpterraintilemapob ,_room);
             //설정한 방의 배열정보를 통하여 타일 설정 및 출입문 오브젝트 생성
             for (int i = 0; i < _room.roomRect.xMax; i++)
             {
@@ -308,7 +321,7 @@ public class BoardManager : MonoBehaviour
                                 }
                                 break;
                             case TileType.Terrain:
-                                tmpGroundtilemap.SetTile(new Vector3Int(i, j, 0), tileReferenceArray[_roomtype].terrainRuleTile);
+                                tmpterraintilemapob.SetTile(new Vector3Int(i, j, 0), tileReferenceArray[_roomtype].terrainRuleTile);
                                 break;
                             default:
                                 break;
@@ -322,12 +335,26 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    private Tilemap DrawRoomEdge(DungeonRoom _room)
+    private Tilemap DrawRoomEdge(Tilemap _terraintilemap, DungeonRoom _room)
     {
-        Tilemap tmptilemap = new Tilemap();
-        
+        //bottom, top
+        for (int i = 0; i < _room.roomRect.xMax; i++)
+        {
+            _terraintilemap.SetTile(new Vector3Int(i, -1, 0), tileReferenceArray[_room.roomSpriteType].terrainRuleTile);
+            _terraintilemap.SetTile(new Vector3Int(i, -2, 0), tileReferenceArray[_room.roomSpriteType].terrainRuleTile);
+            _terraintilemap.SetTile(new Vector3Int(i, (int)_room.roomRect.yMax, 0), tileReferenceArray[_room.roomSpriteType].terrainRuleTile);
+            _terraintilemap.SetTile(new Vector3Int(i, (int)_room.roomRect.yMax + 1, 0), tileReferenceArray[_room.roomSpriteType].terrainRuleTile);
+        }
 
-        return tmptilemap;
+        //left, right
+        for (int j = -2; j < _room.roomRect.yMax + 2; j++)
+        {
+            _terraintilemap.SetTile(new Vector3Int(-1, j, 0), tileReferenceArray[_room.roomSpriteType].terrainRuleTile);
+            _terraintilemap.SetTile(new Vector3Int(-2, j, 0), tileReferenceArray[_room.roomSpriteType].terrainRuleTile);
+            _terraintilemap.SetTile(new Vector3Int((int)_room.roomRect.xMax, j, 0), tileReferenceArray[_room.roomSpriteType].terrainRuleTile);
+            _terraintilemap.SetTile(new Vector3Int((int)_room.roomRect.xMax+1, j, 0), tileReferenceArray[_room.roomSpriteType].terrainRuleTile);
+        }
+        return _terraintilemap;
     }
 
     private GameObject CreateBackGround(DungeonRoom room)
@@ -343,7 +370,7 @@ public class BoardManager : MonoBehaviour
             backgroundob.GetComponent<SpriteRenderer>().sortingLayerName = "BackGround";
             backgroundob.GetComponent<SpriteRenderer>().drawMode = SpriteDrawMode.Sliced;
             backgroundob.GetComponent<SpriteRenderer>().sprite = tmptile.sprite;
-            backgroundob.GetComponent<SpriteRenderer>().size = room.roomRect.size - Vector2.one;
+            backgroundob.GetComponent<SpriteRenderer>().size = room.roomRect.size;
             backgroundob.GetComponent<SpriteRenderer>().sortingOrder = count;
             count++;
             backgroundob.transform.SetParent(tmpParent.transform);
@@ -374,21 +401,6 @@ public class BoardManager : MonoBehaviour
     }
     #endregion
 
-    /// <summary>
-    /// 몬스터 생성
-    /// </summary>
-    private void CreateMonster()
-    {
-        foreach(DungeonRoom room in roomList)
-        {
-            room.SetMonster();
-            foreach(SpawnMonsterInfo monsterinfo in room.monsterInfoList)
-            {
-                Monster tmpm = Instantiate(monsterPrefabList[(int)monsterinfo.mType], monsterinfo.startPos, Quaternion.identity, room.roomModel.transform);              
-                room.monsterList.Add(tmpm);
-            }
-        }
-    }
 }
 
 /// <summary>
@@ -440,29 +452,30 @@ public class DungeonRoom
     }
 
     #region CREATE MAP
-    /// <summary>
-    /// NOTE : 땅 depth 1 테두리 생성
-    /// </summary>
-    public void SetTerrainNormal()
-    {
-        //bottom, top
-        for (int i = 1; i < roomRect.xMax - 1; i++)
-        {
-            roomArray[i, 0] = new TileInfo(TileType.Terrain);
-            roomArray[i, 1] = new TileInfo(TileType.Terrain);
-            roomArray[i, (int)roomRect.yMax - 1] = new TileInfo(TileType.Terrain);
-            roomArray[i, (int)roomRect.yMax - 2] = new TileInfo(TileType.Terrain);
-        }
+    ///// <summary>
+    ///// NOTE : 땅 depth 1 테두리 생성
+    ///// TODO : 현재는 사용하지 않음 
+    ///// </summary>
+    //public void SetTerrainNormal()
+    //{
+    //    //bottom, top
+    //    for (int i = 1; i < roomRect.xMax - 1; i++)
+    //    {
+    //        roomArray[i, 0] = new TileInfo(TileType.Terrain);
+    //        roomArray[i, 1] = new TileInfo(TileType.Terrain);
+    //        roomArray[i, (int)roomRect.yMax - 1] = new TileInfo(TileType.Terrain);
+    //        roomArray[i, (int)roomRect.yMax - 2] = new TileInfo(TileType.Terrain);
+    //    }
 
-        //left, right
-        for (int j = 0; j < roomRect.yMax; j++)
-        {
-            roomArray[0, j] = new TileInfo(TileType.Terrain);
-            roomArray[1, j] = new TileInfo(TileType.Terrain);
-            roomArray[(int)roomRect.xMax - 1, j] = new TileInfo(TileType.Terrain);
-            roomArray[(int)roomRect.xMax - 2, j] = new TileInfo(TileType.Terrain);
-        }
-    }
+    //    //left, right
+    //    for (int j = 0; j < roomRect.yMax; j++)
+    //    {
+    //        roomArray[0, j] = new TileInfo(TileType.Terrain);
+    //        roomArray[1, j] = new TileInfo(TileType.Terrain);
+    //        roomArray[(int)roomRect.xMax - 1, j] = new TileInfo(TileType.Terrain);
+    //        roomArray[(int)roomRect.xMax - 2, j] = new TileInfo(TileType.Terrain);
+    //    }
+    //}
 
     /// <summary>
     /// NOTE : Ground 높이 랜덤 생성
@@ -512,14 +525,14 @@ public class DungeonRoom
         //Entrance갯수 만큼 x포지션 저장
         for (int i = 0; i < neighborRooms.Count; i++)
         {
-            var tmpvalue = (int)Random.Range(1, roomRect.xMax - 1);
+            var tmpvalue = (int)Random.Range(2, roomRect.xMax - 1);
 
             //같은 값이 있는지 체크?
             for (int j = 0; j < posX.Count; j++)
             {
                 if (posX[j].Equals(tmpvalue))
                 {
-                    tmpvalue = (int)Random.Range(2, roomRect.xMax - 3);
+                    tmpvalue = (int)Random.Range(2, roomRect.xMax - 1);
                     //다시 처음부터 확인하기 위함
                     j = 0;
                 }
@@ -529,7 +542,7 @@ public class DungeonRoom
         //저장한 x포지션을 기준으로 y값을 순회하여 roomarray의 0 값을 검색하여 설정
         foreach (int tmpx in posX)
         {
-            for (int j = 1; j < roomRect.yMax - 3; j++)
+            for (int j = 0; j < roomRect.yMax; j++)
             {
                 if (roomArray[tmpx, j] == null)
                 {
@@ -538,8 +551,8 @@ public class DungeonRoom
                 }
             }
         }
+        
     }
-    #endregion
 
     /// <summary>
     /// NOTE : 몬스터 정보 설정
@@ -551,10 +564,10 @@ public class DungeonRoom
         //Test를 위해 1로만 설정
         //현재는 레벨만큼 몬스터 생성
         int numberofmonster = level;
-        
+
         //몬스터 숫자만큼 x포지션 저장
         List<int> posX = new List<int>();
-        for (int i = 0; i <numberofmonster; i++)
+        for (int i = 0; i < numberofmonster; i++)
         {
             var tmpvalue = (int)Random.Range(1, roomRect.xMax - 1);
 
@@ -577,12 +590,13 @@ public class DungeonRoom
             {
                 if (roomArray[tmpx, j] == null)
                 {
-                    monsterInfoList.Add(new SpawnMonsterInfo(MONSTER_TYPE.FOX, new Vector2(tmpx, j+0.5f)));
+                    monsterInfoList.Add(new SpawnMonsterInfo(MONSTER_TYPE.FOX, new Vector2(tmpx, j + 0.5f)));
                     break;
                 }
             }
         }
     }
+    #endregion
 }
 
 /// <summary>
@@ -616,7 +630,7 @@ public class EntranceConnectRoom
 }
 
 /// <summary>
-/// NOTE : Map class info
+/// NOTE : DungeonRoom내부구조물을 한번에 적어서 설정하기위해 클래스 배열로 생성
 /// </summary>
 public class TileInfo
 {

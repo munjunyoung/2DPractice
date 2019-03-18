@@ -94,14 +94,13 @@ class TestSettingWindow : EditorWindow
         GUILayout.Label("Map Size Setting", MapToolWindow.titleFont);
         GUILayout.BeginHorizontal("Box");
         GUILayout.Label("Width");
-        mapWidth = EditorGUILayout.IntSlider(mapWidth, 1, 200);
+        mapWidth = EditorGUILayout.IntSlider(mapWidth, 0, 200);
         GUILayout.EndVertical();
 
         GUILayout.BeginHorizontal("Box");
         GUILayout.Label("Height");
-        mapHeight = EditorGUILayout.IntSlider(mapHeight, 1, 200);
+        mapHeight = EditorGUILayout.IntSlider(mapHeight, 0, 200);
         GUILayout.EndVertical();
-        
         GUILayout.Label("Map Type", MapToolWindow.titleFont);
         selectedTypeMap = GUILayout.Toolbar(selectedTypeMap, new string[] { "Type1", "Type2" });
         GUILayout.Space(10);
