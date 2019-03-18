@@ -97,7 +97,7 @@ public class BoardManager : MonoBehaviour
             //    roomList[i].SetTerrainHegihtRandomly();
         }
     }
-
+    
     /// <summary>
     /// NOTE
     /// </summary>
@@ -129,7 +129,6 @@ public class BoardManager : MonoBehaviour
 
             RandomTerrainRoom(_tmpRoom);
         }
-        
     }
 
     /// <summary>
@@ -321,6 +320,14 @@ public class BoardManager : MonoBehaviour
             _room.roomModel = tmpParent;
             tmpParent.SetActive(false);
         }
+    }
+
+    private Tilemap DrawRoomEdge(DungeonRoom _room)
+    {
+        Tilemap tmptilemap = new Tilemap();
+        
+
+        return tmptilemap;
     }
 
     private GameObject CreateBackGround(DungeonRoom room)
