@@ -10,7 +10,7 @@ public class MapToolWindow : EditorWindow
 
     private static string beforesSceneName = null;
 
-    string type2Path = "Assets/resources/TileType2/TileType2Palette.prefab";
+    string type2Path = "Assets/resources/TileType2";
     static string scenePath = "Assets/_Scenes/";
     static string layoutPath = "Assets/_MapTool/Layout/";
     private string loadFolderPath = "Assets/resources/GeneratedMapData";
