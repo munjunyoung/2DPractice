@@ -11,7 +11,7 @@ public class MapSetting : EditorWindow
 
     private void OnEnable()
     {
-        loadTileArray = TileLoadManager.LoadTile();
+        loadTileArray = TileLoadManager.LoadAllTile();
         maptile = GameObject.Find("TestGround").GetComponent<Tilemap>();
     }
 

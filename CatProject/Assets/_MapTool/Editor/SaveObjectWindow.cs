@@ -98,6 +98,21 @@ class SaveObjectWindow : EditorWindow
                 //저장 버튼
                 if (GUILayout.Button("저장", GUILayout.Height(35)))
                 {
+                    //이름이 같은 파일이 있을경우 
+                    //파일체크 함수 관련
+                    var files = Resources.LoadAll<GameObject>("GeneratedMapData");
+                    foreach (var f in files)
+                    {
+                        if (f.name == saveOb.name)
+                        {
+                            EditorUtility.DisplayDialog("Same Name", "같은 이름이 존재하므로 기존이름에 '1'을 붙여 저장합니다.", "OK");
+                            saveOb.name = saveOb.name + " 1";
+                            SavePrefabAndSelectAlarm(saveOb);
+                            this.Close();
+
+                        }
+                    }
+
                     SavePrefabAndSelectAlarm(saveOb);
                     this.Close();
                 }

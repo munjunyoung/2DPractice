@@ -9,10 +9,9 @@ public class BoardManager : MonoBehaviour
     [HideInInspector]
     public List<DungeonRoom> roomList = new List<DungeonRoom>();
     private Dictionary<int, List<DungeonRoom>> LevelRoomDic = new Dictionary<int, List<DungeonRoom>>();
-
-    //Tile 정보
+    //Tile Data
     private TypeOfTileSetType[] tileReferenceArray;
-    //이미 생성해둔 지형 데이터
+    //Terrain Data
     private List<GeneratedTerrainData> terrainDataReferenceArray;
 
     [Header("MONSTER PREFAB"),SerializeField]
@@ -89,59 +88,73 @@ public class BoardManager : MonoBehaviour
         for (int i = 0; i < _numberOfroom; i++)
         {
             roomList.Add(new DungeonRoom(i, (int)RoomType.Type2, widthMinSize, widthMaxSize, heightMinSize, heightMaxSize));
-            RandomTerrainRoom(roomList[i]);
+            SetRandomTerrainRoom(roomList[i]);
         }
     }
-    
+
+    //점프 가능한 셀 수치
+    private int possibleJumpHeightValue = 5;
     /// <summary>
-    /// NOTE
+    /// NOTE : 미리 저장해둔 지형들을 사이즈를 검색하여 랜덤으로 선택하고 배치
     /// </summary>
-    private void RandomTerrainRoom(DungeonRoom _tmpRoom)
+    private void SetRandomTerrainRoom(DungeonRoom _tmpRoom)
     {
         int startX = _tmpRoom.currentXPos;
-
+       
         List<GeneratedTerrainData> possibleTerrain = new List<GeneratedTerrainData>();
         foreach(var tmpt in terrainDataReferenceArray)
         {
             //현재 남아있는 Xsize와 ysize를 방에 들어갈수있는지 체크하고 임시 생성한 리스트에 추가
-            if (_tmpRoom.remainXSize > tmpt.size.xMax && (_tmpRoom.roomRect.yMax - 2) > tmpt.size.yMax)
-                possibleTerrain.Add(tmpt);
+            if (_tmpRoom.remainXSize > tmpt.size.xMax && (_tmpRoom.roomRect.yMax) > tmpt.size.yMax)
+            {
+                //Terrain을 처음 생성할 때
+                if (_tmpRoom.beforeTerrainData == null)
+                {
+                    possibleTerrain.Add(tmpt);
+                }
+                else
+                {
+                    if (Mathf.Abs(_tmpRoom.beforeTerrainData.endHeight - tmpt.startHeight) <= possibleJumpHeightValue)
+                        possibleTerrain.Add(tmpt);
+                }
+            }
         }
 
+        //한개라도 가능한 지형이 있을경우 선택하여 타일 저장
         if (possibleTerrain.Count > 0)
         {
             GeneratedTerrainData selectedTerrain = possibleTerrain[Random.Range(0, possibleTerrain.Count - 1)];
+
+            Debug.Log("START : " + selectedTerrain.startHeight + ", END : " + selectedTerrain.endHeight);
             //현재 비어있는Room의 x값 초기화
             for (int i = 0; i < selectedTerrain.size.xMax; i++)
             {
                 for (int j = 0; j < selectedTerrain.size.yMax; j++)
                 {
                     if (_tmpRoom.roomArray[startX + i, j] == null)
-                        _tmpRoom.roomArray[startX + i, j] = selectedTerrain.tilearray[i, j];
+                        _tmpRoom.roomArray[startX + i, j] = selectedTerrain.tileArray[i, j];
                 }
             }
-            _tmpRoom.currentXPos = _tmpRoom.currentXPos + selectedTerrain.size.xMax;
 
-            RandomTerrainRoom(_tmpRoom);
+            _tmpRoom.beforeTerrainData = selectedTerrain;
+            _tmpRoom.currentXPos = _tmpRoom.currentXPos + selectedTerrain.size.xMax;
+           
+            
+            SetRandomTerrainRoom(_tmpRoom);
         }
-    }
-    
-    /// <summary>
-    /// 몬스터 생성
-    /// </summary>
-    private void CreateMonster()
-    {
-        foreach (DungeonRoom room in roomList)
+        //없을 경우 마지막으로 끝나는 지형의 나머지 값을 체크
+        else
         {
-            room.SetMonster();
-            foreach (SpawnMonsterInfo monsterinfo in room.monsterInfoList)
+            //음수처리 안해도될듯 하다
+            int nextheight = Random.Range(_tmpRoom.beforeTerrainData.endHeight - possibleJumpHeightValue, _tmpRoom.beforeTerrainData.endHeight + possibleJumpHeightValue);
+            
+            for(int i = _tmpRoom.currentXPos; i<_tmpRoom.roomRect.xMax;i++)
             {
-                Monster tmpm = Instantiate(monsterPrefabList[(int)monsterinfo.mType], monsterinfo.startPos, Quaternion.identity, room.roomModel.transform);
-                room.monsterList.Add(tmpm);
+                for(int j = 0; j<nextheight;j++)
+                    _tmpRoom.roomArray[i, j] = new TileInfo(TileType.Terrain);
             }
         }
     }
-
     #endregion
 
     #region ConnectRoom
@@ -151,6 +164,9 @@ public class BoardManager : MonoBehaviour
     /// </summary>
     private void SetRoomLevel()
     {
+        if (roomList.Count < 2)
+            return;
+
         int levelCount = 0;
         int setSameLevelPer = 50;
 
@@ -335,6 +351,12 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// NOTE : 모든 방의 테두리 생성
+    /// </summary>
+    /// <param name="_terraintilemap"></param>
+    /// <param name="_room"></param>
+    /// <returns></returns>
     private Tilemap DrawRoomEdge(Tilemap _terraintilemap, DungeonRoom _room)
     {
         //bottom, top
@@ -357,6 +379,12 @@ public class BoardManager : MonoBehaviour
         return _terraintilemap;
     }
 
+    /// <summary>
+    /// NOTE : 배경 생성 부모오브젝트를 생성 
+    ///      : 배경이 여러개일 가능성이 높으므로 해당 배경의 수만큼 배경오브젝트를 생성하고 모든 컴포넌트 추가 및 설정
+    /// </summary>
+    /// <param name="room"></param>
+    /// <returns></returns>
     private GameObject CreateBackGround(DungeonRoom room)
     {
         GameObject tmpParent = new GameObject("BackGroundParent");
@@ -377,6 +405,7 @@ public class BoardManager : MonoBehaviour
         }
         return tmpParent;
     }
+
     /// <summary>
     /// NOTE : TileMap Object 동적 생성
     /// </summary>
@@ -399,8 +428,23 @@ public class BoardManager : MonoBehaviour
 
         return tmptilemap;
     }
-    #endregion
 
+    /// <summary>
+    /// 몬스터 생성
+    /// </summary>
+    private void CreateMonster()
+    {
+        foreach (DungeonRoom room in roomList)
+        {
+            room.SetMonster();
+            foreach (SpawnMonsterInfo monsterinfo in room.monsterInfoList)
+            {
+                Monster tmpm = Instantiate(monsterPrefabList[(int)monsterinfo.mType], monsterinfo.startPos, Quaternion.identity, room.roomModel.transform);
+                room.monsterList.Add(tmpm);
+            }
+        }
+    }
+    #endregion
 }
 
 /// <summary>
@@ -424,10 +468,12 @@ public class DungeonRoom
     public int numberOfMonster = -1;
     public List<SpawnMonsterInfo> monsterInfoList = new List<SpawnMonsterInfo>();
     public List<Monster> monsterList = new List<Monster>();
-    //랜덤 터레인을 생성할때 현재 위치
-    public int currentXPos = 0;
+
+    //Terrain
+    public GeneratedTerrainData beforeTerrainData = null;
+    public int currentXPos;
     //현재 Terrain을 넣을때 체크하기위한 size (-2는 테두리 2줄을 포함하기 떄문)
-    public int remainXSize { get { return ((int)roomRect.xMax - currentXPos - 2); } }
+    public int remainXSize { get { return ((int)roomRect.xMax - currentXPos); } }
     
 
     /// <summary>
@@ -476,45 +522,7 @@ public class DungeonRoom
     //        roomArray[(int)roomRect.xMax - 2, j] = new TileInfo(TileType.Terrain);
     //    }
     //}
-
-    /// <summary>
-    /// NOTE : Ground 높이 랜덤 생성
-    /// </summary>
-    public void SetTerrainHegihtRandomly()
-    {
-        //가로 세로 랜덤값
-        int groundWidthMin = 5;
-        int groundWidthMax = 10;
-        int groundHeightValue = 5;
-        int groundMinheight = 1; //최소 floor 높이값
-
-        int beforeheight = Random.Range(groundMinheight, (int)(roomRect.yMax / 3));
-        int currentheight = beforeheight;
-        int beforewidth = 5;
-        
-
-        for (int i = 1; i < roomRect.xMax - 1; i++)
-        {
-            for (int j = currentheight; j >= 0; j--)
-            {
-                roomArray[i, j] = new TileInfo(TileType.Terrain);
-            }
-
-            //높이 변경 및 넓이 설정
-            beforewidth--;
-
-            if (beforewidth <= 0)
-            {
-                beforeheight = currentheight;
-                //랜덤으로 설정할 경우 -가 계속되어 1이하로 내려가는 경우가 생기기 때문에 tmph를 따로 설정 하여 currenth를 따로 초기화
-                var tmpH = Random.Range(-groundHeightValue, groundHeightValue);
-                currentheight = (currentheight + tmpH >= groundMinheight) ? currentheight + tmpH : groundMinheight;
-
-                beforewidth = Random.Range(groundWidthMin, groundWidthMax);
-            }
-        }
-    }
-
+    
     /// <summary>
     /// NOTE : 저장된 NeighborRooms 정보를 통해 출입구 랜덤 생성 
     /// TODO : 현재는 가로값을 랜덤으로 설정하고 높이는 무조건 땅위에 생성하도록 설정하여 개선 가능성이 매우 높음
@@ -646,12 +654,6 @@ public class TileInfo
     public TileInfo(TileType _tiletype)
     {
         tileType = _tiletype;
-        tileNumber = 0;
-    }
-
-    public TileInfo()
-    {
-        tileType = 0;
         tileNumber = 0;
     }
 }

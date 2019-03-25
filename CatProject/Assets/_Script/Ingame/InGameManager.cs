@@ -43,7 +43,7 @@ public class InGameManager : MonoBehaviour
         roomList[0].roomModel.SetActive(true);
         currentRoom = roomList[0];
         //시작할땐 0번 방이므로 체크
-        CheckUnLockRoom();
+        MonsterAliveCheck();
     }
 
     /// <summary>
@@ -58,7 +58,7 @@ public class InGameManager : MonoBehaviour
         roomList[nextnum].roomModel.SetActive(true);
         currentRoom = roomList[nextnum];
         Debug.Log("Change Room ! : CurrentRoom[" + currentnum + "] -> [" + nextnum + "]");
-        CheckUnLockRoom();
+        MonsterAliveCheck();
     }
 
     /// <summary>
@@ -74,11 +74,12 @@ public class InGameManager : MonoBehaviour
         Debug.Log("UNLOCK ROOM [" + currentRoom.roomNumberOfList + "]");
     }
 
+    #region UnLock Room
     /// <summary>
     /// NOTE : ROOM CHECK UN LOCK
     /// TODO : 현재는 몬스터의 존재 유무로만 LOCK 해제, 이후에 추가적으로 방의 타입에 따라 룸을 해제하는 방식을 변경 해야한다.
     /// </summary>
-    public void CheckUnLockRoom()
+    public void MonsterAliveCheck()
     {
         bool checkmonsterisAlive = false;
         foreach(var monster in currentRoom.monsterList)
@@ -91,4 +92,15 @@ public class InGameManager : MonoBehaviour
         if (!checkmonsterisAlive)
             UnLockRoom();
     }
+
+    public void BossAliveCheck()
+    {
+        //..
+    }
+
+    public void GetItemCheck()
+    {
+        //..
+    }
+    #endregion
 }

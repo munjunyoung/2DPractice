@@ -323,7 +323,7 @@ public class Monster : MonoBehaviour
     IEnumerator ActiveOff()
     {
         yield return new WaitForSeconds(2f);
-        InGameManager.GetInstance().CheckUnLockRoom();
+        InGameManager.GetInstance().MonsterAliveCheck();
         gameObject.SetActive(false);
     }
     /// <summary>
