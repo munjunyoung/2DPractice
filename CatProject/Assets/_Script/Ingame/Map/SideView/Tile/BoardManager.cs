@@ -125,7 +125,7 @@ public class BoardManager : MonoBehaviour
         {
             GeneratedTerrainData selectedTerrain = possibleTerrain[Random.Range(0, possibleTerrain.Count - 1)];
 
-            Debug.Log("START : " + selectedTerrain.startHeight + ", END : " + selectedTerrain.endHeight);
+            //Debug.Log("START : " + selectedTerrain.startHeight + ", END : " + selectedTerrain.endHeight);
             //현재 비어있는Room의 x값 초기화
             for (int i = 0; i < selectedTerrain.size.xMax; i++)
             {

@@ -11,7 +11,7 @@ public class PlayerData : MonoBehaviour
     #region EXCEL DATA
     [Header("HEALTH OPTION"),Range(0,250)]
     public int maxHP;
-
+    
     [Header("TP OPTION"), Range(0, 150)]
     public int maxTP;
     [Range(0f,1f)]

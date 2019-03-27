@@ -225,6 +225,7 @@ GameObject:
   - component: {fileID: 1285331772}
   - component: {fileID: 1285331771}
   - component: {fileID: 1285331773}
+  - component: {fileID: 1285331774}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -275,6 +276,18 @@ MonoBehaviour:
   playerTPSlider: {fileID: 1189419985}
   playerHPText: {fileID: 2135236847}
   playerTPText: {fileID: 1956996966}
+--- !u!114 &1285331774
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1285331770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07c4bfdcb7231d44aaa4147704bd4773, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!20 &1432288388 stripped
 Camera:
   m_CorrespondingSourceObject: {fileID: 3846223833714211071, guid: b01bcb764f4a73947b8d8201276cbfd1,

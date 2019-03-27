@@ -91,9 +91,10 @@ public class Monster : MonoBehaviour
     private bool attackOn = false;
     private bool isFrontTarget = false;
     //KnockBack
-    private bool isRunningKncokbackCoroutine = false;
+    private bool isRunningKnockbackCoroutine = false;
     private bool isKnockbackState = false;
-
+    //Stop
+    
     [HideInInspector]
     public bool isAlive;
     private bool isGrounded = false;
@@ -280,7 +281,7 @@ public class Monster : MonoBehaviour
     /// <param name="targetpos"></param>
     private void KnockBack(Transform targetpos)
     {
-        if(!isRunningKncokbackCoroutine)
+        if(!isRunningKnockbackCoroutine)
             StartCoroutine(KnockbackCoroutine(targetpos));
     }
 
@@ -292,7 +293,7 @@ public class Monster : MonoBehaviour
     {
         Debug.Log("Knockback !");
         //상태 변경
-        isRunningKncokbackCoroutine = true;
+        isRunningKnockbackCoroutine = true;
         isKnockbackState = true;
         //KncokBack Action
         rb2D.velocity = Vector2.zero;
@@ -303,7 +304,7 @@ public class Monster : MonoBehaviour
         yield return new WaitForSeconds(mDATA.knockbackTime);
         //상태 리셋
         isKnockbackState = false;
-        isRunningKncokbackCoroutine = false;
+        isRunningKnockbackCoroutine = false;
     }
 
     /// <summary>
