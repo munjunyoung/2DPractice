@@ -14,11 +14,11 @@ public class PlayerData : MonoBehaviour
     
     [Header("TP OPTION"), Range(0, 150)]
     public int maxTP;
-    [Range(0f,1f)]
-    public float recoveryTPRate;
     [Range(0f,10f)]
     public int recoveryTPAmount;
-    
+    [Range(0f, 1f)]
+    public float recoveryTPRate = 0.1f;
+
     /// <summary>
     /// Move :  플레이어 캐릭터 이동 함수 
     /// maxSpeedValue
@@ -32,7 +32,8 @@ public class PlayerData : MonoBehaviour
     [Range(10f, 100f)]
     public float maxSpeedValue;
     [Range(5, 50f)]
-    public float accelerationValue, decelerationValue;
+    public float accelerationValue = 20;
+    public float decelerationValue = 10;
 
     /// <summary>
     /// JUMP : 버튼이나 해당 키가 눌려있음을 체크하여 JumpCount만큼 Addforce(impulse) 반복 실행
@@ -44,12 +45,12 @@ public class PlayerData : MonoBehaviour
     /// NOTE : addforce를 함수 실행 프레임을 몇초 간격으로 둘것인지 설정
     /// </summary>
     [Header("JUMP OPTION")]
-    [Range(1, 10)]
-    public int jumpMaxCount;
     [Range(1, 30)]
     public float jumpPowerPerCount;
+    [Range(1, 10)]
+    public int jumpMaxCount = 5;
     [Range(0.001f, 0.1f)]
-    public float addForceFrameIntervalTime;
+    public float addForceFrameIntervalTime = 0.1f;
 
     /// <summary>
     /// ATTACK : ATTACK 관련 함수 
@@ -65,18 +66,16 @@ public class PlayerData : MonoBehaviour
     /// NOTE : 공격 후 대기시간
     /// </summary>
     [Header("ATTACK OPTION")]
-    [SerializeField]
-    public GameObject attackEffectModel;
     [Range(1f, 5f)]
     public float attackRange;
     [Range(1f, 100f)]
     public int attackDamage;
     [Range(0f, 5f)]
     public float attackCoolTime;
-    [Range(0f,5f)]
-    public float attackAnimSpeed;
     [Range(0, 100)]
     public int attackTPAmount;
+    [Range(0f, 5f)]
+    public float attackAnimSpeed = 1;
     #endregion
 
     /// <summary>
@@ -92,7 +91,9 @@ public class PlayerData : MonoBehaviour
     [Range(0f,10f)]
     public float invincibleTime;
     [Range(0f, 1f)]
-    public float flashRate;
+    public float flashRate = 0.1f;
     [Range(0f, 500f)]
-    public float knockBackPower;
+    public float knockBackPower = 10;
+
+    
 }

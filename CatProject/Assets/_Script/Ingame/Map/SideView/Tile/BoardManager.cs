@@ -100,7 +100,7 @@ public class BoardManager : MonoBehaviour
     private void SetRandomTerrainRoom(DungeonRoom _tmpRoom)
     {
         int startX = _tmpRoom.currentXPos;
-       
+        
         List<GeneratedTerrainData> possibleTerrain = new List<GeneratedTerrainData>();
         foreach(var tmpt in terrainDataReferenceArray)
         {

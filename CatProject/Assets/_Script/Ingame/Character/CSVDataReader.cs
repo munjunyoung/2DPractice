@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Text.RegularExpressions;
+using System.Reflection;
+using System;
 
 public class CSVDataReader : MonoBehaviour
 {
@@ -15,6 +17,7 @@ public class CSVDataReader : MonoBehaviour
     {
        characterDataDic = Read(characterPath);
 
+        //Test
         foreach (var t in characterDataDic["Cat1"])
             Debug.Log(t);
     }
@@ -53,5 +56,14 @@ public class CSVDataReader : MonoBehaviour
             tmplist.Add(values[0], data);
         }
         return tmplist;
+    }
+
+    public void Test()
+    {
+        Type tp = typeof(PlayerData);
+        //해당 값들을 가져옴
+        FieldInfo[] flds = tp.GetFields(BindingFlags.Public);
+        PlayerData testData = new PlayerData();
+        testData.maxHP.ToString();
     }
 }

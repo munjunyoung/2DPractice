@@ -91,6 +91,8 @@ public class Player : MonoBehaviour
     private bool isGrounded;
     private bool isRunningJumpCoroutine = false;
     //Attack
+    [SerializeField]
+    public GameObject attackEffectModel;
     private bool attackCooltimeState = false;
     private bool attackOn;
     private bool isRunningAttackCoroutine = false;
@@ -239,11 +241,11 @@ public class Player : MonoBehaviour
     public void AttackEffectOn()
     {
         UseTP(pDATA.attackTPAmount);
-        pDATA.attackEffectModel.SetActive(true);
+        attackEffectModel.SetActive(true);
     }
     public void AttackEffectOff()
     {
-        pDATA.attackEffectModel.SetActive(false);
+        attackEffectModel.SetActive(false);
     }
     /// <summary>
     /// NOTE : ATTACK 상태 실행시 코루틴
