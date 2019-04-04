@@ -5,21 +5,32 @@ using System.Text.RegularExpressions;
 using System.Reflection;
 using System;
 
-public class CSVDataReader : MonoBehaviour
+public class CSVDataReader
 {
-    private readonly string characterPath = "Character/Data/CharacterData";
+    private static CSVDataReader _instance = null;
+    public static CSVDataReader instance
+    {
+        get
+        {
+            if (_instance == null)
+                _instance = new CSVDataReader();
+            return _instance;
+        }
+    }
+
+    private readonly string DataPath = "Character/Data/";
 
     static string SPLIT_RE = @",(?=(?:[^""]*""[^""]*"")*(?![^""]*""))";
     static string LINE_SPLIT_RE = @"\r\n|\n\r|\n|\r";
 
-    Dictionary<string, Dictionary<string, string>> characterDataDic = new Dictionary<string, Dictionary<string, string>>();
-    private void Start()
+    private Dictionary<string, Dictionary<string, string>> characterDataDic = new Dictionary<string, Dictionary<string, string>>();
+    private Dictionary<string, Dictionary<string, string>> monsterDataDic = new Dictionary<string, Dictionary<string, string>>();
+    
+    private CSVDataReader()
     {
-       characterDataDic = Read(characterPath);
-
-        //Test
-        foreach (var t in characterDataDic["Cat1"])
-            Debug.Log(t);
+        characterDataDic = Read(DataPath + "CharacterData");
+        monsterDataDic = Read(DataPath + "MonsterData");
+        //.. MONSTER 엑셀도 완성되면 추가
     }
 
     /// <summary>
@@ -27,7 +38,7 @@ public class CSVDataReader : MonoBehaviour
     /// </summary>
     /// <param name="path"></param>
     /// <returns></returns>
-    public Dictionary<string, Dictionary<string, string>> Read(string path)
+    private Dictionary<string, Dictionary<string, string>> Read(string path)
     {
         Dictionary<string, Dictionary<string, string>> tmplist = new Dictionary<string, Dictionary<string, string>>();
         TextAsset textdata = Resources.Load(path) as TextAsset;
@@ -58,12 +69,47 @@ public class CSVDataReader : MonoBehaviour
         return tmplist;
     }
 
-    public void Test()
+    /// <summary>
+    /// NOTE : 엑셀 데이터 설정 자동화 (엑셀에 해당 변수 명에 맞게 추가하면 변경됨)
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="_data"></param>
+    /// <param name="_datadic"></param>
+    /// <param name="_typename"></param>
+    public void SetData<T>(T _data, string _typename)
     {
-        Type tp = typeof(PlayerData);
-        //해당 값들을 가져옴
-        FieldInfo[] flds = tp.GetFields(BindingFlags.Public);
-        PlayerData testData = new PlayerData();
-        testData.maxHP.ToString();
+        //해당 타입의 value값(value값또한 dic이므로) 처리
+        Type tp = typeof(T);
+        //타입에 따른 dictionary 변환
+        Dictionary<string, Dictionary<string, string>> _datadic = tp.ToString().Equals("PlayerData") ? characterDataDic : monsterDataDic;
+        //해당 타입의 내용이 들어가지 않을경우 리턴 
+        if (!_datadic.ContainsKey(_typename))
+        {
+            Debug.Log("Load 오류");
+            return;
+        }
+        else
+        {
+            //해당 클래스의 public 형식을 가진 모든 변수명들을 가져옴
+            Dictionary<string, string> tmpdatadic = _datadic[_typename];
+            FieldInfo[] variableStringdatas = tp.GetFields(BindingFlags.Instance | BindingFlags.Public);
+            //가져온 field변수명 순회
+            foreach (var vsd in variableStringdatas)
+            {
+                //field변수 명들이 datadic key값에 존재하는지 비교하여 처리
+                if (tmpdatadic.ContainsKey(vsd.Name))
+                {
+                    //해당 클래스 데이터 처리
+                    object typecheck = vsd.GetValue(_data);
+                    //해당변수의 타입에 따라 처리
+                    if (typecheck is int)
+                        vsd.SetValue(_data, int.Parse(tmpdatadic[vsd.Name]));
+                    else
+                        vsd.SetValue(_data, float.Parse(tmpdatadic[vsd.Name]));
+
+                }
+            }
+        }
     }
 }
+

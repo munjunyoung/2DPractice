@@ -14,7 +14,7 @@ public class IngameCam : MonoBehaviour
     private float camUpOffset;
     [SerializeField, Range(0,20)]
     private float camDistanceOffset;
-    
+
     private void Start()
     {
         playerTarget = GameObject.FindWithTag("Player").transform;
@@ -23,7 +23,7 @@ public class IngameCam : MonoBehaviour
     private void LateUpdate()
     { 
         if(playerTarget!=null)
-        TrackingPlayer();
+            TrackingPlayer();
     }
     /// <summary>
     /// NOTE : 카메라 플레이어 추적 함수

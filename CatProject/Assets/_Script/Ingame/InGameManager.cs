@@ -6,16 +6,23 @@ using UnityEngine;
 public class InGameManager : MonoBehaviour
 {
     public static InGameManager instance;
-
+    //Board
     [Header("BoardManager for CreatedRoomList")]
     public BoardManager boardmanagerSc;
-
     private List<DungeonRoom> roomList = new List<DungeonRoom>();
-    public DungeonRoom currentRoom;
+    private DungeonRoom currentRoom;
+
+    //Player
+    [SerializeField]
+    private Player playerOb;
+    private string playerPath = "Character/Player/";
 
     private void Awake()
     {
+        //Singletone
         instance = this;
+        //캐릭터 생성
+        CreatePlayer(CHARACTER_TYPE.Cat1, playerPath);
     }
 
     private void Start()
@@ -30,8 +37,8 @@ public class InGameManager : MonoBehaviour
     public static InGameManager GetInstance()
     {
         return instance;
-    }
 
+    }
     /// <summary>
     /// NOTE : BoardManager에서 RoomList들을 가져옴 시작 방인 0번방을 active On
     /// NOTE : 방 LIST들을 순회하여 각 방의 몬스터들의 숫자를 체크하여 가장 많은 몬스터 숫자만큼 HP SLIDER 생성
@@ -44,6 +51,15 @@ public class InGameManager : MonoBehaviour
         currentRoom = roomList[0];
         //시작할땐 0번 방이므로 체크
         MonsterAliveCheck();
+    }
+    
+    /// <summary>
+    /// 플레이어 생성
+    /// </summary>
+    private void CreatePlayer(CHARACTER_TYPE _playertype, string path)
+    {
+        var playerprefab = Resources.Load(path + _playertype.ToString()) as GameObject;
+        playerOb = Instantiate(playerprefab).GetComponent<Player>();
     }
 
     /// <summary>

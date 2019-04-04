@@ -4,12 +4,14 @@ using UnityEngine;
 using UnityEngine.UI;
 
 enum ANIMATION_STATE { Idle = 0, Walk, Jump, Fall, Attack, TakeDamage, Die }
+enum CHARACTER_TYPE { Cat1 = 0};
 /// <summary>
 /// NOTE : 플레이어캐릭터 공격 점프 이동
 /// </summary>
 [RequireComponent(typeof(Rigidbody2D), typeof(Animator))]
 public class Player : MonoBehaviour
 {
+    private CHARACTER_TYPE catType = CHARACTER_TYPE.Cat1;
     /// <summary>
     /// CHARACTER STATE 
     /// NOTE : 애니매이션 파라미터 상태 설정 (속성은 animation 속도 설정)
@@ -37,9 +39,9 @@ public class Player : MonoBehaviour
             }
         }
     }
-    
+
     [Header("PLAYER DATA SET")]
-    public PlayerData pDATA;
+    public PlayerData pDATA = new PlayerData();
 
     private Rigidbody2D rb2D;
     private Animator anim;
@@ -105,11 +107,15 @@ public class Player : MonoBehaviour
         rb2D = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         characterSprite = GetComponent<SpriteRenderer>();
+    }
 
+    private void Start()
+    {
+        CSVDataReader.instance.SetData(pDATA, catType.ToString());
         CurrentHP = pDATA.maxHP;
         CurrentTP = pDATA.maxTP;
     }
-    
+
     private void FixedUpdate()
     {
         if (stopOn)

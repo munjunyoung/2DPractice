@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum ORDER_STATE { Idle, Patroll, Trace, Attack }
-public enum MONSTER_TYPE { FOX };
+public enum MONSTER_TYPE { Fox };
 public class Monster : MonoBehaviour
 {
     /// <summary>
@@ -58,8 +58,7 @@ public class Monster : MonoBehaviour
     }
 
     public MONSTER_TYPE mType;
-    [Header("MONSTER DATA SET")]
-    public MonsterData mDATA;
+    public MonsterData mDATA = new MonsterData();
 
     private Rigidbody2D rb2D;
     private Animator anim;
@@ -117,6 +116,7 @@ public class Monster : MonoBehaviour
 
     private void Start()
     {
+        CSVDataReader.instance.SetData(mDATA, mType.ToString());
         OrderState = Random.Range(0, 100) > 99 ? ORDER_STATE.Idle : ORDER_STATE.Patroll;
         //Set HP
         CurrentHP = mDATA.maxHP;

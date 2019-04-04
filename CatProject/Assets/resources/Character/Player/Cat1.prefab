@@ -158,7 +158,6 @@ GameObject:
   - component: {fileID: 5844019777274396629}
   - component: {fileID: 5844019777274396625}
   - component: {fileID: 5844019777274396628}
-  - component: {fileID: 7871937579615917146}
   m_Layer: 9
   m_Name: Cat1
   m_TagString: Player
@@ -312,39 +311,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f22b58f9b0ba1cb45b18216973566e81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pDATA: {fileID: 7871937579615917146}
+  pDATA: {fileID: 0}
   jumpButtonPress: 0
   attackButtonPress: 0
   isAlive: 1
   moveInputValue: 0
   attackEffectModel: {fileID: 2105089177}
---- !u!114 &7871937579615917146
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5844019777274396624}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e511469974f8e7b4f81128681cd6e7d3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHP: 250
-  maxTP: 150
-  recoveryTPRate: 0.1
-  recoveryTPAmount: 1
-  maxSpeedValue: 10
-  accelerationValue: 20
-  decelerationValue: 10
-  jumpMaxCount: 5
-  jumpPowerPerCount: 5
-  addForceFrameIntervalTime: 0.01
-  attackRange: 1
-  attackDamage: 50
-  attackCoolTime: 0
-  attackAnimSpeed: 1
-  attackTPAmount: 15
-  invincibleTime: 0.5
-  flashRate: 0.1
-  knockBackPower: 10

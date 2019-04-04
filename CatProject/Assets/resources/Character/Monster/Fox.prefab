@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 894300984345410729}
   - component: {fileID: 894300984345410733}
   - component: {fileID: 894300984345410735}
-  - component: {fileID: 894300984345410769}
   m_Layer: 10
   m_Name: Fox
   m_TagString: Monster
@@ -171,34 +170,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mType: 0
-  mDATA: {fileID: 894300984345410769}
+  mDATA: {fileID: 0}
   targetOb: {fileID: 0}
   isAlive: 0
   hpSliderUI: {fileID: 0}
---- !u!114 &894300984345410769
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 894300984345410732}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c8be7303c1bc3a49b8f56ca0db2ee6a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHP: 100
-  patrollSpeed: 3
-  traceSpeed: 5
-  jumpPower: 30
-  bodyAttacktDamage: 5
-  attackEffectModel: {fileID: 0}
-  attackRange: 0
-  attackDamage: 0
-  attackCoolTime: 1
-  attackAnimSpeed: 1
-  knockBackPower: 5
-  knockbackTime: 0.5
 --- !u!114 &1040374984849873519
 MonoBehaviour:
   m_ObjectHideFlags: 0

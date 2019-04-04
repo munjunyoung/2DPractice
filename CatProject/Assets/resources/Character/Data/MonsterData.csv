@@ -1,0 +1,2 @@
+ID,maxHP,patrollSpeed,traceSpeed,jumpPower,bodyAttacktDamage,attackRange,attackDamage,attackCoolTime
+Fox,100,3,5,30,5,0,0,1

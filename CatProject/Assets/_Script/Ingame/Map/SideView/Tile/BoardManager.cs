@@ -61,7 +61,6 @@ public class BoardManager : MonoBehaviour
         SetConnectedEntrance();
         //적생성
         CreateMonster();
-
     }
 
     #region Create Room
@@ -598,7 +597,7 @@ public class DungeonRoom
             {
                 if (roomArray[tmpx, j] == null)
                 {
-                    monsterInfoList.Add(new SpawnMonsterInfo(MONSTER_TYPE.FOX, new Vector2(tmpx, j + 0.5f)));
+                    monsterInfoList.Add(new SpawnMonsterInfo(MONSTER_TYPE.Fox, new Vector2(tmpx, j + 0.5f)));
                     break;
                 }
             }

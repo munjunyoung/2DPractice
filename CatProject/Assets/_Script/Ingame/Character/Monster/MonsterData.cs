@@ -1,40 +1,23 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
-public class MonsterData : MonoBehaviour
+public class MonsterData
 {
-    [Header("HEALTH OPTION")]
+    //HEALTH
     public int maxHP;
-    
-    [Header("MOVE OPTION")]
-    [Range(1f, 10f)]
+    //MOVE
     public float patrollSpeed;
-    [Range(1f, 100f)]
     public float traceSpeed;
-    
-    [Header("JUMP OPTION")]
-    [Range(1f, 30f)]
+    //JUMP
     public float jumpPower;
-
-    [Header("ATTACK OPTION")]
-    [Range(1, 50)]
+    //ATTACK
     public int bodyAttacktDamage;
-    [SerializeField]
-    public GameObject attackEffectModel;
-    [Range(1f, 5f)]
     public float attackRange;
-    [Range(1, 50)]
     public int attackDamage;
     //캐릭터와 몸이 겹쳤을때 데미지
-    [Range(0f, 5f)]
     public float attackCoolTime;
-    [Range(0f, 5f)]
-    public float attackAnimSpeed;
-
-    [Header("KNOCKBACK OPTION")]
-    [Range(1, 20)]
-    public float knockBackPower;
-    [Range(0f, 10f)]
-    public float knockbackTime;
+    public float attackAnimSpeed = 1;
+    //KNOCKBACK
+    public float knockBackPower = 5;
+    public float knockbackTime = 0.5f;
 }

@@ -10,6 +10,6 @@ public class Fox : Monster
     /// </summary>
     private Fox()
     {
-        mType = MONSTER_TYPE.FOX;
+        mType = MONSTER_TYPE.Fox;
     }
 }
