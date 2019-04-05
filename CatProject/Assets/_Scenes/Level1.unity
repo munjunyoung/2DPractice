@@ -245,7 +245,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boardmanagerSc: {fileID: 263932817}
-  playerprefab: {fileID: 0}
+  playerOb: {fileID: 0}
 --- !u!4 &1285331772
 Transform:
   m_ObjectHideFlags: 0
@@ -324,11 +324,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
       propertyPath: widthMinSize
-      value: 60
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
       propertyPath: widthMaxSize
-      value: 100
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
       propertyPath: heightMinSize
@@ -356,17 +356,17 @@ PrefabInstance:
     - target: {fileID: 324500466300686044, guid: 3bce843e0745d1a4a8cec1f131ac6654,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 324500466300686044, guid: 3bce843e0745d1a4a8cec1f131ac6654,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 324500466300686044, guid: 3bce843e0745d1a4a8cec1f131ac6654,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 324500466300686044, guid: 3bce843e0745d1a4a8cec1f131ac6654,
         type: 3}
@@ -542,6 +542,11 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 1432288388}
+    - target: {fileID: 3079325504428217205, guid: b131654d3fa069e4eacd87a9fe670de3,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 35
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b131654d3fa069e4eacd87a9fe670de3, type: 3}
 --- !u!1001 &3846223833490555008

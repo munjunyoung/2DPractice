@@ -97,6 +97,7 @@ public class Monster : MonoBehaviour
     [HideInInspector]
     public bool isAlive;
     private bool isGrounded = false;
+    public bool isStopped;
 
     //HP UI
     [SerializeField]
@@ -128,7 +129,8 @@ public class Monster : MonoBehaviour
     {
         if (!isAlive)
             return;
-        
+        if (isStopped)
+            return;
         if (isKnockbackState)
             return;
 
@@ -291,7 +293,6 @@ public class Monster : MonoBehaviour
     /// <returns></returns>
     IEnumerator KnockbackCoroutine(Transform targetpos)
     {
-        Debug.Log("Knockback !");
         //상태 변경
         isRunningKnockbackCoroutine = true;
         isKnockbackState = true;
@@ -318,7 +319,7 @@ public class Monster : MonoBehaviour
         StartCoroutine(ActiveOff());
     }
     /// <summary>
-    /// 해당 시간 후에 삭제
+    /// NOTE : 해당 시간 후에 삭제
     /// </summary>
     /// <returns></returns>
     IEnumerator ActiveOff()
@@ -327,6 +328,23 @@ public class Monster : MonoBehaviour
         InGameManager.GetInstance().MonsterAliveCheck();
         gameObject.SetActive(false);
     }
+
+    /// <summary>
+    /// NOTE : 해당시간만큼 몬스터 행동을 정지 시키기 위함
+    /// </summary>
+    /// <param name="_stopcount"></param>
+    public void StopAction(float _stopcount)
+    {
+        StartCoroutine(StopCoroutine(_stopcount));
+    }
+
+    private IEnumerator StopCoroutine(float _stopcount)
+    {
+        isStopped = true;
+        yield return new WaitForSeconds(_stopcount);
+        isStopped = false;
+    }
+
     /// <summary>
     /// 캐릭터 상태 설정
     /// NOTE : STATE 우선 순위

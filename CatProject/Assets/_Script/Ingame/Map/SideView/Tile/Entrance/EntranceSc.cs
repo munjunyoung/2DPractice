@@ -25,11 +25,9 @@ public class EntranceSc : MonoBehaviour
                 {
                     InGameManager.GetInstance().ChangeCurrentRoom(currentRoomNumber, connectedNextEntrance.currentRoomNumber);
                     collision.transform.position = connectedNextEntrance.transform.position;
-                    collision.GetComponent<Player>().StopCharacter(1f);
                 }
             }
         }
-        
     }
 
     /// <summary>

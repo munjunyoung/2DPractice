@@ -4,14 +4,14 @@ using UnityEngine;
 using UnityEngine.UI;
 
 enum ANIMATION_STATE { Idle = 0, Walk, Jump, Fall, Attack, TakeDamage, Die }
-enum CHARACTER_TYPE { Cat1 = 0};
+enum PLAYER_TYPE { Cat1 = 0};
 /// <summary>
 /// NOTE : 플레이어캐릭터 공격 점프 이동
 /// </summary>
 [RequireComponent(typeof(Rigidbody2D), typeof(Animator))]
 public class Player : MonoBehaviour
 {
-    private CHARACTER_TYPE catType = CHARACTER_TYPE.Cat1;
+    private PLAYER_TYPE catType = PLAYER_TYPE.Cat1;
     /// <summary>
     /// CHARACTER STATE 
     /// NOTE : 애니매이션 파라미터 상태 설정 (속성은 animation 속도 설정)
@@ -99,7 +99,7 @@ public class Player : MonoBehaviour
     private bool attackOn;
     private bool isRunningAttackCoroutine = false;
     //Stop
-    private bool stopOn;
+    private bool isStopped;
     private bool isRunningStopCoroutine = false;
 
     private void Awake()
@@ -118,7 +118,7 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (stopOn)
+        if (isStopped)
             return;
         if (isInvincible)
             return;
@@ -240,8 +240,7 @@ public class Player : MonoBehaviour
 
     //(ANIMATION ADD EVENT FUNCTION)
     /// <summary>
-    /// NOTE : 자식으로 저장된 attackEffectModel을 on, off하는 형식
-    /// NOTE : ATTACK ANIMATION 클립 내부 add Event에서 출력
+    /// NOTE : 자식으로 저장된 attackEffectModel을 on, off하는 형식(ATTACK ANIMATION 클립 내부 add Event에서 출력)
     /// TODO : 현재 애니매이션 클립내부에서 실행되기 때문에 클립이 변경된다면 함수 선언위치 등 고려가능성이 높음
     /// </summary>
     public void AttackEffectOn()
@@ -254,9 +253,7 @@ public class Player : MonoBehaviour
         attackEffectModel.SetActive(false);
     }
     /// <summary>
-    /// NOTE : ATTACK 상태 실행시 코루틴
-    /// NOTE : ATTACK ANIMATION 클립 내부 add Event에서 출력 
-    /// NOTE : 공격 실행 후 카운트 실행 설정한ATTACK COOLTIME값 이후 ATTACK Possible true로 변경
+    /// NOTE : ATTACK 상태 실행시 코루틴, ATTACK ANIMATION 클립 내부 add Event에서 출력 (공격 실행 후 카운트 실행 설정한ATTACK COOLTIME값 이후 ATTACK Possible true로 변경)
     /// </summary>
     /// <returns></returns>
     public IEnumerator AttackCoroutine()
@@ -271,11 +268,10 @@ public class Player : MonoBehaviour
 
     #region STOP
     /// <summary>
-    /// NOTE : STOP코루틴 함수 실행
-    /// NOTE : 외부 함수에서 실행하는 경우가 있어서 public 선언
+    /// NOTE : STOP코루틴 함수 실행, 외부 함수에서 실행하는 경우가 있어서 public 선언
     /// </summary>
     /// <param name="stoptime"></param>
-    public void StopCharacter(float stoptime)
+    public void StopAction(float stoptime)
     {
         jumpButtonPress = false;
         attackButtonPress = false;
@@ -293,9 +289,9 @@ public class Player : MonoBehaviour
     private IEnumerator StopCoroutine(float stoptime)
     {
         isRunningStopCoroutine = true;
-        stopOn = true;
+        isStopped = true;
         yield return new WaitForSeconds(stoptime);
-        stopOn = false;
+        isStopped = false;
         isRunningStopCoroutine = false;
     }
     #endregion
@@ -384,7 +380,7 @@ public class Player : MonoBehaviour
 
     /// <summary>
     /// 캐릭터 상태 설정
-    /// NOTE : STATE 우선 순위
+    /// NOTE : Animation 상태 설정, STATE 우선 순위
     /// 1. ATTACK 2. JUMP 3. FALL 4. MOVE
     /// </summary>
     private void SetAnimationState()

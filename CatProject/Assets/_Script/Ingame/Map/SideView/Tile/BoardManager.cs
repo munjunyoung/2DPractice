@@ -435,7 +435,7 @@ public class BoardManager : MonoBehaviour
     {
         foreach (DungeonRoom room in roomList)
         {
-            room.SetMonster();
+            room.SetMonstersPos();
             foreach (SpawnMonsterInfo monsterinfo in room.monsterInfoList)
             {
                 Monster tmpm = Instantiate(monsterPrefabList[(int)monsterinfo.mType], monsterinfo.startPos, Quaternion.identity, room.roomModel.transform);
@@ -445,6 +445,8 @@ public class BoardManager : MonoBehaviour
     }
     #endregion
 }
+
+
 
 /// <summary>
 /// NOTE : DungeonRoom 클래스
@@ -562,9 +564,9 @@ public class DungeonRoom
     }
 
     /// <summary>
-    /// NOTE : 몬스터 정보 설정
+    /// NOTE : 몬스터 생성 위치 설정
     /// </summary>
-    public void SetMonster()
+    public void SetMonstersPos()
     {
         //각 방의 몬스터 숫자설정
         //..level에따른 설정 

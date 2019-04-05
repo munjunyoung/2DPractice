@@ -20,7 +20,6 @@ public class TargetDetectionSc : MonoBehaviour
 
         if (collision.CompareTag("Player"))
         {
-            Debug.Log("Player! TargetOn");
             parentOb.OrderState = ORDER_STATE.Trace;
             parentOb.targetOb = collision.transform;
         }
