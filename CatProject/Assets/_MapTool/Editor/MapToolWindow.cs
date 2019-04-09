@@ -14,7 +14,8 @@ public class MapToolWindow : EditorWindow
     static string scenePath = "Assets/_Scenes/";
     static string layoutPath = "Assets/_MapTool/Layout/";
     private string loadFolderPath = "Assets/resources/GeneratedMapData";
-   
+    private string csvfilepath = "Assets/resources/Character/CSVData";
+
     [MenuItem("MapTool/Execute MapTool")]
     static void Open()
     {
@@ -109,6 +110,11 @@ public class MapToolWindow : EditorWindow
                     DestroyImmediate(m);
             }
         }
+
+        if (GUILayout.Button(" Data Setting Folder", GUILayout.Height(buttonHeight)))
+        {
+            FindCSVFile();
+        }
         GUILayout.EndVertical();
 
         GUILayout.BeginVertical("Box");
@@ -139,6 +145,14 @@ public class MapToolWindow : EditorWindow
         Selection.activeObject = tmpob;
     }
 
+    private void FindCSVFile()
+    {
+        string path = EditorUtility.OpenFilePanel("SearchCSVFile", csvfilepath,"csv");
+        if(path.Length != 0)
+        {
+            System.Diagnostics.Process.Start(path);
+        }
+    }
     /// <summary>
     /// NOTE : Object Load File
     /// </summary>
