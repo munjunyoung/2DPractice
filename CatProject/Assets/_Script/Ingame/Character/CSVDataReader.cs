@@ -18,7 +18,7 @@ public class CSVDataReader
         }
     }
 
-    private readonly string DataPath = "Character/Data/";
+    private readonly string DataPath = "Character/CSVData/";
 
     static string SPLIT_RE = @",(?=(?:[^""]*""[^""]*"")*(?![^""]*""))";
     static string LINE_SPLIT_RE = @"\r\n|\n\r|\n|\r";
