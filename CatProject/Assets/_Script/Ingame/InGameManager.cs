@@ -5,6 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(BoardManager))]
 public class InGameManager : MonoBehaviour
 {
+    //Singletone
     public static InGameManager instance;
     //Board
     [Header("BoardManager for CreatedRoomList")]
@@ -13,11 +14,10 @@ public class InGameManager : MonoBehaviour
     private DungeonRoom currentRoom;
 
     //Player
-    [SerializeField]
     private Player playerOb;
     private string playerPath = "Character/Player/";
     //Stop
-    private float changeRoomStopCount = 1f;
+    private float changeRoomStopCount = 2f;
 
     private void Awake()
     {
@@ -25,11 +25,6 @@ public class InGameManager : MonoBehaviour
         instance = this;
         //캐릭터 생성
         StartSettingInGM();
-    }
-
-    private void Start()
-    {
-        
     }
     
     /// <summary>
@@ -48,13 +43,12 @@ public class InGameManager : MonoBehaviour
     /// </summary>
     private void StartSettingInGM()
     {
-      
         roomList = boardmanagerSc.roomList;
         roomList[0].roomModel.SetActive(true);
         currentRoom = roomList[0];
         CreatePlayer(PLAYER_TYPE.Cat1, playerPath);
+        roomList[0].CheckMonsterAlive();
         //시작할땐 0번 방이므로 체크
-        MonsterAliveCheck();
     }
     
     /// <summary>
@@ -79,63 +73,18 @@ public class InGameManager : MonoBehaviour
         roomList[nextnum].roomModel.SetActive(true);
         currentRoom = roomList[nextnum];
         Debug.Log("Change Room ! : CurrentRoom[" + currentnum + "] -> [" + nextnum + "]");
-        MonsterAliveCheck();
+        
         StopAllCharacter(changeRoomStopCount);
     }
-
-    /// <summary>
-    /// NOTE : 적을 모두 죽이거나 방에 저장되어있는 해당 요건을 만족했을경우 해제
-    /// </summary>
-    /// <param name="num"></param>
-    private void UnLockRoom()
-    {
-        roomList[currentRoom.roomNumberOfList].unLockState = true;
-        foreach (EntranceConnectRoom tmpentrance in roomList[currentRoom.roomNumberOfList].neighborRooms)
-            tmpentrance.entrance.GetComponent<EntranceSc>().UnLockEntrance();
-        
-        Debug.Log("UNLOCK ROOM [" + currentRoom.roomNumberOfList + "]");
-    }
-
+    
     #endregion
-
-    #region CheckList
+    
     /// <summary>
-    /// NOTE : ROOM CHECK UN LOCK
-    /// TODO : 현재는 몬스터의 존재 유무로만 LOCK 해제, 이후에 추가적으로 방의 타입에 따라 룸을 해제하는 방식을 변경 해야한다.
-    /// </summary>
-    public void MonsterAliveCheck()
-    {
-        bool checkmonsterisAlive = false;
-        foreach(var monster in currentRoom.monsterList)
-        {
-            if (monster.isAlive)
-                checkmonsterisAlive = true;
-        }
-
-        //모두 죽었을 경우 방 해제
-        if (!checkmonsterisAlive)
-            UnLockRoom();
-    }
-
-    public void BossAliveCheck()
-    {
-        //..
-    }
-
-    public void GetItemCheck()
-    {
-        //..
-    }
-    #endregion
-
-
-    /// <summary>
-    /// NOTE : 방이 변경되었을때 캐릭터가 멈추듯 몬스터도 멈추게함
+    /// NOTE : 방이 변경되었을때 캐릭터와 몬스터 파라미터 값만큼 정지
     /// </summary>
     private void StopAllCharacter(float _stopcount)
     {
         playerOb.StopAction(_stopcount);
-        foreach (var monster in currentRoom.monsterList)
-            monster.StopAction(_stopcount);
+        currentRoom.MonsterStop(_stopcount);
     }
 }

@@ -6,6 +6,8 @@ public enum ORDER_STATE { Idle, Patroll, Trace, Attack }
 public enum MONSTER_TYPE { Fox };
 public class Monster : MonoBehaviour
 {
+    //자신이 존재하는 방
+    public DungeonRoom ownRoom = null;
     /// <summary>
     /// CHARACTER STATE 
     /// NOTE : 애니매이션 파라미터 상태 설정 (속성은 animation 속도 설정)
@@ -102,6 +104,7 @@ public class Monster : MonoBehaviour
     //HP UI
     [SerializeField]
     private MonsterHPSliderSc hpSliderUI;
+    
 
     private void Awake()
     {
@@ -325,7 +328,7 @@ public class Monster : MonoBehaviour
     IEnumerator ActiveOff()
     {
         yield return new WaitForSeconds(2f);
-        InGameManager.GetInstance().MonsterAliveCheck();
+        ownRoom.CheckMonsterAlive();
         gameObject.SetActive(false);
     }
 
@@ -397,4 +400,9 @@ public class Monster : MonoBehaviour
         isGrounded = false;
     }
     #endregion
+
+    private void OnNotify()
+    {
+        
+    }
 }

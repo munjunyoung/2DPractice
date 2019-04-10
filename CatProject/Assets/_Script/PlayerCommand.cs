@@ -15,12 +15,12 @@ public class PlayerCommand : MonoBehaviour
     void Start()
     {
         playerSc = GameObject.FindWithTag("Player").GetComponent<Player>();
+        SetCommand();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
     }
 
     /// <summary>
@@ -32,14 +32,13 @@ public class PlayerCommand : MonoBehaviour
         jumpC = new CommandJump();
         attackC = new CommandAttack();
     }
-    
 }
 
 public class Command
 {
     public virtual void Execute(Player _player) { }
     public virtual void Execute(Player _player, Vector2 input) { }
-    
+    public virtual void Execute(Player _player, bool buttonOn) { }
 }
 
 public class CommandMove : Command
@@ -52,9 +51,9 @@ public class CommandMove : Command
 
 public class CommandJump : Command
 {
-    public override void Execute(Player _player)
+    public override void Execute(Player _player, bool buttonOn)
     {
-        //_player.Jump();
+        //_player.Jump(buttonOn);
     }
 }
 
