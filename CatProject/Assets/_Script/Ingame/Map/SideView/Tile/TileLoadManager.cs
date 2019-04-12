@@ -14,7 +14,10 @@ public class TileLoadManager : MonoBehaviour
     //[HideInInspector]
     public TypeOfTileSetType[] loadTileArray;
     public List<GeneratedTerrainData> loadTerrainDataList = new List<GeneratedTerrainData>();
-    
+
+    public Dictionary<string, GameObject> structurePrefab = new Dictionary<string, GameObject>();
+    public Dictionary<string, Monster> monsterPrefab = new Dictionary<string, Monster>();
+
     public void Awake()
     {
         loadTileArray = LoadAllTile();
@@ -48,7 +51,7 @@ public class TileLoadManager : MonoBehaviour
     /// NOTE : 미리 생성해둔 지형 데이터 TileInfo 배열로 전환
     /// </summary>
     /// <returns></returns>
-    public List<GeneratedTerrainData> LoadAllTerrainData()
+    private List<GeneratedTerrainData> LoadAllTerrainData()
     {
         List<GeneratedTerrainData> tmpterrainlist = new List<GeneratedTerrainData>();
         
@@ -94,6 +97,12 @@ public class TileLoadManager : MonoBehaviour
         }
 
         return tmpterrainlist;
+    }
+
+    private void PrefabLoadAll()
+    {
+        //.. monsterLoad
+        //.. entranceLoad
     }
     
 }

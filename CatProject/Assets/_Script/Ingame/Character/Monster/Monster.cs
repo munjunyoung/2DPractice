@@ -207,7 +207,7 @@ public class Monster : MonoBehaviour
             else if (frontCheckInfo.collider.CompareTag("Monster"))
                 dir = Vector2.zero;
         }
-
+         
         sR.flipX = (int)(transform.position.x) > (int)(targetOb.position.x) ? true : false;
         
         rb2D.velocity = new Vector2(dir.x * currentMoveSpeed, rb2D.velocity.y);
@@ -328,7 +328,7 @@ public class Monster : MonoBehaviour
     IEnumerator ActiveOff()
     {
         yield return new WaitForSeconds(2f);
-        ownRoom.CheckMonsterAlive();
+        ownRoom.CheckLockRoom();
         gameObject.SetActive(false);
     }
 

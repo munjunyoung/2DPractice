@@ -23,8 +23,6 @@ public class DungeonRoom
     //Terrain
     public GeneratedTerrainData beforeTerrainData = null;
     public int currentXPos;
-    //Check
-    private bool monsterComplete, itemComplete, bossComplete;
 
     /// <summary>
     /// NOTE : 방의 사이즈 랜덤 설정 생성자
@@ -135,45 +133,48 @@ public class DungeonRoom
     /// <summary>
     /// NOTE : 방 체크
     /// </summary>
-    private void CheckLockRoom()
+    public void CheckLockRoom()
     {
-        bool roomLockState = true;
-        if (monsterComplete)//&bosscheck&itemcheck..?
-            roomLockState = false;
-        
-        if (!roomLockState)
+        // 몬스터 , 보스 , 아이템 체크 후 출입구 개방
+        if(CheckMonsterAlive()&&BossAliveCheck()&&GetItemCheck())
             UnLockEntrances();
     }
     /// <summary>
     /// NOTE : ROOM CHECK UN LOCK
     /// TODO : 현재는 몬스터의 존재 유무로만 LOCK 해제, 이후에 추가적으로 방의 타입에 따라 룸을 해제하는 방식을 변경 해야한다.
     /// </summary>
-    public void CheckMonsterAlive()
+    private bool CheckMonsterAlive()
     {
-        monsterComplete = true;
-        foreach (var monsterinfo in monsterInfoList)
+        bool checkcomplete = true;
+        if (monsterInfoList.Count > 0)
         {
-            if (monsterinfo.monsterModel.isAlive)
-                monsterComplete = false;
+            foreach (var monsterinfo in monsterInfoList)
+            {
+                if (monsterinfo.monsterModel.isAlive)
+                    checkcomplete = false;
+            }
         }
-
-        CheckLockRoom();
+        return checkcomplete;
     }
 
     /// <summary>
     /// 보스 관련 체크 
     /// </summary>
-    public void BossAliveCheck()
+    private bool BossAliveCheck()
     {
+        bool checkcomplete = true;
         //..
+        return checkcomplete;
     }
 
     /// <summary>
     /// 
     /// </summary>
-    public void GetItemCheck()
+    private bool GetItemCheck()
     {
+        bool checkcomplete = true;
         //..
+        return checkcomplete;
     }
     
     /// <summary>
@@ -194,6 +195,63 @@ public class DungeonRoom
     public void MonsterStop(float _stopcount)
     {
         foreach (var monsterinfo in monsterInfoList)
+        {
+            if(monsterinfo.monsterModel.isActiveAndEnabled)
             monsterinfo.monsterModel.StopAction(_stopcount);
+        }
+    }
+}
+
+
+/// <summary>
+/// NOTE : DungeonRoom 클래스에서 설정하는 몬스터 정보 (구조체로 선언하려다 foreach문에서 멤버변수 초기화가 되지 않아 클래스로 변경)
+/// </summary>
+public class SpawnMonsterInfo
+{
+    public MONSTER_TYPE mType;
+    public Vector2 startPos;
+    public Monster monsterModel;
+
+    public SpawnMonsterInfo(MONSTER_TYPE _mtype, Vector2 _startpos)
+    {
+        mType = _mtype;
+        startPos = _startpos;
+        monsterModel = null;
+    }
+}
+
+/// <summary>
+/// NOTE : 출입구 클래스 연결된 방과 해당 오브젝트 (struct으로 구현하였다가 foreach문에서 반복 변수 초기화가 불가하여 class로 변경(구조체 : 값복사, 클래스 : 참조복사)
+/// </summary>
+public class EntranceConnectRoom
+{
+    public DungeonRoom connectedRoom;
+    public EntranceSc entrance;
+
+    public EntranceConnectRoom(DungeonRoom _room)
+    {
+        connectedRoom = _room;
+        entrance = null;
+    }
+}
+
+/// <summary>
+/// NOTE : DungeonRoom내부구조물을 한번에 적어서 설정하기위해 클래스 배열로 생성
+/// </summary>
+public class TileInfo
+{
+    public TileType tileType;
+    public int tileNumber;
+
+    public TileInfo(TileType _tiletype, int _tilenumber)
+    {
+        tileType = _tiletype;
+        tileNumber = _tilenumber;
+    }
+
+    public TileInfo(TileType _tiletype)
+    {
+        tileType = _tiletype;
+        tileNumber = 0;
     }
 }

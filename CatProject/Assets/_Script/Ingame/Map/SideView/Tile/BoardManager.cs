@@ -19,7 +19,7 @@ public class BoardManager : MonoBehaviour
     private GameObject parentModelOfRooms;
 
     [Header("ROOM OPTION")]
-    [SerializeField, Range(1, 100)]
+    [SerializeField, Range(3, 100)]
     private int numberOfRoom;
     [SerializeField, Range(30, 60)]
     private int widthMinSize;
@@ -47,20 +47,6 @@ public class BoardManager : MonoBehaviour
         terrainDataReferenceArray = GetComponent<TileLoadManager>().loadTerrainDataList;
         //Rooms 생성
         CreateRooms(numberOfRoom);
-        //Rooms 레벨 설정
-        SetRoomLevel();
-        //Rooms 연결
-        RandomEdgeConnect();
-        //Rooms Entrance 오브젝트 생성
-        foreach (DungeonRoom room in roomList)
-            room.SetEntrancePos();
-
-        //Rooms Draw
-        DrawRoom();
-        //출입문 진입시 출현할 포지션 설정
-        SetConnectedEntrance();
-        //적생성
-        CreateMonster();
     }
 
     #region Create Room
@@ -85,10 +71,27 @@ public class BoardManager : MonoBehaviour
     private void CreateRooms(int _numberOfroom)
     {
         for (int i = 0; i < _numberOfroom; i++)
-        {
             roomList.Add(new DungeonRoom(i, (int)RoomType.Type2, widthMinSize, widthMaxSize, heightMinSize, heightMaxSize));
-            SetRandomTerrainRoom(roomList[i]);
-        }
+        //RoomLevel설정
+        SetRoomLevel();
+        //0레벨을 제외한 나머지 랜덤 Terrain 설정
+        foreach(var room in roomList)
+        {
+            if (!room.level.Equals(0))
+                SetRandomTerrainRoom(room);
+        }       
+        //Rooms 연결
+        RandomEdgeConnect();
+        //Rooms Entrance 오브젝트 생성
+        foreach (DungeonRoom room in roomList)
+            room.SetEntrancePos();
+        
+        //Rooms Draw
+        DrawRoom();
+        //출입문 진입시 출현할 포지션 설정
+        SetConnectedEntrance();
+        //적생성
+        CreateMonster();
     }
     
     /// <summary>
@@ -158,20 +161,24 @@ public class BoardManager : MonoBehaviour
 
     #region ConnectRoom
     /// <summary>
-    /// NOTE : 생성 된 방들의 레벨 설정
+    /// NOTE : 생성 된 방들의 레벨 설정, 방은 항상 3개 이상 생성해야한다.
     /// XXX : 시작 방은 같은 레벨 여러개 설정, 보스방은 한개만 설정 
     /// </summary>
     private void SetRoomLevel()
     {
         if (roomList.Count < 2)
             return;
+        //0번쨰 방 - 시작방 설정 
+        LevelRoomDic.Add(0, new List<DungeonRoom>());
+        roomList[0].level = 0;
+        LevelRoomDic[0].Add(roomList[0]);
 
-        int levelCount = 0;
+        int levelCount = 1;
         int setSameLevelPer = 50;
 
         LevelRoomDic.Add(levelCount, new List<DungeonRoom>());
 
-        for (int i = 0; i < roomList.Count - 1; i++)
+        for (int i = 1; i < roomList.Count - 1; i++)
         {
             roomList[i].level = levelCount;
             LevelRoomDic[levelCount].Add(roomList[i]);
@@ -188,7 +195,7 @@ public class BoardManager : MonoBehaviour
             }
         }
 
-        //마지막 보스방 설정
+        //마지막 방 - 보스방 설정
         if (roomList[roomList.Count - 2].level.Equals(levelCount))
         {
             levelCount++;
@@ -447,58 +454,4 @@ public class BoardManager : MonoBehaviour
         }
     }
     #endregion
-}
-
-
-/// <summary>
-/// NOTE : DungeonRoom 클래스에서 설정하는 몬스터 정보 (구조체로 선언하려다 foreach문에서 멤버변수 초기화가 되지 않아 클래스로 변경)
-/// </summary>
-public class SpawnMonsterInfo
-{
-    public MONSTER_TYPE mType;
-    public Vector2 startPos;
-    public Monster monsterModel;
-
-    public SpawnMonsterInfo(MONSTER_TYPE _mtype, Vector2 _startpos)
-    {
-        mType = _mtype;
-        startPos = _startpos;
-        monsterModel = null;
-    }
-}
-
-/// <summary>
-/// NOTE : 출입구 클래스 연결된 방과 해당 오브젝트 (struct으로 구현하였다가 foreach문에서 반복 변수 초기화가 불가하여 class로 변경(구조체 : 값복사, 클래스 : 참조복사)
-/// </summary>
-public class EntranceConnectRoom
-{
-    public DungeonRoom connectedRoom;
-    public EntranceSc entrance;
-
-    public EntranceConnectRoom(DungeonRoom _room)
-    {
-        connectedRoom = _room;
-        entrance = null;
-    }
-}
-
-/// <summary>
-/// NOTE : DungeonRoom내부구조물을 한번에 적어서 설정하기위해 클래스 배열로 생성
-/// </summary>
-public class TileInfo
-{
-    public TileType tileType;
-    public int tileNumber;
-
-    public TileInfo(TileType _tiletype, int _tilenumber)
-    {
-        tileType = _tiletype;
-        tileNumber = _tilenumber;
-    }
-
-    public TileInfo(TileType _tiletype)
-    {
-        tileType = _tiletype;
-        tileNumber = 0;
-    }
 }

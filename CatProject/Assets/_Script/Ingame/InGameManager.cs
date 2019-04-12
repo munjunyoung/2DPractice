@@ -46,9 +46,10 @@ public class InGameManager : MonoBehaviour
         roomList = boardmanagerSc.roomList;
         roomList[0].roomModel.SetActive(true);
         currentRoom = roomList[0];
-        CreatePlayer(PLAYER_TYPE.Cat1, playerPath);
-        roomList[0].CheckMonsterAlive();
+        currentRoom.CheckLockRoom();
         //시작할땐 0번 방이므로 체크
+
+        CreatePlayer(PLAYER_TYPE.Cat1, playerPath);
     }
     
     /// <summary>
@@ -73,11 +74,21 @@ public class InGameManager : MonoBehaviour
         roomList[nextnum].roomModel.SetActive(true);
         currentRoom = roomList[nextnum];
         Debug.Log("Change Room ! : CurrentRoom[" + currentnum + "] -> [" + nextnum + "]");
-        
+        currentRoom.CheckLockRoom();
+
         StopAllCharacter(changeRoomStopCount);
     }
     
     #endregion
+    
+    /// <summary>
+    /// NOTE : 파리미터가 true이면 TimeScale값을 0으로 변경 , 반대면 1
+    /// </summary>
+    /// <param name="_ispause"></param>
+    private void TimePause(bool _ispause)
+    {
+        Time.timeScale = _ispause ? 0f : 1f;
+    }
     
     /// <summary>
     /// NOTE : 방이 변경되었을때 캐릭터와 몬스터 파라미터 값만큼 정지
