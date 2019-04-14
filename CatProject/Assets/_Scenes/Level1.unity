@@ -112,18 +112,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!114 &263932817 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654,
-    type: 3}
-  m_PrefabInstance: {fileID: 324500465119315211}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0a111057ed294445b86ca5d0f096927, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &488652508
 GameObject:
   m_ObjectHideFlags: 0
@@ -214,6 +202,37 @@ MonoBehaviour:
   m_Script: {fileID: -113659843, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1202703317
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1202703319}
+  - component: {fileID: 324500465751402874}
+  m_Layer: 0
+  m_Name: BoardManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1202703319
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1202703317}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1285331770
 GameObject:
   m_ObjectHideFlags: 0
@@ -244,8 +263,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 156d22d1be516dd4db3e131a384d1b72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boardmanagerSc: {fileID: 263932817}
-  playerOb: {fileID: 0}
+  boardmanagerSc: {fileID: 324500465751402874}
 --- !u!4 &1285331772
 Transform:
   m_ObjectHideFlags: 0
@@ -258,7 +276,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1285331773
 MonoBehaviour:
@@ -306,95 +324,23 @@ MonoBehaviour:
   m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1001 &324500465119315211
-PrefabInstance:
+--- !u!114 &324500465751402874
+MonoBehaviour:
   m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 324500466300686046, guid: 3bce843e0745d1a4a8cec1f131ac6654,
-        type: 3}
-      propertyPath: m_Name
-      value: BoardManager
-      objectReference: {fileID: 0}
-    - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
-      propertyPath: numberOfRoom
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
-      propertyPath: widthMinSize
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
-      propertyPath: widthMaxSize
-      value: 60
-      objectReference: {fileID: 0}
-    - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
-      propertyPath: heightMinSize
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 1718447217, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
-      propertyPath: heightMaxSize
-      value: 60
-      objectReference: {fileID: 0}
-    - target: {fileID: 324500466300686044, guid: 3bce843e0745d1a4a8cec1f131ac6654,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 324500466300686044, guid: 3bce843e0745d1a4a8cec1f131ac6654,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 324500466300686044, guid: 3bce843e0745d1a4a8cec1f131ac6654,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 324500466300686044, guid: 3bce843e0745d1a4a8cec1f131ac6654,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 324500466300686044, guid: 3bce843e0745d1a4a8cec1f131ac6654,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 324500466300686044, guid: 3bce843e0745d1a4a8cec1f131ac6654,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 324500466300686044, guid: 3bce843e0745d1a4a8cec1f131ac6654,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 324500466300686044, guid: 3bce843e0745d1a4a8cec1f131ac6654,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 324500466300686044, guid: 3bce843e0745d1a4a8cec1f131ac6654,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 324500466300686044, guid: 3bce843e0745d1a4a8cec1f131ac6654,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 324500466300686044, guid: 3bce843e0745d1a4a8cec1f131ac6654,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 3bce843e0745d1a4a8cec1f131ac6654, type: 3}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1202703317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a111057ed294445b86ca5d0f096927, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  numberOfRoom: 5
+  widthMinSize: 30
+  widthMaxSize: 60
+  heightMinSize: 30
+  heightMaxSize: 60
 --- !u!1001 &3079325504767085100
 PrefabInstance:
   m_ObjectHideFlags: 0

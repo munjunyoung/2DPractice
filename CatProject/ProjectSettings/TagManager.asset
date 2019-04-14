@@ -8,6 +8,7 @@ TagManager:
   - Floor
   - Entrance
   - Monster
+  - PlayerAttackEffect
   layers:
   - Default
   - TransparentFX

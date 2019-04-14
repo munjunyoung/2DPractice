@@ -4,26 +4,34 @@ using UnityEngine;
 using System;
 using UnityEngine.Tilemaps;
 
-enum RoomType { Type1 = 0 , Type2}
+enum Room_TileType { Type1 = 0, Type2 }
 public enum TileType { BackGround = 0, Entrance, Terrain }
-public class TileLoadManager : MonoBehaviour
+public class LoadDataManager 
 {
     //Resouces Load Path
-    private static readonly string[] roomTypePathArray = { "TileType1" , "TileType2" };
+    private static readonly string[] roomTypePathArray = { "TileType1", "TileType2" };
     private static readonly string[] tileTypePathArray = { "0.BackGround", "1.Entrance" };
-    //[HideInInspector]
-    public TypeOfTileSetType[] loadTileArray;
-    public List<GeneratedTerrainData> loadTerrainDataList = new List<GeneratedTerrainData>();
+    private readonly string structurePefabPath = "Structure";
+    private readonly string monsterPrefabPath = "Character/Monster";
 
+    //Tile 
+    public TypeOfTileSetType[] tileDataArray;
+    public List<GeneratedTerrainData> terrainDataList = new List<GeneratedTerrainData>();
+    //Prefab
     public Dictionary<string, GameObject> structurePrefab = new Dictionary<string, GameObject>();
     public Dictionary<string, Monster> monsterPrefab = new Dictionary<string, Monster>();
 
-    public void Awake()
+    /// <summary>
+    /// 
+    /// </summary>
+    public LoadDataManager()
     {
-        loadTileArray = LoadAllTile();
-        loadTerrainDataList = LoadAllTerrainData();
+        tileDataArray = LoadAllTile();
+        terrainDataList = LoadAllTerrainData();
+        structurePrefab = LoadStructurePrefab();
+        monsterPrefab = LoadMonsterPrefab();
     }
-    
+
     /// <summary>
     /// NOTE : Resource Load를 통하여 모든 타일들을 불러옴
     /// NOTE : 에디터에서도 사용하기위하여 STATIC으로 선언(Path 포함)
@@ -36,7 +44,7 @@ public class TileLoadManager : MonoBehaviour
         {
             tmptilearray[i].tileType = new TypeOfTileSet[tileTypePathArray.Length];
             //RuleTile 저장
-            tmptilearray[i].terrainRuleTile = Resources.Load<RuleTile>("Tile/"+ roomTypePathArray[i] + "/RuleTile/RuleTile_Terrain");
+            tmptilearray[i].terrainRuleTile = Resources.Load<RuleTile>("Tile/" + roomTypePathArray[i] + "/RuleTile/RuleTile_Terrain");
             //일반 Tile들 저장
             for (int j = 0; j < tileTypePathArray.Length; j++)
             {
@@ -54,14 +62,14 @@ public class TileLoadManager : MonoBehaviour
     private List<GeneratedTerrainData> LoadAllTerrainData()
     {
         List<GeneratedTerrainData> tmpterrainlist = new List<GeneratedTerrainData>();
-        
+
         Tilemap[] tmploadprefab = Resources.LoadAll<Tilemap>("GeneratedMapData");
-        foreach(var tilemapdata in tmploadprefab)
+        foreach (var tilemapdata in tmploadprefab)
         {
             //데이터를 저장할 맵 배열 생성
             TileInfo[,] tmptileinfoarray = new TileInfo[tilemapdata.cellBounds.xMax, tilemapdata.cellBounds.yMax];
             //해당 tilemapdata의 모든 포지션을 검색하여 tile이 설정되어있는 부분을 체크
-            foreach(var tilepos in tilemapdata.cellBounds.allPositionsWithin)
+            foreach (var tilepos in tilemapdata.cellBounds.allPositionsWithin)
             {
                 //현재 포지션에 타일이 존재하지 않을경우 
                 if (!tilemapdata.HasTile(tilepos))
@@ -73,15 +81,15 @@ public class TileLoadManager : MonoBehaviour
             int startHeight = -2;
             int endHeight = -2;
 
-            for (int j=0; j<tilemapdata.cellBounds.yMax;j++)
+            for (int j = 0; j < tilemapdata.cellBounds.yMax; j++)
             {
                 //시작높이
-                if (startHeight == -2&&tmptileinfoarray[0, j]==null)
+                if (startHeight == -2 && tmptileinfoarray[0, j] == null)
                     startHeight = j - 1;
                 //끝높이
-                if (endHeight == -2&&tmptileinfoarray[tilemapdata.cellBounds.xMax - 1, j]==null)
+                if (endHeight == -2 && tmptileinfoarray[tilemapdata.cellBounds.xMax - 1, j] == null)
                     endHeight = j - 1;
-              
+
                 //두개 모두 채워졌을경우 반복문 종료
                 if (!startHeight.Equals(-2) && !endHeight.Equals(-2))
                     break;
@@ -98,38 +106,54 @@ public class TileLoadManager : MonoBehaviour
 
         return tmpterrainlist;
     }
-
-    private void PrefabLoadAll()
-    {
-        //.. monsterLoad
-        //.. entranceLoad
-    }
     
+    /// <summary>
+    /// NOTE : 구조물 PREFAB 모두 로드 하고 Dictionary에 저장후 리턴 
+    /// </summary>
+    /// <returns></returns>
+    private Dictionary<string, GameObject> LoadStructurePrefab()
+    {
+        var structures = Resources.LoadAll<GameObject>(structurePefabPath);
+        Dictionary<string, GameObject> tmpDic = new Dictionary<string, GameObject>();
+        foreach (var s in structures)
+            tmpDic.Add(s.name, s);
+
+        return tmpDic;
+    }
+
+    /// <summary>
+    /// NOTE : 몬스터 PREFAB 모두 로드 하고 Dictionary에 저장후 리턴 
+    /// </summary>
+    private Dictionary<string, Monster> LoadMonsterPrefab()
+    {
+        var monsters = Resources.LoadAll<GameObject>(monsterPrefabPath);
+        Dictionary<string, Monster> tmpdic = new Dictionary<string, Monster>();
+        foreach (var m in monsters)
+            tmpdic.Add(m.name, m.GetComponent<Monster>());
+        return tmpdic;
+    }
+
 }
 
 /// <summary>
-/// NOTE : 타일타입의 종류를 고름 ( 맵 에디터 툴에서도 사용하므로 클래스 내부에 선언하지 않음)
+/// NOTE : 타일타입의 종류를 고름 tileType : 로드된 Tile들의 배열, terrainRuleTile : RuleTile 타입 Terrain 데이터
 /// </summary>
-[Serializable]
 public struct TypeOfTileSetType
 {
-    [Header("0 : BackGround")]
-    [Header("1 : Entrance")]
     public TypeOfTileSet[] tileType;
     public RuleTile terrainRuleTile;
 }
 
 /// <summary>
-/// 타일의 종류
+/// NOTE : 타일의 종류 0 - 배경 1 - 출입구 
 /// </summary>
-[Serializable]
 public struct TypeOfTileSet
 {
     public Tile[] tile;
 }
 
 /// <summary>
-/// 생성된 배열값과 해당 사이즈 나중에 행과 열의 크기를 구하는방법을 사용하는거보다 미리 저장해서 꺼내쓰는게 좋을것 같다)
+/// NOTE : 생성된 배열값과 해당 사이즈 나중에 행과 열의 크기를 구하는방법을 사용하는거보다 미리 저장해서 꺼내쓰는게 좋을것 같다)
 /// </summary>
 public class GeneratedTerrainData
 {

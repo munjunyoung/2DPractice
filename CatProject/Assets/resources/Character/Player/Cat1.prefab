@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 679968720}
   m_Layer: 0
   m_Name: AttackEffect
-  m_TagString: Untagged
+  m_TagString: PlayerAttackEffect
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -311,7 +311,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f22b58f9b0ba1cb45b18216973566e81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pDATA: {fileID: 0}
   jumpButtonPress: 0
   attackButtonPress: 0
   isAlive: 1

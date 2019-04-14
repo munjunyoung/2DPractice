@@ -5,16 +5,11 @@ using UnityEngine;
 public class PlayerEffect : MonoBehaviour
 {
     private Player playerSc;
-    private int Damage;
+    [HideInInspector]
+    public int damage;
     private void Start()
     {
         playerSc = gameObject.transform.parent.GetComponent<Player>();
-        Damage = playerSc.pDATA.attackDamage;
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Monster"))
-            collision.GetComponent<Monster>().TakeDamage(Damage, transform);
+        damage = playerSc.pDATA.attackDamage;
     }
 }

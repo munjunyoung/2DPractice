@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum Room_ClearType {None = 0, Battle , Puzzle }
 /// <summary>
 /// NOTE : DungeonRoom 클래스
 /// TODO : 함수와 클래스 변수들을 분리해야하는 개선 사항 가능성
@@ -15,6 +16,7 @@ public class DungeonRoom
     public Rect roomRect = new Rect(0, 0, 0, 0);
     public int roomNumberOfList = -1;
     public int roomSpriteType = -1;
+    public Room_ClearType roomClearType = Room_ClearType.None;
     public int level = -1;
     //connectrooms
     public List<EntranceConnectRoom> entranceInfoList = new List<EntranceConnectRoom>();

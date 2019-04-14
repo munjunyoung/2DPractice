@@ -3,19 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-[RequireComponent(typeof(TileLoadManager))]
 public class BoardManager : MonoBehaviour
 {
     [HideInInspector]
     public List<DungeonRoom> roomList = new List<DungeonRoom>();
     private Dictionary<int, List<DungeonRoom>> LevelRoomDic = new Dictionary<int, List<DungeonRoom>>();
-   
-    //Tile Data
-    private TypeOfTileSetType[] tileReferenceArray;
-    //Terrain Data
-    private List<GeneratedTerrainData> terrainDataReferenceArray;
-    
-    //RoomParent들의 부모가 될 오브젝트 (Grid)
+
+    private LoadDataManager loadData;
+    //Room들의 부모가 될 오브젝트 (Grid)
     private GameObject parentModelOfRooms;
 
     [Header("ROOM OPTION")]
@@ -29,22 +24,12 @@ public class BoardManager : MonoBehaviour
     private int heightMinSize;
     [SerializeField, Range(60, 100)]
     private int heightMaxSize;
-
-    //NOTE : Reference GameObject Model
-    [Header("Reference GameObject Model")]
-    [SerializeField]
-    private GameObject entranceModel = null;
-    [SerializeField]
-    private List<Monster> monsterPrefabList = new List<Monster>();
-
+    
     private void Awake()
     {
+        loadData = new LoadDataManager();
         //Grid 오브젝트 생성
         CreateParentGridObject();
-        //오브젝트 타일 참조
-        tileReferenceArray = GetComponent<TileLoadManager>().loadTileArray;
-        //미리 생성해둔 맵 데이터 참조
-        terrainDataReferenceArray = GetComponent<TileLoadManager>().loadTerrainDataList;
         //Rooms 생성
         CreateRooms(numberOfRoom);
     }
@@ -70,8 +55,9 @@ public class BoardManager : MonoBehaviour
     /// <param name="_numberOfroom"></param>
     private void CreateRooms(int _numberOfroom)
     {
+        //DungeonRoom 클래스 생성
         for (int i = 0; i < _numberOfroom; i++)
-            roomList.Add(new DungeonRoom(i, (int)RoomType.Type2, widthMinSize, widthMaxSize, heightMinSize, heightMaxSize));
+            roomList.Add(new DungeonRoom(i, (int)Room_TileType.Type2, widthMinSize, widthMaxSize, heightMinSize, heightMaxSize));
         //RoomLevel설정
         SetRoomLevel();
         //0레벨을 제외한 나머지 랜덤 Terrain 설정
@@ -104,7 +90,7 @@ public class BoardManager : MonoBehaviour
         var remainXSize = _tmpRoom.roomRect.xMax - _tmpRoom.currentXPos;
         List<GeneratedTerrainData> possibleTerrain = new List<GeneratedTerrainData>();
 
-        foreach (var tmpt in terrainDataReferenceArray)
+        foreach (var tmpt in loadData.terrainDataList)
         {
             //현재 남아있는 Xsize와 ysize를 방에 들어갈수있는지 체크하고 임시 생성한 리스트에 추가
             if (remainXSize > tmpt.size.xMax && (_tmpRoom.roomRect.yMax) > tmpt.size.yMax)
@@ -327,10 +313,10 @@ public class BoardManager : MonoBehaviour
                         switch (_room.roomGroundArray[i, j].tileType)
                         {
                             case TileType.Entrance:
-                                GameObject tmpob = Instantiate(entranceModel, new Vector3(i, j + 1f, 0), Quaternion.identity);
-                                tmpob.GetComponent<SpriteRenderer>().sprite = tileReferenceArray[_roomtype].tileType[(int)_room.roomGroundArray[i, j].tileType].tile[_room.roomGroundArray[i, j].tileNumber].sprite;
+                                GameObject tmpob = Instantiate(loadData.structurePrefab[TileType.Entrance.ToString()], new Vector3(i, j + 1f, 0), Quaternion.identity);
+                                tmpob.GetComponent<SpriteRenderer>().sprite = loadData.tileDataArray[_roomtype].tileType[(int)_room.roomGroundArray[i, j].tileType].tile[_room.roomGroundArray[i, j].tileNumber].sprite;
                                 tmpob.GetComponent<SpriteRenderer>().sortingLayerName = "Entrance";
-                                tmpob.GetComponent<EntranceSc>().doorOpenSprite = tileReferenceArray[_roomtype].tileType[(int)_room.roomGroundArray[i, j].tileType].tile[_room.roomGroundArray[i, j].tileNumber+1].sprite;
+                                tmpob.GetComponent<EntranceSc>().doorOpenSprite = loadData.tileDataArray[_roomtype].tileType[(int)_room.roomGroundArray[i, j].tileType].tile[_room.roomGroundArray[i, j].tileNumber+1].sprite;
                                 tmpob.transform.SetParent(tmpParent.transform);
                                 foreach (EntranceConnectRoom nroom in _room.entranceInfoList)
                                 {
@@ -343,7 +329,7 @@ public class BoardManager : MonoBehaviour
                                 }
                                 break;
                             case TileType.Terrain:
-                                tmpterraintilemapob.SetTile(new Vector3Int(i, j, 0), tileReferenceArray[_roomtype].terrainRuleTile);
+                                tmpterraintilemapob.SetTile(new Vector3Int(i, j, 0), loadData.tileDataArray[_roomtype].terrainRuleTile);
                                 break;
                             default:
                                 break;
@@ -368,19 +354,19 @@ public class BoardManager : MonoBehaviour
         //bottom, top
         for (int i = 0; i < _room.roomRect.xMax; i++)
         {
-            _terraintilemap.SetTile(new Vector3Int(i, -1, 0), tileReferenceArray[_room.roomSpriteType].terrainRuleTile);
-            _terraintilemap.SetTile(new Vector3Int(i, -2, 0), tileReferenceArray[_room.roomSpriteType].terrainRuleTile);
-            _terraintilemap.SetTile(new Vector3Int(i, (int)_room.roomRect.yMax, 0), tileReferenceArray[_room.roomSpriteType].terrainRuleTile);
-            _terraintilemap.SetTile(new Vector3Int(i, (int)_room.roomRect.yMax + 1, 0), tileReferenceArray[_room.roomSpriteType].terrainRuleTile);
+            _terraintilemap.SetTile(new Vector3Int(i, -1, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
+            _terraintilemap.SetTile(new Vector3Int(i, -2, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
+            _terraintilemap.SetTile(new Vector3Int(i, (int)_room.roomRect.yMax, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
+            _terraintilemap.SetTile(new Vector3Int(i, (int)_room.roomRect.yMax + 1, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
         }
 
         //left, right
         for (int j = -2; j < _room.roomRect.yMax + 2; j++)
         {
-            _terraintilemap.SetTile(new Vector3Int(-1, j, 0), tileReferenceArray[_room.roomSpriteType].terrainRuleTile);
-            _terraintilemap.SetTile(new Vector3Int(-2, j, 0), tileReferenceArray[_room.roomSpriteType].terrainRuleTile);
-            _terraintilemap.SetTile(new Vector3Int((int)_room.roomRect.xMax, j, 0), tileReferenceArray[_room.roomSpriteType].terrainRuleTile);
-            _terraintilemap.SetTile(new Vector3Int((int)_room.roomRect.xMax+1, j, 0), tileReferenceArray[_room.roomSpriteType].terrainRuleTile);
+            _terraintilemap.SetTile(new Vector3Int(-1, j, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
+            _terraintilemap.SetTile(new Vector3Int(-2, j, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
+            _terraintilemap.SetTile(new Vector3Int((int)_room.roomRect.xMax, j, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
+            _terraintilemap.SetTile(new Vector3Int((int)_room.roomRect.xMax+1, j, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
         }
         return _terraintilemap;
     }
@@ -396,7 +382,7 @@ public class BoardManager : MonoBehaviour
         GameObject tmpParent = new GameObject("BackGroundParent");
         int count = 0;
         //배경 오브젝트 생성
-        foreach (var tmptile in tileReferenceArray[room.roomSpriteType].tileType[0].tile)
+        foreach (var tmptile in loadData.tileDataArray[room.roomSpriteType].tileType[0].tile)
         {
             GameObject backgroundob = new GameObject("BackGround", typeof(SpriteRenderer));
             backgroundob.transform.localPosition = Vector3.zero;
@@ -446,7 +432,7 @@ public class BoardManager : MonoBehaviour
             
             foreach (SpawnMonsterInfo monsterinfo in room.monsterInfoList)
             {
-                Monster tmpm = Instantiate(monsterPrefabList[(int)monsterinfo.mType], monsterinfo.startPos, Quaternion.identity, room.roomModel.transform);
+                Monster tmpm = Instantiate(loadData.monsterPrefab[monsterinfo.mType.ToString()], monsterinfo.startPos, Quaternion.identity, room.roomModel.transform);
                 tmpm.ownRoom = room;
                 monsterinfo.monsterModel = tmpm;
                 
