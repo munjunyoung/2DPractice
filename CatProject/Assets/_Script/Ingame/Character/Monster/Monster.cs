@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum ORDER_STATE { Idle, Patroll, Trace, Attack }
-public enum MONSTER_TYPE { Fox };
 public class Monster : MonoBehaviour
 {
     //자신이 존재하는 방

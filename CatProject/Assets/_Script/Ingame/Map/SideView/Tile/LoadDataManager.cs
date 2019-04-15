@@ -13,14 +13,15 @@ public class LoadDataManager
     private static readonly string[] tileTypePathArray = { "0.BackGround", "1.Entrance" };
     private readonly string structurePefabPath = "Structure";
     private readonly string monsterPrefabPath = "Character/Monster";
+    private readonly string DestructibleStructurePrefabPath = "DestructibleStructure";
 
     //Tile 
     public TypeOfTileSetType[] tileDataArray;
     public List<GeneratedTerrainData> terrainDataList = new List<GeneratedTerrainData>();
     //Prefab
-    public Dictionary<string, GameObject> structurePrefab = new Dictionary<string, GameObject>();
     public Dictionary<string, Monster> monsterPrefab = new Dictionary<string, Monster>();
-
+    public Dictionary<string, GameObject> structurePrefab = new Dictionary<string, GameObject>();
+    public Dictionary<string, DesStructure> DesStructurePrefab = new Dictionary<string, DesStructure>();
     /// <summary>
     /// 
     /// </summary>
@@ -28,8 +29,10 @@ public class LoadDataManager
     {
         tileDataArray = LoadAllTile();
         terrainDataList = LoadAllTerrainData();
-        structurePrefab = LoadStructurePrefab();
+
         monsterPrefab = LoadMonsterPrefab();
+        structurePrefab = LoadStructurePrefab();
+        DesStructurePrefab = LoadDesStructurePrefab();
     }
 
     /// <summary>
@@ -108,6 +111,18 @@ public class LoadDataManager
     }
     
     /// <summary>
+    /// NOTE : 몬스터 PREFAB 모두 로드 하고 Dictionary에 저장후 리턴 
+    /// </summary>
+    private Dictionary<string, Monster> LoadMonsterPrefab()
+    {
+        var monsters = Resources.LoadAll<GameObject>(monsterPrefabPath);
+        Dictionary<string, Monster> tmpdic = new Dictionary<string, Monster>();
+        foreach (var m in monsters)
+            tmpdic.Add(m.name, m.GetComponent<Monster>());
+        return tmpdic;
+    }
+
+    /// <summary>
     /// NOTE : 구조물 PREFAB 모두 로드 하고 Dictionary에 저장후 리턴 
     /// </summary>
     /// <returns></returns>
@@ -120,16 +135,17 @@ public class LoadDataManager
 
         return tmpDic;
     }
-
+    
     /// <summary>
-    /// NOTE : 몬스터 PREFAB 모두 로드 하고 Dictionary에 저장후 리턴 
+    /// NOTE : 파괴되는 구조물 PREFAB 모두 로드 하고 Dictionary에 저장후 리턴
     /// </summary>
-    private Dictionary<string, Monster> LoadMonsterPrefab()
+    /// <returns></returns>
+    private Dictionary<string, DesStructure> LoadDesStructurePrefab()
     {
-        var monsters = Resources.LoadAll<GameObject>(monsterPrefabPath);
-        Dictionary<string, Monster> tmpdic = new Dictionary<string, Monster>();
-        foreach (var m in monsters)
-            tmpdic.Add(m.name, m.GetComponent<Monster>());
+        var destructure = Resources.LoadAll<GameObject>(DestructibleStructurePrefabPath);
+        Dictionary<string, DesStructure> tmpdic = new Dictionary<string, DesStructure>();
+        foreach (var ds in destructure)
+            tmpdic.Add(ds.name, ds.GetComponent<DesStructure>());
         return tmpdic;
     }
 

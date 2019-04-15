@@ -77,7 +77,7 @@ public class BoardManager : MonoBehaviour
         //출입문 진입시 출현할 포지션 설정
         SetConnectedEntrance();
         //적생성
-        CreateMonster();
+        DrawPrefabByClearType();
     }
     
     /// <summary>
@@ -157,6 +157,7 @@ public class BoardManager : MonoBehaviour
         //0번쨰 방 - 시작방 설정 
         LevelRoomDic.Add(0, new List<DungeonRoom>());
         roomList[0].level = 0;
+        roomList[0].roomClearType = Room_ClearType.None;
         LevelRoomDic[0].Add(roomList[0]);
 
         int levelCount = 1;
@@ -167,6 +168,7 @@ public class BoardManager : MonoBehaviour
         for (int i = 1; i < roomList.Count - 1; i++)
         {
             roomList[i].level = levelCount;
+            roomList[i].roomClearType = (Room_ClearType)(Random.Range(0,100)<50?1:2);
             LevelRoomDic[levelCount].Add(roomList[i]);
 
             if (Random.Range(0, 100) > setSameLevelPer)
@@ -190,6 +192,7 @@ public class BoardManager : MonoBehaviour
         }
 
         roomList[roomList.Count - 1].level = levelCount;
+        roomList[roomList.Count - 1].roomClearType = Room_ClearType.Boss;
         LevelRoomDic[levelCount].Add(roomList[roomList.Count - 1]);
     }
 
@@ -424,18 +427,41 @@ public class BoardManager : MonoBehaviour
     /// <summary>
     /// 몬스터 생성
     /// </summary>
-    private void CreateMonster()
+    private void DrawPrefabByClearType()
     {
         foreach (DungeonRoom room in roomList)
         {
-            room.SetMonstersPos();
-            
-            foreach (SpawnMonsterInfo monsterinfo in room.monsterInfoList)
+            switch(room.roomClearType)
             {
-                Monster tmpm = Instantiate(loadData.monsterPrefab[monsterinfo.mType.ToString()], monsterinfo.startPos, Quaternion.identity, room.roomModel.transform);
-                tmpm.ownRoom = room;
-                monsterinfo.monsterModel = tmpm;
-                
+                case Room_ClearType.Battle:
+                    //몬스터 생성
+                    room.SetMonstersPos();
+
+                    foreach (SpawnMonsterInfo monsterinfo in room.monsterInfoList)
+                    {
+                        Monster tmpm = Instantiate(loadData.monsterPrefab[monsterinfo.mType.ToString()], monsterinfo.startPos, Quaternion.identity, room.roomModel.transform);
+                        tmpm.ownRoom = room;
+                        monsterinfo.monsterModel = tmpm;
+                    }
+                    break;
+                case Room_ClearType.Puzzle:
+                    room.SetDesStructurePos();
+
+                    foreach(SpawnDesStructureInfo dsinfo in room.desStructureInfoList)
+                    {
+                        DesStructure tmpds = Instantiate(loadData.DesStructurePrefab[dsinfo.dsType.ToString()], dsinfo.startPos, Quaternion.identity, room.roomModel.transform);
+                        tmpds.ownRoom = room;
+                        dsinfo.desStructureModel = tmpds;
+
+                    }
+                    break;
+                case Room_ClearType.Boss:
+                    //..보스 생성관련
+                    break;
+                default:
+                    break;
+
+
             }
         }
     }

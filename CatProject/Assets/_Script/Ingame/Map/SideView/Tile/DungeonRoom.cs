@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum Room_ClearType {None = 0, Battle , Puzzle }
+public enum Room_ClearType {None = 0, Battle , Puzzle, Boss }
+
+public enum MONSTER_TYPE { Fox = 0};
+public enum DesStructure_TYPE { Frog = 0 };
 /// <summary>
 /// NOTE : DungeonRoom 클래스
 /// TODO : 함수와 클래스 변수들을 분리해야하는 개선 사항 가능성
@@ -18,10 +21,10 @@ public class DungeonRoom
     public int roomSpriteType = -1;
     public Room_ClearType roomClearType = Room_ClearType.None;
     public int level = -1;
-    //connectrooms
+
     public List<EntranceConnectRoom> entranceInfoList = new List<EntranceConnectRoom>();
-    //Monster
     public List<SpawnMonsterInfo> monsterInfoList = new List<SpawnMonsterInfo>();
+    public List<SpawnDesStructureInfo> desStructureInfoList = new List<SpawnDesStructureInfo>();
     //Terrain
     public GeneratedTerrainData beforeTerrainData = null;
     public int currentXPos;
@@ -128,6 +131,50 @@ public class DungeonRoom
             }
         }
     }
+
+    /// <summary>
+    /// NOTE : 파괴되는 구조물의 위치 설정
+    /// </summary>
+    public void SetDesStructurePos()
+    {
+        //각 방의 몬스터 숫자설정
+        //..level에따른 설정 
+        //Test를 위해 1로만 설정
+        //현재는 레벨만큼 몬스터 생성
+        int number = level;
+
+        //몬스터 숫자만큼 x포지션 저장
+        List<int> posX = new List<int>();
+        for (int i = 0; i < number; i++)
+        {
+            var tmpvalue = (int)Random.Range(1, roomRect.xMax - 1);
+
+            //같은 값이 있는지 체크?
+            for (int j = 0; j < posX.Count; j++)
+            {
+                if (posX[j].Equals(tmpvalue))
+                {
+                    tmpvalue = (int)Random.Range(2, roomRect.xMax - 2);
+                    //다시 처음부터 확인하기 위함
+                    j = 0;
+                }
+            }
+            posX.Add(tmpvalue);
+        }
+        //저장한 x포지션을 기준으로 y값을 순회하여 roomarray의 0 값을 검색하여 설정
+        foreach (int tmpx in posX)
+        {
+            for (int j = 1; j < roomRect.yMax - 1; j++)
+            {
+                if (roomGroundArray[tmpx, j] == null)
+                {
+                    desStructureInfoList.Add(new SpawnDesStructureInfo(DesStructure_TYPE.Frog, new Vector2(tmpx, j + 0.5f)));
+                    break;
+                }
+            }
+        }
+
+    }
     #endregion
 
     #region Room Complete Check
@@ -138,7 +185,7 @@ public class DungeonRoom
     public void CheckLockRoom()
     {
         // 몬스터 , 보스 , 아이템 체크 후 출입구 개방
-        if(CheckMonsterAlive()&&BossAliveCheck()&&GetItemCheck())
+        if(CheckMonsterAlive()&&PuzzleClearCheck()&&BossAliveCheck()&&GetItemCheck())
             UnLockEntrances();
     }
     /// <summary>
@@ -169,6 +216,25 @@ public class DungeonRoom
         return checkcomplete;
     }
 
+    /// <summary>
+    /// NOTE : 퍼즐관련 체크 현재는 부서지는 구조물을 부셨느냐 만 체크함
+    /// </summary>
+    /// <returns></returns>
+    private bool PuzzleClearCheck()
+    {
+        bool checkcomplete = true;
+
+        if(desStructureInfoList.Count>0)
+        {
+            foreach(var dsinfo in desStructureInfoList)
+            {
+                if (dsinfo.desStructureModel.isAlive)
+                    checkcomplete = false;
+            }
+        }
+
+        return checkcomplete;
+    }
     /// <summary>
     /// 
     /// </summary>
@@ -220,6 +286,23 @@ public class SpawnMonsterInfo
         startPos = _startpos;
         monsterModel = null;
     }
+}
+
+/// <summary>
+/// NOTE : DungeonRoom 클래스에서 설정하는 파괴되는구조물 정보 
+/// </summary>
+public class SpawnDesStructureInfo
+{
+    public DesStructure_TYPE dsType;
+    public Vector2 startPos;
+    public DesStructure desStructureModel;
+
+    public SpawnDesStructureInfo(DesStructure_TYPE _dstype, Vector2 _startpos)
+    {
+        dsType = _dstype;
+        startPos = _startpos;
+        desStructureModel = null;
+    }   
 }
 
 /// <summary>
