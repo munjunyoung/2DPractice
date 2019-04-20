@@ -4,7 +4,7 @@ using UnityEngine;
 
 public enum Room_ClearType {None = 0, Battle , Puzzle, Boss }
 
-public enum MONSTER_TYPE { Fox = 0};
+public enum MONSTER_TYPE { Fox = 0, Dog = 1};
 public enum DesStructure_TYPE { Frog = 0 };
 /// <summary>
 /// NOTE : DungeonRoom 클래스
@@ -46,7 +46,7 @@ public class DungeonRoom
         var tmpW = Random.Range(_widthMin, _widthMax);
         var tmpH = Random.Range(_heightMin, _heightMax);
         roomRect = new Rect(0, 0, tmpW, tmpH);
-
+        
         roomGroundArray = new TileInfo[(int)roomRect.width, (int)roomRect.height];
     }
 

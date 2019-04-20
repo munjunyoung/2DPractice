@@ -26,5 +26,5 @@ public class MonsterHPSliderSc : MonoBehaviour
     public void SetHPValue(int currenthp)
     {
             monsterHPSlider.value = currenthp;
-    }
+    }   
 }

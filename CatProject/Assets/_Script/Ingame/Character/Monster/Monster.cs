@@ -65,7 +65,7 @@ public class Monster : MonoBehaviour
     private Rigidbody2D rb2D;
     private Animator anim;
     private SpriteRenderer sR;
-
+    
     //Raycast    
     private int raycastLayerMask;
     [HideInInspector]
@@ -95,7 +95,7 @@ public class Monster : MonoBehaviour
     private bool isRunningKnockbackCoroutine = false;
     private bool isKnockbackState = false;
     //Stop
-    
+
     [HideInInspector]
     public bool isAlive;
     private bool isGrounded = false;
@@ -104,7 +104,8 @@ public class Monster : MonoBehaviour
     //HP UI
     [SerializeField]
     private MonsterHPSliderSc hpSliderUI;
-    
+    //몬스터가 보스로 등장할 경우 여기서 변경
+    public bool isBoss = false;
 
     private void Awake()
     {
@@ -113,9 +114,17 @@ public class Monster : MonoBehaviour
         rb2D = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         sR = GetComponent<SpriteRenderer>();
-        
+
         //Set Layer 8 - tile, 9 - player
-        raycastLayerMask = (1 << LayerMask.NameToLayer("Player")) | (1 << LayerMask.NameToLayer("Tile")) | (1<<LayerMask.NameToLayer("Monster"));
+        raycastLayerMask = (1 << LayerMask.NameToLayer("Player")) | (1 << LayerMask.NameToLayer("Tile")) | (1 << LayerMask.NameToLayer("Monster"));
+        //Size
+        if (isBoss)
+        {
+            //사이즈 변경 및 색깔 변경
+            transform.localScale = Vector3.one * 3f;
+            sR.color = new Color(1, 0.5f, 0.5f, 1);
+        }
+
     }
 
     private void Start()
@@ -126,10 +135,12 @@ public class Monster : MonoBehaviour
         CurrentHP = mDATA.maxHP;
         hpSliderUI = transform.GetComponentInChildren<MonsterHPSliderSc>();
         hpSliderUI.SetSliderStartValue(mDATA.maxHP, CurrentHP);
+        hpSliderUI.gameObject.SetActive(false);
     }
 
     private void FixedUpdate()
     {
+        Debug.Log(transform.localScale);
         if (!isAlive)
             return;
         if (isStopped)
@@ -174,14 +185,14 @@ public class Monster : MonoBehaviour
         Vector2 dir = sR.flipX.Equals(true) ? -Vector2.right : Vector2.right;
 
         //벽 Raycast
-        RaycastHit2D wallCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -0.5f, 0), dir, 1.5f, raycastLayerMask);
+        RaycastHit2D wallCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -((transform.localScale.y - 1) + 0.5f), 0), dir, transform.localScale.x + 0.5f, raycastLayerMask);
         if (wallCheckInfo.collider != null)
         {
-            if (wallCheckInfo.collider.CompareTag("Ground") || wallCheckInfo.collider.CompareTag("Floor")||wallCheckInfo.collider.CompareTag("Monster"))
+            if (wallCheckInfo.collider.CompareTag("Ground") || wallCheckInfo.collider.CompareTag("Floor") || wallCheckInfo.collider.CompareTag("Monster"))
                 sR.flipX = sR.flipX.Equals(true) ? false : true;
         }
         //길 끊김 Null Raycast
-        RaycastHit2D nullCheckInfo = Physics2D.Raycast(transform.position, dir + new Vector2(0, -1f), 1.5f, raycastLayerMask);
+        RaycastHit2D nullCheckInfo = Physics2D.Raycast(transform.position, dir + new Vector2(0, -transform.localScale.y), transform.localScale.x + 0.5f, raycastLayerMask);
         if (nullCheckInfo.collider == null)
             sR.flipX = sR.flipX.Equals(true) ? false : true;
 
@@ -195,8 +206,9 @@ public class Monster : MonoBehaviour
     {
         //flip을 통한 dir 설정
         Vector2 dir = sR.flipX.Equals(true) ? -Vector2.right : Vector2.right;
-        //벽 Raycast
-        RaycastHit2D frontCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -0.5f, 0), dir, 1f, raycastLayerMask);
+        //벽 Raycast (아래를 훑어야하긴하는데)
+        RaycastHit2D frontCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -((transform.localScale.y - 1) + 0.5f), 0), dir, transform.localScale.x, raycastLayerMask);
+
         if (frontCheckInfo.collider != null)
         {
             if (frontCheckInfo.collider.CompareTag("Ground") || frontCheckInfo.collider.CompareTag("Floor"))
@@ -206,9 +218,9 @@ public class Monster : MonoBehaviour
             else if (frontCheckInfo.collider.CompareTag("Monster"))
                 dir = Vector2.zero;
         }
-         
+
         sR.flipX = (int)(transform.position.x) > (int)(targetOb.position.x) ? true : false;
-        
+
         rb2D.velocity = new Vector2(dir.x * currentMoveSpeed, rb2D.velocity.y);
     }
 
@@ -271,26 +283,29 @@ public class Monster : MonoBehaviour
             return;
 
         CurrentHP -= damage;
-        anim.SetTrigger("TakeDamage");
+        //체력 UI 시작 및 설정
+        if (!hpSliderUI.isActiveAndEnabled)
+            hpSliderUI.gameObject.SetActive(true);
         hpSliderUI.SetHPValue(CurrentHP);
 
+        anim.SetTrigger("TakeDamage");
         KnockBack(targetpos);
         if (CurrentHP <= 0)
             Die();
     }
-    
+
     /// <summary>
     /// NOTE : 넉백, 플레이어와 부딪혔을 때나 공격 당했을 때
     /// </summary>
     /// <param name="targetpos"></param>
     private void KnockBack(Transform targetpos)
     {
-        if(!isRunningKnockbackCoroutine)
+        if (!isRunningKnockbackCoroutine)
             StartCoroutine(KnockbackCoroutine(targetpos));
     }
 
     /// <summary>
-    /// NOTE : 넉백 물리 실행 및 설정 시간 이후 상태 변경
+    /// NOTE : 넉백 물리 실행 및 설정 시간 이후 상태 변경 
     /// </summary>
     /// <returns></returns>
     IEnumerator KnockbackCoroutine(Transform targetpos)
@@ -304,7 +319,17 @@ public class Monster : MonoBehaviour
         float ydir = Mathf.Sign(transform.position.y - targetpos.position.y).Equals(1) ? 1f : -1f;
         Vector2 dir = new Vector2(xdir, ydir);
         rb2D.AddForce(dir * mDATA.knockBackPower, ForceMode2D.Impulse);
-        yield return new WaitForSeconds(mDATA.knockbackTime);
+
+        //점멸이펙트
+        float timer = 0f;
+        Color tmpcolor = sR.color;
+        while (timer <= mDATA.knockbackTime)
+        {
+            timer += 0.1f;
+            tmpcolor.a = tmpcolor.a.Equals(1f) ? 0.2f : 1f;
+            sR.color = tmpcolor;
+            yield return new WaitForSeconds(0.1f);
+        }
         //상태 리셋
         isKnockbackState = false;
         isRunningKnockbackCoroutine = false;
@@ -382,14 +407,14 @@ public class Monster : MonoBehaviour
         if (contactnormalSum.y > 0)
             isGrounded = true;
 
-        if(collision.collider.CompareTag("Player"))
+        if (collision.collider.CompareTag("Player"))
         {
             if (isAlive)
                 KnockBack(collision.transform);
         }
-        
+
     }
-    
+
     /// <summary>
     /// NOTE : GROUND CHECK FALSE
     /// </summary>
