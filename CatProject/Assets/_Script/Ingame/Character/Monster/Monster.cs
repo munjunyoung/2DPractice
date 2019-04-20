@@ -7,6 +7,7 @@ public class Monster : MonoBehaviour
 {
     //자신이 존재하는 방
     public DungeonRoom ownRoom = null;
+    delegate void AlarmHandler();
     /// <summary>
     /// CHARACTER STATE 
     /// NOTE : 애니매이션 파라미터 상태 설정 (속성은 animation 속도 설정)
@@ -120,7 +121,7 @@ public class Monster : MonoBehaviour
     private void Start()
     {
         CSVDataReader.instance.SetData(mDATA, mType.ToString());
-        OrderState = Random.Range(0, 100) > 99 ? ORDER_STATE.Idle : ORDER_STATE.Patroll;
+        OrderState = Random.Range(0, 100) > 50 ? ORDER_STATE.Idle : ORDER_STATE.Patroll;
         //Set HP
         CurrentHP = mDATA.maxHP;
         hpSliderUI = transform.GetComponentInChildren<MonsterHPSliderSc>();
@@ -167,7 +168,6 @@ public class Monster : MonoBehaviour
     /// </summary>
     private void Patroll()
     {
-
         if (!isGrounded)
             return;
         //flip을 통한 dir 설정
