@@ -130,7 +130,7 @@ public class Monster : MonoBehaviour
     private void Start()
     {
         CSVDataReader.instance.SetData(mDATA, mType.ToString());
-        OrderState = Random.Range(0, 100) > 50 ? ORDER_STATE.Idle : ORDER_STATE.Patroll;
+        OrderState = Random.Range(0, 100) > 35 ? ORDER_STATE.Idle : ORDER_STATE.Patroll;
         //Set HP
         CurrentHP = mDATA.maxHP;
         hpSliderUI = transform.GetComponentInChildren<MonsterHPSliderSc>();
@@ -207,7 +207,7 @@ public class Monster : MonoBehaviour
         //flip을 통한 dir 설정
         Vector2 dir = sR.flipX.Equals(true) ? -Vector2.right : Vector2.right;
         //벽 Raycast (아래를 훑어야하긴하는데)
-        RaycastHit2D frontCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -((transform.localScale.y - 1) + 0.5f), 0), dir, transform.localScale.x, raycastLayerMask);
+        RaycastHit2D frontCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -((transform.localScale.y - 1) + 0.2f), 0), dir, transform.localScale.x, raycastLayerMask);
 
         if (frontCheckInfo.collider != null)
         {

@@ -25,6 +25,7 @@ public class DungeonRoom
     public List<EntranceConnectRoom> entranceInfoList = new List<EntranceConnectRoom>();
     public List<SpawnMonsterInfo> monsterInfoList = new List<SpawnMonsterInfo>();
     public List<SpawnDesStructureInfo> desStructureInfoList = new List<SpawnDesStructureInfo>();
+    public List<SpawnBossInfo> bossInfoList = new List<SpawnBossInfo>();
     //Terrain
     public GeneratedTerrainData beforeTerrainData = null;
     public int currentXPos;
@@ -57,36 +58,53 @@ public class DungeonRoom
     /// </summary>
     public void SetEntrancePos()
     {
-        List<int> posX = new List<int>();
-        //Entrance갯수 만큼 x포지션 저장
-        for (int i = 0; i < entranceInfoList.Count; i++)
+        switch(roomClearType)
         {
-            var tmpvalue = (int)Random.Range(2, roomRect.xMax - 1);
+            case Room_ClearType.None:
+            case Room_ClearType.Boss:
+                for (int j = 0; j < roomRect.yMax; j++)
+                {
+                    if (roomGroundArray[5, j] == null)
+                    {
+                        roomGroundArray[5, j] = new TileInfo(TileType.Entrance, 0);
+                        break;
+                    }
+                }
+                break;
+            default:
+                List<int> posX = new List<int>();
+                //Entrance갯수 만큼 x포지션 저장
+                for (int i = 0; i < entranceInfoList.Count; i++)
+                {
+                    var tmpvalue = (int)Random.Range(2, roomRect.xMax - 1);
 
-            //같은 값이 있는지 체크?
-            for (int j = 0; j < posX.Count; j++)
-            {
-                if (posX[j].Equals(tmpvalue))
-                {
-                    tmpvalue = (int)Random.Range(2, roomRect.xMax - 1);
-                    //다시 처음부터 확인하기 위함
-                    j = 0;
+                    //같은 값이 있는지 체크?
+                    for (int j = 0; j < posX.Count; j++)
+                    {
+                        if (posX[j]-3<tmpvalue&&posX[j]+3<tmpvalue)
+                        {
+                            tmpvalue = (int)Random.Range(2, roomRect.xMax - 1);
+                            //다시 처음부터 확인하기 위함
+                            j = 0;
+                        }
+                    }
+                    posX.Add(tmpvalue);
                 }
-            }
-            posX.Add(tmpvalue);
-        }
-        //저장한 x포지션을 기준으로 y값을 순회하여 roomarray의 0 값을 검색하여 설정
-        foreach (int tmpx in posX)
-        {
-            for (int j = 0; j < roomRect.yMax; j++)
-            {
-                if (roomGroundArray[tmpx, j] == null)
+                //저장한 x포지션을 기준으로 y값을 순회하여 roomarray의 0 값을 검색하여 설정
+                foreach (int tmpx in posX)
                 {
-                    roomGroundArray[tmpx, j] = new TileInfo(TileType.Entrance, 0);
-                    break;
+                    for (int j = 0; j < roomRect.yMax; j++)
+                    {
+                        if (roomGroundArray[tmpx, j] == null)
+                        {
+                            roomGroundArray[tmpx, j] = new TileInfo(TileType.Entrance, 0);
+                            break;
+                        }
+                    }
                 }
-            }
+                break;
         }
+       
     }
 
     /// <summary>
@@ -106,9 +124,11 @@ public class DungeonRoom
         {
             var tmpvalue = (int)Random.Range(1, roomRect.xMax - 1);
 
+            
             //같은 값이 있는지 체크?
             for (int j = 0; j < posX.Count; j++)
             {
+
                 if (posX[j].Equals(tmpvalue))
                 {
                     tmpvalue = (int)Random.Range(2, roomRect.xMax - 2);
@@ -116,6 +136,7 @@ public class DungeonRoom
                     j = 0;
                 }
             }
+
             posX.Add(tmpvalue);
         }
         //저장한 x포지션을 기준으로 y값을 순회하여 roomarray의 0 값을 검색하여 설정
@@ -168,12 +189,27 @@ public class DungeonRoom
             {
                 if (roomGroundArray[tmpx, j] == null)
                 {
-                    desStructureInfoList.Add(new SpawnDesStructureInfo(DesStructure_TYPE.Frog, new Vector2(tmpx, j + 0.5f)));
+                    desStructureInfoList.Add(new SpawnDesStructureInfo(DesStructure_TYPE.Frog, new Vector2(tmpx, j + 1f)));
                     break;
                 }
             }
         }
 
+    }
+
+    /// <summary>
+    /// NOTE : 보스 포지션 설정
+    /// </summary>
+    public void SetBossPos()
+    {
+        Vector2 startpos = Vector2.zero; 
+        int xpos = (int)roomRect.width - 7;
+        for(int j=0; j<roomRect.height-1;j++)
+        {
+            if (roomGroundArray[xpos, j] == null)
+                startpos = new Vector2(xpos, j);
+        }
+        bossInfoList.Add(new SpawnBossInfo(MONSTER_TYPE.Dog, startpos));
     }
     #endregion
 
@@ -205,17 +241,7 @@ public class DungeonRoom
         }
         return checkcomplete;
     }
-
-    /// <summary>
-    /// 보스 관련 체크 
-    /// </summary>
-    private bool BossAliveCheck()
-    {
-        bool checkcomplete = true;
-        //..
-        return checkcomplete;
-    }
-
+    
     /// <summary>
     /// NOTE : 퍼즐관련 체크 현재는 부서지는 구조물을 부셨느냐 만 체크함
     /// </summary>
@@ -235,6 +261,26 @@ public class DungeonRoom
 
         return checkcomplete;
     }
+
+    /// <summary>
+    /// 보스 관련 체크 
+    /// </summary>
+    private bool BossAliveCheck()
+    {
+        bool checkcomplete = true;
+
+        if (bossInfoList.Count > 0)
+        {
+            foreach (var bossinfo in bossInfoList)
+            {
+                if (bossinfo.monsterModel.isAlive)
+                    checkcomplete = false;
+            }
+        }
+        //..
+        return checkcomplete;
+    }
+
     /// <summary>
     /// 
     /// </summary>
@@ -305,17 +351,33 @@ public class SpawnDesStructureInfo
     }   
 }
 
+public class SpawnBossInfo
+{
+    public MONSTER_TYPE mType;
+    public Vector2 startPos;
+    public Monster monsterModel;
+
+    public SpawnBossInfo(MONSTER_TYPE _mtype, Vector2 _startpos)
+    {
+        mType = _mtype;
+        startPos = _startpos;
+        monsterModel = null;
+    }
+}
+
 /// <summary>
 /// NOTE : 출입구 클래스 연결된 방과 해당 오브젝트 (struct으로 구현하였다가 foreach문에서 반복 변수 초기화가 불가하여 class로 변경(구조체 : 값복사, 클래스 : 참조복사)
 /// </summary>
 public class EntranceConnectRoom
 {
+    public Vector2 startPos;
     public DungeonRoom connectedRoom;
     public EntranceSc entrance;
 
     public EntranceConnectRoom(DungeonRoom _room)
     {
         connectedRoom = _room;
+        startPos = Vector2.zero;
         entrance = null;
     }
 }

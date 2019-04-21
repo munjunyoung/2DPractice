@@ -42,7 +42,7 @@ public class BoardManager : MonoBehaviour
     private void CreateParentGridObject()
     {
         parentModelOfRooms = new GameObject();
-        parentModelOfRooms.AddComponent<Grid>().cellGap = new Vector3(-0.01f, -0.01f, 0);
+        parentModelOfRooms.AddComponent<Grid>().cellGap = new Vector3(-0.001f, -0.001f, 0);
         parentModelOfRooms.transform.position = Vector3.zero;
         parentModelOfRooms.transform.rotation = Quaternion.identity;
         parentModelOfRooms.transform.localScale = Vector3.one;
@@ -61,11 +61,10 @@ public class BoardManager : MonoBehaviour
         //RoomLevel설정
         SetRoomLevel();
         //0레벨을 제외한 나머지 랜덤 Terrain 설정
-        foreach(var room in roomList)
+        for(int i = 1;i<roomList.Count-1;i++)
         {
-            if (!room.level.Equals(0))
-                SetRandomTerrainRoom(room);
-        }       
+            SetRandomTerrainRoom(roomList[i]);
+        }
         //Rooms 연결
         RandomEdgeConnect();
         //Rooms Entrance 오브젝트 생성
@@ -316,7 +315,7 @@ public class BoardManager : MonoBehaviour
                         switch (_room.roomGroundArray[i, j].tileType)
                         {
                             case TileType.Entrance:
-                                GameObject tmpob = Instantiate(loadData.structurePrefab[TileType.Entrance.ToString()], new Vector3(i, j + 1f, 0), Quaternion.identity);
+                                GameObject tmpob = Instantiate(loadData.structurePrefab[TileType.Entrance.ToString()], new Vector3(i+0.5f, j + 1f, 0), Quaternion.identity);
                                 tmpob.GetComponent<SpriteRenderer>().sprite = loadData.tileDataArray[_roomtype].tileType[(int)_room.roomGroundArray[i, j].tileType].tile[_room.roomGroundArray[i, j].tileNumber].sprite;
                                 tmpob.GetComponent<SpriteRenderer>().sortingLayerName = "Entrance";
                                 tmpob.GetComponent<EntranceSc>().doorOpenSprite = loadData.tileDataArray[_roomtype].tileType[(int)_room.roomGroundArray[i, j].tileType].tile[_room.roomGroundArray[i, j].tileNumber+1].sprite;
@@ -456,12 +455,18 @@ public class BoardManager : MonoBehaviour
                     }
                     break;
                 case Room_ClearType.Boss:
-                    //..보스 생성관련
+                    room.SetBossPos();
+                    foreach (SpawnBossInfo bossinfo in room.bossInfoList)
+                    {
+                        Monster tmpboss = Instantiate(loadData.monsterPrefab[bossinfo.mType.ToString()],bossinfo.startPos , Quaternion.identity, room.roomModel.transform);
+                        tmpboss.GetComponent<Monster>().isBoss = true;
+                        tmpboss.ownRoom = room;
+                        bossinfo.monsterModel = tmpboss;
+                    }
                     break;
                 default:
+                    Debug.Log("NO ClearType!");
                     break;
-
-
             }
         }
     }
