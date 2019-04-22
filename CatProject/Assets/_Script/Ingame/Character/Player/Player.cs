@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 enum ANIMATION_STATE { Idle = 0, Walk, Jump, Fall, Attack, TakeDamage, Die }
-enum PLAYER_TYPE { Cat1 = 0};
+public enum PLAYER_TYPE { Cat1 = 0};
 /// <summary>
 /// NOTE : 플레이어캐릭터 공격 점프 이동
 /// </summary>
