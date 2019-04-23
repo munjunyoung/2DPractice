@@ -35,7 +35,7 @@ public class LoadDataManager
         DesStructurePrefab = LoadDesStructurePrefab();
     }
 
-    /// <summary>
+    /// <summary>a
     /// NOTE : Resource Load를 통하여 모든 타일들을 불러옴
     /// NOTE : 에디터에서도 사용하기위하여 STATIC으로 선언(Path 포함)
     /// </summary>

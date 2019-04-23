@@ -222,9 +222,7 @@ public class DungeonRoom
     {
         // 몬스터 , 보스 , 아이템 체크 후 출입구 개방
         if (CheckMonsterAlive() && PuzzleClearCheck() && BossAliveCheck() && GetItemCheck())
-        {
             UnLockEntrances();
-        }
     }
     /// <summary>
     /// NOTE : ROOM CHECK UN LOCK

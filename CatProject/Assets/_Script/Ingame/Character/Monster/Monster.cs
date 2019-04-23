@@ -140,7 +140,6 @@ public class Monster : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Debug.Log(transform.localScale);
         if (!isAlive)
             return;
         if (isStopped)

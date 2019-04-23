@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 public class InGameManager : MonoBehaviour
 {
     //Singletone
@@ -42,6 +42,8 @@ public class InGameManager : MonoBehaviour
     /// </summary>
     private void StartSettingInGM()
     {
+        //Debug.Log("The current scene is " + SceneManager.GetActiveScene().name);
+        boardmanagerSc.CreateRooms();
         roomList = boardmanagerSc.roomList;
         roomList[0].roomModel.SetActive(true);
         currentRoom = roomList[0];

@@ -25,38 +25,20 @@ public class BoardManager : MonoBehaviour
     [SerializeField, Range(60, 100)]
     private int heightMaxSize;
     
-    private void Awake()
-    {
-        loadData = new LoadDataManager();
-        //Grid 오브젝트 생성
-        CreateParentGridObject();
-        //Rooms 생성
-        CreateRooms(numberOfRoom);
-    }
+    
 
     #region Create Room
-    /// <summary>
-    /// NOTE : 오브젝트를 생성할때 방들의 상위 오브젝트가 될 부모 설정 함수
-    /// TODO : 씬하나에 끝날 경우에는 미리 생성하는 것으로 해당 함수 제거 요망 씬이 넘어갈때마다 필요할 거라고 생각되었기 때문 (방을 남겨두기에는 하위오브젝트들을 destroy함으로써 gc가 돌꺼같나..?)
-    /// </summary>
-    private void CreateParentGridObject()
-    {
-        parentModelOfRooms = new GameObject();
-        parentModelOfRooms.AddComponent<Grid>().cellGap = new Vector3(-0.001f, -0.001f, 0);
-        parentModelOfRooms.transform.position = Vector3.zero;
-        parentModelOfRooms.transform.rotation = Quaternion.identity;
-        parentModelOfRooms.transform.localScale = Vector3.one;
-        parentModelOfRooms.name = "Rooms";
-    }
-
     /// <summary>
     /// NOTE : 파라미터 숫자만큼 DungeonRoomByTile 클래스 객체 생성 함수
     /// </summary>
     /// <param name="_numberOfroom"></param>
-    private void CreateRooms(int _numberOfroom)
-    {
+    public void CreateRooms()
+    {  //Grid 오브젝트 생성
+        loadData = new LoadDataManager();
+
+        CreateParentGridObject();
         //DungeonRoom 클래스 생성
-        for (int i = 0; i < _numberOfroom; i++)
+        for (int i = 0; i < numberOfRoom; i++)
             roomList.Add(new DungeonRoom(i, (int)Room_TileType.Type2, widthMinSize, widthMaxSize, heightMinSize, heightMaxSize));
         //RoomLevel설정
         SetRoomLevel();
@@ -77,6 +59,20 @@ public class BoardManager : MonoBehaviour
         SetConnectedEntrance();
         //적생성
         DrawPrefabByClearType();
+    }
+
+    /// <summary>
+    /// NOTE : 오브젝트를 생성할때 방들의 상위 오브젝트가 될 부모 설정 함수
+    /// TODO : 씬하나에 끝날 경우에는 미리 생성하는 것으로 해당 함수 제거 요망 씬이 넘어갈때마다 필요할 거라고 생각되었기 때문 (방을 남겨두기에는 하위오브젝트들을 destroy함으로써 gc가 돌꺼같나..?)
+    /// </summary>
+    private void CreateParentGridObject()
+    {
+        parentModelOfRooms = new GameObject();
+        parentModelOfRooms.AddComponent<Grid>().cellGap = new Vector3(-0.001f, -0.001f, 0);
+        parentModelOfRooms.transform.position = Vector3.zero;
+        parentModelOfRooms.transform.rotation = Quaternion.identity;
+        parentModelOfRooms.transform.localScale = Vector3.one;
+        parentModelOfRooms.name = "Rooms";
     }
     
     /// <summary>
@@ -464,8 +460,11 @@ public class BoardManager : MonoBehaviour
                         bossinfo.monsterModel = tmpboss;
                     }
                     break;
+                case Room_ClearType.None:
+                    Debug.Log("ClearType - None ");
+                    break;
                 default:
-                    Debug.Log("NO ClearType!");
+                    Debug.Log("ClearType Default");
                     break;
             }
         }
