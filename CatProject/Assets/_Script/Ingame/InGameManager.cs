@@ -17,7 +17,7 @@ public class InGameManager : MonoBehaviour
     private string playerPath = "Character/Player/";
     //Stop
     private float changeRoomStopCount = 2f;
-
+    //
     private void Awake()
     {
         //Singletone
@@ -98,5 +98,29 @@ public class InGameManager : MonoBehaviour
     {
         playerOb.StopAction(_stopcount);
         currentRoom.MonsterStop(_stopcount);
+    }
+
+    /// <summary>
+    /// NOTE : Stage Clear, 알람패널 실행
+    /// </summary>
+    public void CheckAllStageClear()
+    {
+        bool allclearCheck = true;
+        foreach(var room in roomList)
+        {
+            if (!room.clearCheck)
+                allclearCheck = false;
+        }
+
+        if(allclearCheck)
+            GetComponent<PlayerUIManager>().ShowAlaramPanel(Alarm_State.CLEAR);
+    }
+
+    /// <summary>
+    /// NOTE : 플레이어 죽음 (클리어 실패) 알람 패널 실행
+    /// </summary>
+    public void DiePlayer()
+    {
+        GetComponent<PlayerUIManager>().ShowAlaramPanel(Alarm_State.DIE);
     }
 }

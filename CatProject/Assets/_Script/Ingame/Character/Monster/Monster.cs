@@ -427,9 +427,6 @@ public class Monster : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("PlayerAttackEffect"))
-        {
             TakeDamage(collision.GetComponent<PlayerEffect>().damage, collision.transform);
-            Debug.Log(collision.GetComponent<PlayerEffect>().damage);
-        }
-    }
+    }8
 }

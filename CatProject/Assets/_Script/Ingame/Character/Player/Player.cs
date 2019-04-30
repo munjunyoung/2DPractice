@@ -102,6 +102,7 @@ public class Player : MonoBehaviour
     private bool isStopped;
     private bool isRunningStopCoroutine = false;
 
+    private bool isDie = false;
     private void Awake()
     {
         rb2D = GetComponent<Rigidbody2D>();
@@ -118,6 +119,8 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (isDie)
+            return;
         if (isStopped)
             return;
         if (isInvincible)
@@ -340,10 +343,14 @@ public class Player : MonoBehaviour
     /// <param name="damage"></param>
     private void TakeDamage(int damage, Transform targetpos)
     {
+        if (isDie)
+            return;
         if (isInvincible)
             return;
 
         CurrentHP -= damage;
+        if (CurrentHP <= 0)
+            StartCoroutine(Die());
 
         //Knockback Action
         currentMoveSpeed = 0;
@@ -376,6 +383,14 @@ public class Player : MonoBehaviour
         tmpcolor.a = 1f;
         characterSprite.color = tmpcolor;
         isInvincible = false;
+    }
+    
+    IEnumerator Die()
+    {
+        isDie = true;
+        //..die animation 실행
+        yield return new WaitForSeconds(2f);
+        InGameManager.instance.DiePlayer();
     }
 
     /// <summary>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+public enum Alarm_State { DIE, CLEAR };
 public class PlayerUIManager : MonoBehaviour
 {
     /// <summary>
@@ -15,12 +16,20 @@ public class PlayerUIManager : MonoBehaviour
     private Slider playerTPSlider;
     [SerializeField]
     private Text playerHPText, playerTPText;
-
+ 
+    [SerializeField]
+    private GameObject AlarmPanel;
+    [SerializeField]
+    private Text AlarmText;
+    [SerializeField]
+    private Button YesButton;
     
     private void Start()
     {
         //player hp/tp ui start
         PlayerPointUIStart();
+
+        AlarmPanel.SetActive(false);
     }
     
     #region PLAYER HP TP
@@ -78,6 +87,22 @@ public class PlayerUIManager : MonoBehaviour
         SetTPUI(0);
     }
     #endregion
+
+    public void ShowAlaramPanel(Alarm_State _state)
+    {
+        switch(_state)
+        {
+            case Alarm_State.CLEAR:
+                AlarmText.text = "Congratulation!";
+                YesButton.onClick.AddListener(() => { GlobalManager.instance.LoadScene(Scene_Name.StageSelect);});
+                break;
+            case Alarm_State.DIE:
+                AlarmText.text = "YOU DIE..";
+                YesButton.onClick.AddListener(() => { GlobalManager.instance.LoadScene(Scene_Name.Lobby); });
+                break;
+        }
+        AlarmPanel.SetActive(true);
+    }
 }
 
 

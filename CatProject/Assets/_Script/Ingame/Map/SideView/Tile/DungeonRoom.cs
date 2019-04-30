@@ -21,6 +21,7 @@ public class DungeonRoom
     public int roomSpriteType = -1;
     public Room_ClearType roomClearType = Room_ClearType.None;
     public int level = -1;
+    public bool clearCheck = false;
 
     public List<EntranceConnectRoom> entranceInfoList = new List<EntranceConnectRoom>();
     public List<SpawnMonsterInfo> monsterInfoList = new List<SpawnMonsterInfo>();
@@ -29,6 +30,7 @@ public class DungeonRoom
     //Terrain
     public GeneratedTerrainData beforeTerrainData = null;
     public int currentXPos;
+    
 
     /// <summary>
     /// NOTE : 방의 사이즈 랜덤 설정 생성자
@@ -222,7 +224,11 @@ public class DungeonRoom
     {
         // 몬스터 , 보스 , 아이템 체크 후 출입구 개방
         if (CheckMonsterAlive() && PuzzleClearCheck() && BossAliveCheck() && GetItemCheck())
+        {
             UnLockEntrances();
+            clearCheck = true;
+            InGameManager.instance.CheckAllStageClear();
+        }
     }
     /// <summary>
     /// NOTE : ROOM CHECK UN LOCK
