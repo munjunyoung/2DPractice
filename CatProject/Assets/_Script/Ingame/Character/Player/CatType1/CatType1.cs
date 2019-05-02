@@ -7,19 +7,12 @@ using System.Collections.Generic;
 /// </summary>
 public class CatType1 : Player
 {
-    /// <summary>
-    /// TODO : CAT TYPE 1 ABILLITY SET (BY EXCEL DATA)..
-    /// </summary>
-    protected void SetDATA()
+    private void Start()
     {
-        //..
-    }
-    /// <summary>
-    /// TODO : 캣종류에 따른 스킬?
-    /// </summary>
-    protected void Skill()
-    {
-
+        CSVDataReader.instance.SetData(pDATA, PLAYER_TYPE.Cat1.ToString());
+        mySkill = gameObject.AddComponent<SkillAttackUpgrade>();
+        CurrentHP = pDATA.maxHP;
+        CurrentTP = pDATA.maxTP;
     }
 }
 

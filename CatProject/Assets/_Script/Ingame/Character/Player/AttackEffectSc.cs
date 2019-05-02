@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerEffect : MonoBehaviour
+public class AttackEffectSc : MonoBehaviour
 {
     private Player playerSc;
     [HideInInspector]

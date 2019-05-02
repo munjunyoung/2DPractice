@@ -303,6 +303,11 @@ public class Monster : MonoBehaviour
             StartCoroutine(KnockbackCoroutine(targetpos));
     }
 
+    protected void Skill()
+    {
+        
+    }
+
     /// <summary>
     /// NOTE : 넉백 물리 실행 및 설정 시간 이후 상태 변경 
     /// </summary>
@@ -388,7 +393,7 @@ public class Monster : MonoBehaviour
 
         if (attackOn)
             CurrentAnimState = ANIMATION_STATE.Attack;
-
+        
         anim.SetFloat("StateFloat", (int)CurrentAnimState);
     }
 
@@ -427,6 +432,6 @@ public class Monster : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("PlayerAttackEffect"))
-            TakeDamage(collision.GetComponent<PlayerEffect>().damage, collision.transform);
-    }8
+            TakeDamage(collision.GetComponent<AttackEffectSc>().damage, collision.transform);
+    }
 }

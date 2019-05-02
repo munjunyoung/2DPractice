@@ -11,7 +11,6 @@ public enum PLAYER_TYPE { Cat1 = 0};
 [RequireComponent(typeof(Rigidbody2D), typeof(Animator))]
 public class Player : MonoBehaviour
 {
-    private PLAYER_TYPE catType = PLAYER_TYPE.Cat1;
     /// <summary>
     /// CHARACTER STATE 
     /// NOTE : 애니매이션 파라미터 상태 설정 (속성은 animation 속도 설정)
@@ -101,22 +100,23 @@ public class Player : MonoBehaviour
     //Stop
     private bool isStopped;
     private bool isRunningStopCoroutine = false;
-
+    //Skill
+    protected Skill mySkill = null;
+    //Die
     private bool isDie = false;
+
+    public void OnSkill()
+    {
+        mySkill.Execute();
+    }
+
     private void Awake()
     {
         rb2D = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         characterSprite = GetComponent<SpriteRenderer>();
     }
-
-    private void Start()
-    {
-        CSVDataReader.instance.SetData(pDATA, catType.ToString());
-        CurrentHP = pDATA.maxHP;
-        CurrentTP = pDATA.maxTP;
-    }
-
+    
     private void FixedUpdate()
     {
         if (isDie)
