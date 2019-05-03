@@ -2,11 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Skill : MonoBehaviour
 {
     protected Player playerSc;
-    protected bool SkillOn = false;
     protected float SkillDuration = 10f;
     protected virtual void Awake()
     {
@@ -15,7 +15,7 @@ public class Skill : MonoBehaviour
     public virtual void Execute() { }
 }
 
-public class SkillAttackUpgrade : Skill
+public class SkillAttackUP : Skill
 {
     int originalDamage = 30;
     int plusDamage = 30;
@@ -45,13 +45,12 @@ public class SkillAttackUpgrade : Skill
     
     public override void Execute()
     {
-        if (!SkillOn)
-            StartCoroutine(SkillExecute());
+        StartCoroutine(SkillExecute());
     }
 
     IEnumerator SkillExecute()
     {
-        SkillOn = true;
+        playerSc.isRunningSkill = true;
         effectModel.transform.localScale = changeScale;
         spriteOfEffectModel.color = changeColor;
         attackScOfEffectModel.damage += plusDamage;
@@ -59,6 +58,47 @@ public class SkillAttackUpgrade : Skill
         effectModel.transform.localScale = originalScale;
         spriteOfEffectModel.color = originalColor;
         attackScOfEffectModel.damage = originalDamage;
-        SkillOn = false;
+        playerSc.isRunningSkill = false;
+    }
+}
+
+public class SkillSpeedUP : Skill
+{
+    private int speedUpAmount = 5;
+    private float originalSpeed;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        originalSpeed = playerSc.pDATA.maxSpeedValue;
+    }
+
+    public override void Execute()
+    {
+        StartCoroutine(SkillExecute());
+    }
+
+    IEnumerator SkillExecute()
+    {
+        playerSc.pDATA.maxSpeedValue += speedUpAmount;
+        yield return new WaitForSeconds(SkillDuration);
+        playerSc.pDATA.maxSpeedValue = originalSpeed;
+    }
+}
+
+public class SkillRecoveryHP : Skill
+{
+    private int hpUpAmount = 5;
+    private float originalHp;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        originalHp = playerSc.pDATA.maxHP;
+    }
+
+    public override void Execute()
+    {
+        playerSc.CurrentHP += 50;
     }
 }

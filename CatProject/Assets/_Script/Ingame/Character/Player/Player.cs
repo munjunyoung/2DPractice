@@ -102,12 +102,14 @@ public class Player : MonoBehaviour
     private bool isRunningStopCoroutine = false;
     //Skill
     protected Skill mySkill = null;
+    public bool isRunningSkill = false;
     //Die
     private bool isDie = false;
 
-    public void OnSkill()
+    public bool OnSkill()
     {
         mySkill.Execute();
+        return isRunningSkill;
     }
 
     private void Awake()

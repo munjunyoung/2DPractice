@@ -8,13 +8,15 @@ enum Room_TileType { Type1 = 0, Type2 }
 public enum TileType { BackGround = 0, Entrance, Terrain }
 public class LoadDataManager 
 {
+    private LoadDataManager _instance;
+    public LoadDataManager instance; 
     //Resouces Load Path
     private static readonly string[] roomTypePathArray = { "TileType1", "TileType2" };
     private static readonly string[] tileTypePathArray = { "0.BackGround", "1.Entrance" };
     private readonly string structurePefabPath = "Structure";
     private readonly string monsterPrefabPath = "Character/Monster";
     private readonly string DestructibleStructurePrefabPath = "DestructibleStructure";
-
+    private readonly string SkillSpritePath = "BuffSkillSprite";
     //Tile 
     public TypeOfTileSetType[] tileDataArray;
     public List<GeneratedTerrainData> terrainDataList = new List<GeneratedTerrainData>();
@@ -22,6 +24,7 @@ public class LoadDataManager
     public Dictionary<string, Monster> monsterPrefab = new Dictionary<string, Monster>();
     public Dictionary<string, GameObject> structurePrefab = new Dictionary<string, GameObject>();
     public Dictionary<string, DesStructure> DesStructurePrefab = new Dictionary<string, DesStructure>();
+    public Dictionary<string, Sprite> skillSpriteDic = new Dictionary<string, Sprite>();
     /// <summary>
     /// 
     /// </summary>
@@ -146,6 +149,16 @@ public class LoadDataManager
         Dictionary<string, DesStructure> tmpdic = new Dictionary<string, DesStructure>();
         foreach (var ds in destructure)
             tmpdic.Add(ds.name, ds.GetComponent<DesStructure>());
+        return tmpdic;
+    }
+
+    private Dictionary<string, Sprite> LoadSkillSprite()
+    {
+        var sprites = Resources.LoadAll<GameObject>(SkillSpritePath);
+        Dictionary<string, Sprite> tmpdic = new Dictionary<string, Sprite>();
+        foreach (var s in sprites)
+            tmpdic.Add(s.name, s.GetComponent<Sprite>());
+
         return tmpdic;
     }
 

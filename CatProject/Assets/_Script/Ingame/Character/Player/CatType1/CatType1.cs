@@ -10,7 +10,7 @@ public class CatType1 : Player
     private void Start()
     {
         CSVDataReader.instance.SetData(pDATA, PLAYER_TYPE.Cat1.ToString());
-        mySkill = gameObject.AddComponent<SkillAttackUpgrade>();
+        mySkill = gameObject.AddComponent<SkillRecoveryHP>();
         CurrentHP = pDATA.maxHP;
         CurrentTP = pDATA.maxTP;
     }
