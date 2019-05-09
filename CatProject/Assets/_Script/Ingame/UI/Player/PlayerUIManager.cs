@@ -23,6 +23,9 @@ public class PlayerUIManager : MonoBehaviour
     private Text AlarmText;
     [SerializeField]
     private Button YesButton;
+
+    [SerializeField]
+    private Text ItemNumberText;
     
     private void Start()
     {
@@ -44,8 +47,9 @@ public class PlayerUIManager : MonoBehaviour
         playerTPSlider.maxValue = playerSc.pDATA.maxTP;
         SetHPUI(playerSc.CurrentHP);
         SetTPUI(playerSc.CurrentTP);
-
         StartCoroutine(PointSetUpdate());
+        
+        SetCatnipItemNumberText();
     }
     /// <summary>
     /// NOTE : HP UI UPDATE
@@ -102,6 +106,14 @@ public class PlayerUIManager : MonoBehaviour
                 break;
         }
         AlarmPanel.SetActive(true);
+    }
+
+    /// <summary>
+    /// NOTE : ITEM NUMBER TEXT 설정
+    /// </summary>
+    public void SetCatnipItemNumberText()
+    {
+        ItemNumberText.text = playerSc.catnipItemNumber.ToString();
     }
 }
 

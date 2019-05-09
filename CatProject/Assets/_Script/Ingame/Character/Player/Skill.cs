@@ -11,7 +11,7 @@ public class Skill : MonoBehaviour
 
     public float durationTime = 0;
     public float coolTime = 0;
-    public int consumeValue = 0;
+    public int consumeCatnipValue = 0;
 
     protected bool skillPossibleCheck = false;
     /// <summary>
@@ -32,7 +32,7 @@ public class Skill : MonoBehaviour
         if (skillpossiblecheck)
         {
             StartCoroutine(ExecuteSkillCoroutine(durationTime));
-            playerSc.item -= consumeValue;
+            playerSc.catnipItemNumber -= consumeCatnipValue;
         }
 
         return skillpossiblecheck;
@@ -46,7 +46,7 @@ public class Skill : MonoBehaviour
         if (playerSc.isRunningSkillCooltime)
             return false;
         //플레이어 아이템값이 적을 경우
-        if (playerSc.item < consumeValue)
+        if (playerSc.catnipItemNumber < consumeCatnipValue)
         {
             Debug.Log("아이템이 부족합니다.");
             return false;
@@ -90,7 +90,7 @@ public class SkillAttackUP : Skill
 
         durationTime = 5f;
         coolTime = 5f;
-        consumeValue = 5;
+        consumeCatnipValue = 5;
     }
     
     protected override IEnumerator ExecuteSkillCoroutine(float _durationTime)
@@ -117,7 +117,7 @@ public class SkillSpeedUP : Skill
         
         durationTime = 5f;
         coolTime = 10f;
-        consumeValue = 5;
+        consumeCatnipValue = 5;
     }
     
     protected override IEnumerator ExecuteSkillCoroutine(float _durationtime)
@@ -140,7 +140,7 @@ public class SkillRecoveryHP : Skill
 
         durationTime = 0f;
         coolTime = 10f;
-        consumeValue = 5;
+        consumeCatnipValue = 5;
     }
     
     protected override bool CheckSkillPossible()

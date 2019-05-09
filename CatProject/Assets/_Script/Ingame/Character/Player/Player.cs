@@ -107,7 +107,7 @@ public class Player : MonoBehaviour
     private bool isDie = false;
 
     //Item
-    public int item = 100;
+    public int catnipItemNumber = 10;
 
     protected virtual void Awake()
     {

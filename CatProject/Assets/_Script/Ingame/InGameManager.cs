@@ -11,13 +11,14 @@ public class InGameManager : MonoBehaviour
     public BoardManager boardmanagerSc;
     private List<DungeonRoom> roomList = new List<DungeonRoom>();
     private DungeonRoom currentRoom;
-
+    
     //Player
     private Player playerOb;
     private string playerPath = "Character/Player/";
     //Stop
     private float changeRoomStopCount = 2f;
-    //
+    //UI Manager
+    public PlayerUIManager UIManagerSc;
     private void Awake()
     {
         //Singletone
