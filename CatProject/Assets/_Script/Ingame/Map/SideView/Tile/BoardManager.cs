@@ -34,7 +34,7 @@ public class BoardManager : MonoBehaviour
     /// <param name="_numberOfroom"></param>
     public void CreateRooms()
     {  //Grid 오브젝트 생성
-        loadData = new LoadDataManager();
+        loadData = LoadDataManager.instance;
 
         CreateParentGridObject();
         //DungeonRoom 클래스 생성

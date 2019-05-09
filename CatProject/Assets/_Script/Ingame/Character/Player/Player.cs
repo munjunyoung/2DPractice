@@ -101,18 +101,15 @@ public class Player : MonoBehaviour
     private bool isStopped;
     private bool isRunningStopCoroutine = false;
     //Skill
-    protected Skill mySkill = null;
-    public bool isRunningSkill = false;
+    public Skill mySkill = null;
+    public bool isRunningSkillCooltime = false;
     //Die
     private bool isDie = false;
 
-    public bool OnSkill()
-    {
-        mySkill.Execute();
-        return isRunningSkill;
-    }
+    //Item
+    public int item = 100;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         rb2D = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
@@ -270,6 +267,14 @@ public class Player : MonoBehaviour
         isRunningAttackCoroutine = false;
     }
     #endregion
+    
+    /// <summary>
+    /// NOTE : 스킬 사용 (스킬 실행시 true, 아닐경우 false 리턴)
+    /// </summary>
+    public bool ExecuteSkillCheck()
+    {
+        return mySkill.Execute();
+    }
 
     #region STOP
     /// <summary>

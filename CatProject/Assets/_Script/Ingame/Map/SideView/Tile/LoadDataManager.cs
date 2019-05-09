@@ -8,15 +8,25 @@ enum Room_TileType { Type1 = 0, Type2 }
 public enum TileType { BackGround = 0, Entrance, Terrain }
 public class LoadDataManager 
 {
-    private LoadDataManager _instance;
-    public LoadDataManager instance; 
+    private static LoadDataManager _instance = null;
+    public static LoadDataManager instance
+    {
+        get
+        {
+            if(_instance==null)
+            {
+                _instance = new LoadDataManager();
+            }
+            return _instance;
+        }
+    }
     //Resouces Load Path
     private static readonly string[] roomTypePathArray = { "TileType1", "TileType2" };
     private static readonly string[] tileTypePathArray = { "0.BackGround", "1.Entrance" };
     private readonly string structurePefabPath = "Structure";
     private readonly string monsterPrefabPath = "Character/Monster";
     private readonly string DestructibleStructurePrefabPath = "DestructibleStructure";
-    private readonly string SkillSpritePath = "BuffSkillSprite";
+    private readonly string SkillSpritePath = "SkillSprite";
     //Tile 
     public TypeOfTileSetType[] tileDataArray;
     public List<GeneratedTerrainData> terrainDataList = new List<GeneratedTerrainData>();
@@ -36,6 +46,8 @@ public class LoadDataManager
         monsterPrefab = LoadMonsterPrefab();
         structurePrefab = LoadStructurePrefab();
         DesStructurePrefab = LoadDesStructurePrefab();
+
+        skillSpriteDic = LoadSkillSprite();
     }
 
     /// <summary>a
@@ -152,12 +164,16 @@ public class LoadDataManager
         return tmpdic;
     }
 
+    /// <summary>
+    /// NOTE : 스킬관련 Sprite 이미지
+    /// </summary>
+    /// <returns></returns>
     private Dictionary<string, Sprite> LoadSkillSprite()
     {
-        var sprites = Resources.LoadAll<GameObject>(SkillSpritePath);
+        var sprites = Resources.LoadAll<Sprite>(SkillSpritePath);
         Dictionary<string, Sprite> tmpdic = new Dictionary<string, Sprite>();
         foreach (var s in sprites)
-            tmpdic.Add(s.name, s.GetComponent<Sprite>());
+            tmpdic.Add(s.name, s);
 
         return tmpdic;
     }

@@ -42,7 +42,6 @@ public class InGameManager : MonoBehaviour
     /// </summary>
     private void StartSettingInGM()
     {
-        //Debug.Log("The current scene is " + SceneManager.GetActiveScene().name);
         boardmanagerSc.CreateRooms();
         roomList = boardmanagerSc.roomList;
         roomList[0].roomModel.SetActive(true);
