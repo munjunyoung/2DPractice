@@ -32,7 +32,7 @@ public class Skill : MonoBehaviour
         if (skillpossiblecheck)
         {
             StartCoroutine(ExecuteSkillCoroutine(durationTime));
-            playerSc.catnipItemNumber -= consumeCatnipValue;
+            playerSc.CatnipItemNumber -= consumeCatnipValue;
         }
 
         return skillpossiblecheck;
@@ -46,7 +46,7 @@ public class Skill : MonoBehaviour
         if (playerSc.isRunningSkillCooltime)
             return false;
         //플레이어 아이템값이 적을 경우
-        if (playerSc.catnipItemNumber < consumeCatnipValue)
+        if (playerSc.CatnipItemNumber < consumeCatnipValue)
         {
             Debug.Log("아이템이 부족합니다.");
             return false;

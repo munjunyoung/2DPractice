@@ -107,7 +107,16 @@ public class Player : MonoBehaviour
     private bool isDie = false;
 
     //Item
-    public int catnipItemNumber = 10;
+    private int _catnipItemNumber = 10;
+    public int CatnipItemNumber
+    {
+        get{ return _catnipItemNumber; }
+        set
+        {
+            _catnipItemNumber = value;
+            PlayerUIManager.instance.SetCatnipItemNumberText(_catnipItemNumber);
+        }
+    }
 
     protected virtual void Awake()
     {

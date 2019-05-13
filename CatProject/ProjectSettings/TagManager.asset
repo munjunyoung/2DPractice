@@ -61,6 +61,9 @@ TagManager:
   - name: Entrance
     uniqueID: 1010700307
     locked: 0
+  - name: Item
+    uniqueID: 2693753647
+    locked: 0
   - name: Monster
     uniqueID: 3126272891
     locked: 0

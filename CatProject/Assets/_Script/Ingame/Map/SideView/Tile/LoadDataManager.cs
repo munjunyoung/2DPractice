@@ -1,7 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-using System;
 using UnityEngine.Tilemaps;
 
 enum Room_TileType { Type1 = 0, Type2 }
@@ -25,29 +24,32 @@ public class LoadDataManager
     private static readonly string[] tileTypePathArray = { "0.BackGround", "1.Entrance" };
     private readonly string structurePefabPath = "Structure";
     private readonly string monsterPrefabPath = "Character/Monster";
-    private readonly string DestructibleStructurePrefabPath = "DestructibleStructure";
-    private readonly string SkillSpritePath = "SkillSprite";
+    private readonly string destructibleStructurePrefabPath = "DestructibleStructure";
+    private readonly string skillSpritePath = "SkillSprite";
+    private readonly string itemPrefabPath = "Item";
     //Tile 
     public TypeOfTileSetType[] tileDataArray;
     public List<GeneratedTerrainData> terrainDataList = new List<GeneratedTerrainData>();
     //Prefab
     public Dictionary<string, Monster> monsterPrefab = new Dictionary<string, Monster>();
     public Dictionary<string, GameObject> structurePrefab = new Dictionary<string, GameObject>();
-    public Dictionary<string, DesStructure> DesStructurePrefab = new Dictionary<string, DesStructure>();
+    public Dictionary<string, DesStructure> desStructurePrefab = new Dictionary<string, DesStructure>();
     public Dictionary<string, Sprite> skillSpriteDic = new Dictionary<string, Sprite>();
+    public Dictionary<string, ItemSc> itemPrefabDic = new Dictionary<string, ItemSc>();
+
     /// <summary>
-    /// 
+    /// NOTE : 필요한 데이터들 한번에 로드
     /// </summary>
     public LoadDataManager()
     {
         tileDataArray = LoadAllTile();
         terrainDataList = LoadAllTerrainData();
 
-        monsterPrefab = LoadMonsterPrefab();
-        structurePrefab = LoadStructurePrefab();
-        DesStructurePrefab = LoadDesStructurePrefab();
-
-        skillSpriteDic = LoadSkillSprite();
+        SetLoadData(itemPrefabDic, itemPrefabPath);
+        SetLoadData(skillSpriteDic, skillSpritePath);
+        SetLoadData(monsterPrefab, monsterPrefabPath);
+        SetLoadData(structurePrefab, structurePefabPath);
+        SetLoadData(desStructurePrefab, destructibleStructurePrefabPath);
     }
 
     /// <summary>a
@@ -126,56 +128,22 @@ public class LoadDataManager
     }
     
     /// <summary>
-    /// NOTE : 몬스터 PREFAB 모두 로드 하고 Dictionary에 저장후 리턴 
+    /// NOTE : dictionary와 path를 변수를 선언하고 파라미터 입력, 해당 데이터 로드하고 dictionary 초기화
     /// </summary>
-    private Dictionary<string, Monster> LoadMonsterPrefab()
+    /// <typeparam name="T"></typeparam>
+    /// <param name="_dic"></param>
+    /// <param name="_path"></param>
+    private void SetLoadData<T>(Dictionary<string, T> _dic, string _path)
     {
-        var monsters = Resources.LoadAll<GameObject>(monsterPrefabPath);
-        Dictionary<string, Monster> tmpdic = new Dictionary<string, Monster>();
-        foreach (var m in monsters)
-            tmpdic.Add(m.name, m.GetComponent<Monster>());
-        return tmpdic;
-    }
-
-    /// <summary>
-    /// NOTE : 구조물 PREFAB 모두 로드 하고 Dictionary에 저장후 리턴 
-    /// </summary>
-    /// <returns></returns>
-    private Dictionary<string, GameObject> LoadStructurePrefab()
-    {
-        var structures = Resources.LoadAll<GameObject>(structurePefabPath);
-        Dictionary<string, GameObject> tmpDic = new Dictionary<string, GameObject>();
-        foreach (var s in structures)
-            tmpDic.Add(s.name, s);
-
-        return tmpDic;
-    }
-    
-    /// <summary>
-    /// NOTE : 파괴되는 구조물 PREFAB 모두 로드 하고 Dictionary에 저장후 리턴
-    /// </summary>
-    /// <returns></returns>
-    private Dictionary<string, DesStructure> LoadDesStructurePrefab()
-    {
-        var destructure = Resources.LoadAll<GameObject>(DestructibleStructurePrefabPath);
-        Dictionary<string, DesStructure> tmpdic = new Dictionary<string, DesStructure>();
-        foreach (var ds in destructure)
-            tmpdic.Add(ds.name, ds.GetComponent<DesStructure>());
-        return tmpdic;
-    }
-
-    /// <summary>
-    /// NOTE : 스킬관련 Sprite 이미지
-    /// </summary>
-    /// <returns></returns>
-    private Dictionary<string, Sprite> LoadSkillSprite()
-    {
-        var sprites = Resources.LoadAll<Sprite>(SkillSpritePath);
-        Dictionary<string, Sprite> tmpdic = new Dictionary<string, Sprite>();
-        foreach (var s in sprites)
-            tmpdic.Add(s.name, s);
-
-        return tmpdic;
+        //T 타입 데이터 캐스팅 로드
+        var loadob = Resources.LoadAll(_path, typeof(T)).Cast<T>().ToArray();
+        
+        foreach (var lo in loadob)
+        {
+            //key값의 name설정을 위한 object로 타입 변환
+            UnityEngine.Object tmp = lo as UnityEngine.Object;
+            _dic.Add(tmp.name, lo);
+        }
     }
 
 }
@@ -215,3 +183,69 @@ public class GeneratedTerrainData
         endHeight = _endheight;
     }
 }
+
+
+
+
+///// <summary>
+///// NOTE : 몬스터 PREFAB 모두 로드 하고 Dictionary에 저장후 리턴 
+///// </summary>
+//private Dictionary<string, Monster> LoadMonsterPrefab()
+//{
+//    var monsters = Resources.LoadAll<GameObject>(monsterPrefabPath);
+//    Dictionary<string, Monster> tmpdic = new Dictionary<string, Monster>();
+//    foreach (var m in monsters)
+//        tmpdic.Add(m.name, m.GetComponent<Monster>());
+//    return tmpdic;
+//}
+
+///// <summary>
+///// NOTE : 구조물 PREFAB 모두 로드 하고 Dictionary에 저장후 리턴 
+///// </summary>
+///// <returns></returns>
+//private Dictionary<string, GameObject> LoadStructurePrefab()
+//{
+//    var structures = Resources.LoadAll<GameObject>(structurePefabPath);
+//    Dictionary<string, GameObject> tmpDic = new Dictionary<string, GameObject>();
+//    foreach (var s in structures)
+//        tmpDic.Add(s.name, s);
+
+//    return tmpDic;
+//}
+
+///// <summary>
+///// NOTE : 파괴되는 구조물 PREFAB 모두 로드 하고 Dictionary에 저장후 리턴
+///// </summary>
+///// <returns></returns>
+//private Dictionary<string, DesStructure> LoadDesStructurePrefab()
+//{
+//    var destructure = Resources.LoadAll<GameObject>(DestructibleStructurePrefabPath);
+//    Dictionary<string, DesStructure> tmpdic = new Dictionary<string, DesStructure>();
+//    foreach (var ds in destructure)
+//        tmpdic.Add(ds.name, ds.GetComponent<DesStructure>());
+//    return tmpdic;
+//}
+
+///// <summary>
+///// NOTE : 스킬관련 Sprite 이미지
+///// </summary>
+///// <returns></returns>
+//private Dictionary<string, Sprite> LoadSkillSprite()
+//{
+//    var sprites = Resources.LoadAll<Sprite>(SkillSpritePath);
+//    Dictionary<string, Sprite> tmpdic = new Dictionary<string, Sprite>();
+//    foreach (var s in sprites)
+//        tmpdic.Add(s.name, s);
+
+//    return tmpdic;
+//}
+
+//private Dictionary<string, GameObject> LoadItemPrefab()
+//{
+//    var itemob = Resources.LoadAll<GameObject>(ItemPrefabPath);
+//    Dictionary<string, GameObject> tmpdic = new Dictionary<string, GameObject>();
+//    foreach (var it in itemob)
+//        tmpdic.Add(it.name, it);
+
+//    return tmpdic;
+//}

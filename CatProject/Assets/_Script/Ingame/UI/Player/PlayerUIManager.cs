@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public enum Alarm_State { DIE, CLEAR };
 public class PlayerUIManager : MonoBehaviour
 {
+    public static PlayerUIManager instance;
     /// <summary>
     /// PLAYER
     /// </summary>
@@ -26,20 +27,22 @@ public class PlayerUIManager : MonoBehaviour
 
     [SerializeField]
     private Text ItemNumberText;
-    
+
+    private void Awake()
+    {
+        instance = this;
+    }
+
     private void Start()
     {
-        //player hp/tp ui start
-        PlayerPointUIStart();
-
-        AlarmPanel.SetActive(false);
+        UIManagerStartFunction();
     }
-    
+
     #region PLAYER HP TP
     /// <summary>
     /// NOTE : 플레이어 HP TP UI 업데이트 시작
     /// </summary>
-    private void PlayerPointUIStart()
+    public void UIManagerStartFunction()
     {
         playerSc = GameObject.FindWithTag("Player").GetComponent<Player>();
 
@@ -48,8 +51,9 @@ public class PlayerUIManager : MonoBehaviour
         SetHPUI(playerSc.CurrentHP);
         SetTPUI(playerSc.CurrentTP);
         StartCoroutine(PointSetUpdate());
-        
-        SetCatnipItemNumberText();
+
+        SetCatnipItemNumberText(playerSc.CatnipItemNumber);
+        AlarmPanel.SetActive(false);
     }
     /// <summary>
     /// NOTE : HP UI UPDATE
@@ -111,9 +115,9 @@ public class PlayerUIManager : MonoBehaviour
     /// <summary>
     /// NOTE : ITEM NUMBER TEXT 설정
     /// </summary>
-    public void SetCatnipItemNumberText()
+    public void SetCatnipItemNumberText(int number)
     {
-        ItemNumberText.text = playerSc.catnipItemNumber.ToString();
+        ItemNumberText.text = number.ToString();
     }
 }
 

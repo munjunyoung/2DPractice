@@ -17,8 +17,7 @@ public class InGameManager : MonoBehaviour
     private string playerPath = "Character/Player/";
     //Stop
     private float changeRoomStopCount = 2f;
-    //UI Manager
-    public PlayerUIManager UIManagerSc;
+
     private void Awake()
     {
         //Singletone
@@ -98,6 +97,8 @@ public class InGameManager : MonoBehaviour
     {
         playerOb.StopAction(_stopcount);
         currentRoom.MonsterStop(_stopcount);
+        currentRoom.ItemStop(_stopcount);
+        
     }
 
     /// <summary>
@@ -113,7 +114,7 @@ public class InGameManager : MonoBehaviour
         }
 
         if(allclearCheck)
-            GetComponent<PlayerUIManager>().ShowAlaramPanel(Alarm_State.CLEAR);
+            PlayerUIManager.instance.ShowAlaramPanel(Alarm_State.CLEAR);
     }
 
     /// <summary>
@@ -121,6 +122,6 @@ public class InGameManager : MonoBehaviour
     /// </summary>
     public void DiePlayer()
     {
-        GetComponent<PlayerUIManager>().ShowAlaramPanel(Alarm_State.DIE);
+        PlayerUIManager.instance.ShowAlaramPanel(Alarm_State.DIE);
     }
 }

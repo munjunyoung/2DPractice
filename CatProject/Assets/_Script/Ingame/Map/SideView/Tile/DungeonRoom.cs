@@ -6,6 +6,7 @@ public enum Room_ClearType {None = 0, Battle , Puzzle, Boss }
 
 public enum MONSTER_TYPE { Fox = 0, Dog = 1};
 public enum DesStructure_TYPE { Frog = 0 };
+public enum Item_TYPE { Catnip = 0 };
 /// <summary>
 /// NOTE : DungeonRoom 클래스
 /// TODO : 함수와 클래스 변수들을 분리해야하는 개선 사항 가능성
@@ -27,6 +28,7 @@ public class DungeonRoom
     public List<SpawnMonsterInfo> monsterInfoList = new List<SpawnMonsterInfo>();
     public List<SpawnDesStructureInfo> desStructureInfoList = new List<SpawnDesStructureInfo>();
     public List<SpawnBossInfo> bossInfoList = new List<SpawnBossInfo>();
+    public List<SpawnItemInfo> itemInfoList = new List<SpawnItemInfo>();
     //Terrain
     public GeneratedTerrainData beforeTerrainData = null;
     public int currentXPos;
@@ -133,7 +135,7 @@ public class DungeonRoom
 
                 if (posX[j].Equals(tmpvalue))
                 {
-                    tmpvalue = (int)Random.Range(2, roomRect.xMax - 2);
+                    tmpvalue = (int)Random.Range(1, roomRect.xMax - 1);
                     //다시 처음부터 확인하기 위함
                     j = 0;
                 }
@@ -149,6 +151,39 @@ public class DungeonRoom
                 if (roomGroundArray[tmpx, j] == null)
                 {
                     monsterInfoList.Add(new SpawnMonsterInfo(MONSTER_TYPE.Fox, new Vector2(tmpx, j + 0.5f)));
+                    break;
+                }
+            }
+        }
+    }
+
+    public void SetItemPos()
+    {
+        List<int> posX = new List<int>();
+        int itemnumber = Random.Range(0, 10);
+
+        for(int i = 0; i< itemnumber; i++)
+        {
+            var tmpvalue = (int)Random.Range(1, roomRect.xMax - 1);
+            for(int j=0; j< posX.Count; j++)
+            {
+                if(posX[j].Equals(tmpvalue))
+                {
+                    //random값을 다시 설정하고 j를 0으로 바꿈으로써 다시 체크
+                    tmpvalue = (int)Random.Range(1, roomRect.xMax - 1);
+                    j = 0;
+                }
+            }
+            posX.Add(tmpvalue);
+        }
+        //저장한 x포지션을 기준으로 y값을 순회하여 roomarray의 0 값을 검색하여 설정
+        foreach (int tmpx in posX)
+        {
+            for (int j = 1; j < roomRect.yMax - 1; j++)
+            {
+                if (roomGroundArray[tmpx, j] == null)
+                {
+                    itemInfoList.Add(new SpawnItemInfo(Item_TYPE.Catnip, new Vector2(tmpx, j)));
                     break;
                 }
             }
@@ -320,6 +355,19 @@ public class DungeonRoom
             monsterinfo.monsterModel.StopAction(_stopcount);
         }
     }
+    
+    /// <summary>
+    /// NOTE : 아이템 trigger 처리 기능 정지
+    /// </summary>
+    /// <param name="_stopcount"></param>
+    public void ItemStop(float _stopcount)
+    {
+        foreach(var iteminfo in itemInfoList)
+        {
+            if (iteminfo.itemModel.isActiveAndEnabled)
+                iteminfo.itemModel.StopAction(_stopcount);
+        }
+    }
 }
 
 
@@ -368,6 +416,20 @@ public class SpawnBossInfo
         mType = _mtype;
         startPos = _startpos;
         monsterModel = null;
+    }
+}
+
+public class SpawnItemInfo
+{
+    public Item_TYPE iType;
+    public Vector2 startpos;
+    public ItemSc itemModel;
+    
+    public SpawnItemInfo(Item_TYPE _itype, Vector2 _startpos)
+    {
+        iType = _itype;
+        startpos = _startpos;
+        itemModel = null;
     }
 }
 

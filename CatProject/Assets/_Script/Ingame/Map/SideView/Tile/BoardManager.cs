@@ -426,7 +426,8 @@ public class BoardManager : MonoBehaviour
     {
         foreach (DungeonRoom room in roomList)
         {
-            switch(room.roomClearType)
+            DrawItem(room);
+            switch (room.roomClearType)
             {
                 case Room_ClearType.Battle:
                     //몬스터 생성
@@ -438,13 +439,14 @@ public class BoardManager : MonoBehaviour
                         tmpm.ownRoom = room;
                         monsterinfo.monsterModel = tmpm;
                     }
+
                     break;
                 case Room_ClearType.Puzzle:
                     room.SetDesStructurePos();
 
                     foreach(SpawnDesStructureInfo dsinfo in room.desStructureInfoList)
                     {
-                        DesStructure tmpds = Instantiate(loadData.DesStructurePrefab[dsinfo.dsType.ToString()], dsinfo.startPos, Quaternion.identity, room.roomModel.transform);
+                        DesStructure tmpds = Instantiate(loadData.desStructurePrefab[dsinfo.dsType.ToString()], dsinfo.startPos, Quaternion.identity, room.roomModel.transform);
                         tmpds.ownRoom = room;
                         dsinfo.desStructureModel = tmpds;
 
@@ -467,6 +469,20 @@ public class BoardManager : MonoBehaviour
                     Debug.Log("ClearType Default");
                     break;
             }
+        }
+    }
+
+    /// <summary>
+    /// NOTE : 아이템 PREFAB 생성
+    /// </summary>
+    /// <param name="room"></param>
+    private void DrawItem(DungeonRoom room)
+    {
+        room.SetItemPos();
+        foreach (SpawnItemInfo iteminfo in room.itemInfoList)
+        {
+            ItemSc tmpitem = Instantiate(loadData.itemPrefabDic[iteminfo.iType.ToString()], iteminfo.startpos, Quaternion.identity, room.roomModel.transform);
+            iteminfo.itemModel = tmpitem;
         }
     }
     #endregion
