@@ -42,7 +42,7 @@ public class StageSelectSceneManager : MonoBehaviour
         switch(selectStageLevel)
         {
             case 1:
-                GlobalManager.instance.LoadScene(Scene_Name.Level1);
+                GlobalManager.instance.LoadScene(Scene_Name.S_03Ingame);
                 break;
             default:
                 break;

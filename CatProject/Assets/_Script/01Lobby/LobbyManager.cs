@@ -58,7 +58,7 @@ public class LobbyManager : MonoBehaviour
     public void LoadStageScene()
     {
         GlobalManager.instance.pType = pType;
-        GlobalManager.instance.LoadScene(Scene_Name.StageSelect);
+        GlobalManager.instance.LoadScene(Scene_Name.S_02StageSelect);
     }
 
     private void CreateBackGround()

@@ -8,7 +8,8 @@ public enum Skill_Type { Buff, Immediate}
 public class Skill : MonoBehaviour
 {
     protected Player playerSc;
-
+    protected SpriteRenderer playerSprite;
+    protected Color playerColor;
     public float durationTime = 0;
     public float coolTime = 0;
     public int consumeCatnipValue = 0;
@@ -22,6 +23,8 @@ public class Skill : MonoBehaviour
     protected virtual void Start()
     {
         playerSc = GetComponent<Player>();
+        playerSprite = playerSc.GetComponent<SpriteRenderer>();
+        playerColor = playerSprite.color;
     }
     /// <summary>
     /// NOTE : 캐릭터 실행
@@ -61,9 +64,22 @@ public class Skill : MonoBehaviour
     /// <returns></returns>
     protected virtual IEnumerator ExecuteSkillCoroutine(float _durationtime)
     {
+        CharacterEffectOn();
         yield return new WaitForSeconds(_durationtime);
+        CharacterEffectOff();
+    }
+
+    /// <summary>
+    /// NOTE : 스킬 사용시 캐릭터 이펙트 관련 (스킬마다 다른 캐릭터 이펙트 부여)
+    /// </summary>
+    protected virtual void CharacterEffectOn() { }
+    
+    protected virtual void CharacterEffectOff()
+    {
+        playerSprite.color = Color.white;
     }
 }
+
 
 public class SkillAttackUP : Skill
 {
@@ -103,6 +119,12 @@ public class SkillAttackUP : Skill
         spriteOfEffectModel.color = originalColor;
         attackScOfEffectSc.damage = originalDamage;
     }
+
+    protected override void CharacterEffectOn()
+    {
+        base.CharacterEffectOn();
+        playerSprite.color = Color.red;
+    }
 }
 
 public class SkillSpeedUP : Skill
@@ -123,8 +145,14 @@ public class SkillSpeedUP : Skill
     protected override IEnumerator ExecuteSkillCoroutine(float _durationtime)
     {
         playerSc.pDATA.maxSpeedValue += speedUpAmount;
-        yield return StartCoroutine(ExecuteSkillCoroutine(_durationtime));
+        yield return StartCoroutine(base.ExecuteSkillCoroutine(_durationtime));
         playerSc.pDATA.maxSpeedValue = originalSpeed;
+    }
+
+    protected override void CharacterEffectOn()
+    {
+        base.CharacterEffectOn();
+        playerSprite.color = Color.blue;
     }
 }
 
@@ -159,5 +187,11 @@ public class SkillRecoveryHP : Skill
     {
         playerSc.CurrentHP += hpUpAmount;
         yield return StartCoroutine(base.ExecuteSkillCoroutine(_durationtime));
+    }
+
+    protected override void CharacterEffectOn()
+    {
+        base.CharacterEffectOn();
+        playerSprite.color = Color.green;
     }
 }

@@ -102,11 +102,11 @@ public class PlayerUIManager : MonoBehaviour
         {
             case Alarm_State.CLEAR:
                 AlarmText.text = "Congratulation!";
-                YesButton.onClick.AddListener(() => { GlobalManager.instance.LoadScene(Scene_Name.StageSelect);});
+                YesButton.onClick.AddListener(() => { GlobalManager.instance.LoadScene(Scene_Name.S_02StageSelect);});
                 break;
             case Alarm_State.DIE:
                 AlarmText.text = "YOU DIE..";
-                YesButton.onClick.AddListener(() => { GlobalManager.instance.LoadScene(Scene_Name.Lobby); });
+                YesButton.onClick.AddListener(() => { GlobalManager.instance.LoadScene(Scene_Name.S_01Lobby); });
                 break;
         }
         AlarmPanel.SetActive(true);

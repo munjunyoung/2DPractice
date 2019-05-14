@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine;
 
-public enum Scene_Name { Lobby, StageSelect, Level1}
+public enum Scene_Name { S_00StartScene, S_01Lobby, S_02StageSelect, S_03Ingame }
 public class GlobalManager
 {
 
@@ -35,6 +35,11 @@ public class GlobalManager
         //SceneManager.SetActiveScene(ns);
 
 
+    }
+
+    public void ExitGame()
+    {
+        Application.Quit();
     }
 
     //public IEnumerator LoadSceneCoroutine(Scene_Name _nextSceneName)

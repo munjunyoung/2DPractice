@@ -160,7 +160,7 @@ public class DungeonRoom
     public void SetItemPos()
     {
         List<int> posX = new List<int>();
-        int itemnumber = Random.Range(0, 10);
+        int itemnumber = Random.Range(1, 10);
 
         for(int i = 0; i< itemnumber; i++)
         {
@@ -179,11 +179,11 @@ public class DungeonRoom
         //저장한 x포지션을 기준으로 y값을 순회하여 roomarray의 0 값을 검색하여 설정
         foreach (int tmpx in posX)
         {
-            for (int j = 1; j < roomRect.yMax - 1; j++)
+            for (int j = 0; j < roomRect.yMax - 1; j++)
             {
                 if (roomGroundArray[tmpx, j] == null)
                 {
-                    itemInfoList.Add(new SpawnItemInfo(Item_TYPE.Catnip, new Vector2(tmpx, j)));
+                    itemInfoList.Add(new SpawnItemInfo(Item_TYPE.Catnip, new Vector2(tmpx, j+1)));
                     break;
                 }
             }
@@ -405,6 +405,9 @@ public class SpawnDesStructureInfo
     }   
 }
 
+/// <summary>
+/// NOTE : BOSS INFO 클래스
+/// </summary>
 public class SpawnBossInfo
 {
     public MONSTER_TYPE mType;
@@ -419,6 +422,9 @@ public class SpawnBossInfo
     }
 }
 
+/// <summary>
+/// NOTE : 아이템 INFO 클래스
+/// </summary>
 public class SpawnItemInfo
 {
     public Item_TYPE iType;

@@ -10,13 +10,12 @@ public class CatType1 : Player
     protected override void Awake()
     {
         base.Awake();
+        CSVDataReader.instance.SetData(pDATA, PLAYER_TYPE.Cat1.ToString());
         mySkill = gameObject.AddComponent<SkillAttackUP>();
     }
 
     private void Start()
     {
-        CSVDataReader.instance.SetData(pDATA, PLAYER_TYPE.Cat1.ToString());
-        
         CurrentHP = pDATA.maxHP;
         CurrentTP = pDATA.maxTP;
     }
