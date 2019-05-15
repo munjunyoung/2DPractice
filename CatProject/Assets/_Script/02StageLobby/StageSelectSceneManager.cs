@@ -14,7 +14,7 @@ public class StageSelectSceneManager : MonoBehaviour
     [SerializeField]
     public Text selectStageAlarmText;
     public StageClick[] doors;
-
+    
     private void Awake()
     {
         instance = this;
@@ -56,8 +56,8 @@ public class StageSelectSceneManager : MonoBehaviour
     public void NoButtonInSelectStagePanel()
     {
         selectStageAlarmPanel.SetActive(false);
-        foreach(var d in doors)
-            d.CloseDoorImage();
+        foreach (var d in doors)
+            d.SetOriginalColor();
     }
     #endregion
 }

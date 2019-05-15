@@ -31,7 +31,7 @@ public class LobbyManager : MonoBehaviour
 
         selectCompeletePanel.SetActive(false);
         //BackGround 생성
-        CreateBackGround();
+        //CreateBackGround();
         //카메라 배경포지션 센터 설정
         cam.transform.position = new Vector3(width * 0.5f, height * 0.5f, -1f);
     }
@@ -72,14 +72,14 @@ public class LobbyManager : MonoBehaviour
             backgroundTilemap.SetTile(new Vector3Int(i, height + 1, 0), loadData.tileDataArray[(int)spriteType].terrainRuleTile);
         }
 
-        //left, right
-        for (int j = -2; j < height + 2; j++)
-        {
-            backgroundTilemap.SetTile(new Vector3Int(-1, j, 0), loadData.tileDataArray[(int)spriteType].terrainRuleTile);
-            backgroundTilemap.SetTile(new Vector3Int(-2, j, 0), loadData.tileDataArray[(int)spriteType].terrainRuleTile);
-            backgroundTilemap.SetTile(new Vector3Int(width, j, 0), loadData.tileDataArray[(int)spriteType].terrainRuleTile);
-            backgroundTilemap.SetTile(new Vector3Int(width + 1, j, 0), loadData.tileDataArray[(int)spriteType].terrainRuleTile);
-        }
+        ////left, right
+        //for (int j = -2; j < height + 2; j++)
+        //{
+        //    backgroundTilemap.SetTile(new Vector3Int(-1, j, 0), loadData.tileDataArray[(int)spriteType].terrainRuleTile);
+        //    backgroundTilemap.SetTile(new Vector3Int(-2, j, 0), loadData.tileDataArray[(int)spriteType].terrainRuleTile);
+        //    backgroundTilemap.SetTile(new Vector3Int(width, j, 0), loadData.tileDataArray[(int)spriteType].terrainRuleTile);
+        //    backgroundTilemap.SetTile(new Vector3Int(width + 1, j, 0), loadData.tileDataArray[(int)spriteType].terrainRuleTile);
+        //}
 
         GameObject tmpParent = new GameObject("BackGroundParent");
         int count = 0;
