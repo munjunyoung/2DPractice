@@ -12,6 +12,6 @@ public class StartSceneManager : MonoBehaviour
 
     public void ExitButtonFunc()
     {
-        GlobalManager.instance.ExitGame();
+        Application.Quit();
     }
 }
