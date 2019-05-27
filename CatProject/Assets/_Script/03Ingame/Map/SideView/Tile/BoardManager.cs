@@ -13,6 +13,7 @@ public class BoardManager : MonoBehaviour
     //Room들의 부모가 될 오브젝트 (Grid)
     private GameObject parentModelOfRooms;
 
+    //시작방 + 랜덤방 + 보스방 포함해서 최소 방 3개 이상 필요 (예외처리 안함)
     [Header("ROOM OPTION")]
     [SerializeField, Range(3, 100)]
     private int numberOfRoom;
@@ -52,7 +53,7 @@ public class BoardManager : MonoBehaviour
         //Rooms Entrance 오브젝트 생성
         foreach (DungeonRoom room in roomList)
             room.SetEntrancePos();
-        
+        PrintLogRoomNeighbors();
         //Rooms Draw
         DrawRoom();
         //출입문 진입시 출현할 포지션 설정
@@ -159,7 +160,6 @@ public class BoardManager : MonoBehaviour
         int setSameLevelPer = 50;
 
         LevelRoomDic.Add(levelCount, new List<DungeonRoom>());
-
         for (int i = 1; i < roomList.Count - 1; i++)
         {
             roomList[i].level = levelCount;
@@ -184,7 +184,7 @@ public class BoardManager : MonoBehaviour
             levelCount++;
             LevelRoomDic.Add(levelCount, new List<DungeonRoom>());
             setSameLevelPer = 50;
-        }
+        }   
 
         roomList[roomList.Count - 1].level = levelCount;
         roomList[roomList.Count - 1].roomClearType = Room_ClearType.Boss;
@@ -207,36 +207,40 @@ public class BoardManager : MonoBehaviour
     /// </summary>
     private void RandomEdgeConnect()
     {
-        for (int i = 0; i < LevelRoomDic.Count - 1; i++)
+        for (int lvl = 0; lvl < LevelRoomDic.Count - 1; lvl++)
         {
             //같은 레벨 방이 2개 이상 있을 경우
-            if (LevelRoomDic[i].Count >= 2)
+            if (LevelRoomDic[lvl].Count >= 2)
             {
-                for (int j = 0; j < LevelRoomDic[i].Count - 1; j++)
-                    ConnectEdge(LevelRoomDic[i][j], LevelRoomDic[i][j + 1]);
+                for (int count = 0; count < LevelRoomDic[lvl].Count - 1; count++)
+                    ConnectEdge(LevelRoomDic[lvl][count], LevelRoomDic[lvl][count + 1]);
 
                 //다음레벨로 길이 끊기지 않도록 한개는 우선 적용 (우선 적용할 방은 같은 레벨을 가진 방중 랜덤으로 선택)
-                var s = Random.Range(0, LevelRoomDic[i].Count - 1);
-                ConnectEdge(LevelRoomDic[i][s], LevelRoomDic[i + 1][Random.Range(0, LevelRoomDic[i + 1].Count - 1)]);
+                var s = Random.Range(0, LevelRoomDic[lvl].Count - 1);
+                ConnectEdge(LevelRoomDic[lvl][s], LevelRoomDic[lvl + 1][Random.Range(0, LevelRoomDic[lvl + 1].Count - 1)]);
 
-                for (int k = 0; k < LevelRoomDic[i].Count - 1; k++)
+                //보스방 이전방은 한개만 설정되도록 한다.
+                if (lvl.Equals(LevelRoomDic.Count - 2))
+                    return;
+
+                for (int k = 0; k < LevelRoomDic[lvl].Count - 1; k++)
                 {
                     s++;
-                    var tmpIndex = s % LevelRoomDic[i].Count;
+                    var tmpIndex = s % LevelRoomDic[lvl].Count;
                     if (Random.Range(0, 100) > 50)
-                        ConnectEdge(LevelRoomDic[i][tmpIndex], LevelRoomDic[i + 1][Random.Range(0, LevelRoomDic[i + 1].Count)]);
+                        ConnectEdge(LevelRoomDic[lvl][tmpIndex], LevelRoomDic[lvl + 1][Random.Range(0, LevelRoomDic[lvl + 1].Count)]);
                 }
             }
             //같은 레벨 방이 1개 일 경우
-            else if (LevelRoomDic[i].Count == 1)
+            else if (LevelRoomDic[lvl].Count == 1)
             {
-                ConnectEdge(LevelRoomDic[i][0], LevelRoomDic[i + 1][Random.Range(0, LevelRoomDic[i + 1].Count - 1)]);
+                ConnectEdge(LevelRoomDic[lvl][0], LevelRoomDic[lvl + 1][Random.Range(0, LevelRoomDic[lvl + 1].Count - 1)]);
             }
             else
             {
-                Debug.Log(" 레벨 [" + i + "] 를 가진 방이 존재하지 않습니다.");
+                Debug.Log(" 레벨 [" + lvl + "] 를 가진 방이 존재하지 않습니다.");
             }
-        }
+        }        
     }
 
     /// <summary>

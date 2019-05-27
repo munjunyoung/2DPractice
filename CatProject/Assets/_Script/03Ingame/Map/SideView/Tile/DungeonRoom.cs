@@ -60,6 +60,8 @@ public class DungeonRoom
     /// NOTE : 저장된 NeighborRooms 정보를 통해 출입구 랜덤 생성 
     /// TODO : 현재는 가로값을 랜덤으로 설정하고 높이는 무조건 땅위에 생성하도록 설정하여 개선 가능성이 매우 높음
     /// </summary>
+    /// 
+    int distanceOtherObject = 3;
     public void SetEntrancePos()
     {
         switch(roomClearType)
@@ -80,19 +82,19 @@ public class DungeonRoom
                 //Entrance갯수 만큼 x포지션 저장
                 for (int i = 0; i < entranceInfoList.Count; i++)
                 {
-                    var tmpvalue = (int)Random.Range(2, roomRect.xMax - 1);
+                    var randomXvalue = (int)Random.Range(2, roomRect.xMax - 2);
 
                     //같은 값이 있는지 체크?
                     for (int j = 0; j < posX.Count; j++)
                     {
-                        if (posX[j]-3<tmpvalue&&posX[j]+3<tmpvalue)
+                        if (posX[j]-distanceOtherObject>randomXvalue&&posX[j]+distanceOtherObject<randomXvalue)
                         {
-                            tmpvalue = (int)Random.Range(2, roomRect.xMax - 1);
+                            randomXvalue = (int)Random.Range(2, roomRect.xMax - 2);
                             //다시 처음부터 확인하기 위함
                             j = 0;
                         }
                     }
-                    posX.Add(tmpvalue);
+                    posX.Add(randomXvalue);
                 }
                 //저장한 x포지션을 기준으로 y값을 순회하여 roomarray의 0 값을 검색하여 설정
                 foreach (int tmpx in posX)
@@ -157,6 +159,9 @@ public class DungeonRoom
         }
     }
 
+    /// <summary>
+    /// NOTE : 아이템 숫자 및 포지션 설정
+    /// </summary>
     public void SetItemPos()
     {
         List<int> posX = new List<int>();
@@ -205,7 +210,7 @@ public class DungeonRoom
         List<int> posX = new List<int>();
         for (int i = 0; i < number; i++)
         {
-            var tmpvalue = (int)Random.Range(1, roomRect.xMax - 1);
+            var tmpvalue = (int)Random.Range(2, roomRect.xMax - 2);
 
             //같은 값이 있는지 체크?
             for (int j = 0; j < posX.Count; j++)

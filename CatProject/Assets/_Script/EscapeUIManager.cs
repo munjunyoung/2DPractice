@@ -14,6 +14,9 @@ public class EscapeUIManager : MonoBehaviour
 
     private void Awake()
     {
+        Application.targetFrameRate = 60;
+        Screen.SetResolution(1280, 720, true);
+        
         DontDestroyOnLoad(this);
     }
     // Start is called before the first frame update
@@ -59,7 +62,7 @@ public class EscapeUIManager : MonoBehaviour
 
     public void BackInOptionPanel()
     {
-        OptionPanel.SetActive(true);
+        OptionPanel.SetActive(false);
     }
 
     /// <summary>

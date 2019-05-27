@@ -19,7 +19,6 @@ public class MapToolWindow : EditorWindow
     [MenuItem("MapTool/Execute MapTool")]
     static void Open()
     {
-
         //Layout Save - 현재 씬이 맵 에디터씬이 아닌경우 layout저장 (맵 에디터를 종료 했을때 layout을 되돌려주기 위함
         if ((beforesSceneName = EditorSceneManager.GetActiveScene().name) != "MapEditScene")
             LayoutUtility.SaveLayout(layoutPath + "SaveLayout.wlt");
@@ -27,7 +26,7 @@ public class MapToolWindow : EditorWindow
         EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo();
       
         //Change Scene
-        EditorSceneManager.OpenScene(scenePath + "MapEditScene.unity");
+        EditorSceneManager.OpenScene(scenePath + "MapEditorScene/MapEditScene.unity");
         
         //Layout Load
         LayoutUtility.LoadLayout(layoutPath + "MapEditorLayout.wlt");
