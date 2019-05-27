@@ -23,6 +23,7 @@ public class MapToolWindow : EditorWindow
         if ((beforesSceneName = EditorSceneManager.GetActiveScene().name) != "MapEditScene")
             LayoutUtility.SaveLayout(layoutPath + "SaveLayout.wlt");
 
+        Debug.Log(beforesSceneName);
         EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo();
       
         //Change Scene
@@ -126,7 +127,7 @@ public class MapToolWindow : EditorWindow
             if (beforesSceneName == null)
             {
                 EditorUtility.DisplayDialog("NO", "이전 저장된 씬내용이 없습니다! LEVEL 1 SCENE으로 이동합니다", "OK");
-                EditorSceneManager.OpenScene(scenePath + "Level1.unity");
+                EditorSceneManager.OpenScene(scenePath + "S_00StartScene.unity");
                 return;
             }
             EditorSceneManager.OpenScene(scenePath + beforesSceneName +".unity");
