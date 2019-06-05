@@ -169,7 +169,10 @@ public class MapToolWindow : EditorWindow
             var gridob = GameObject.Find("Grid");
             //현재 hirarchy에서 grid ob가 존재하지 않을 경우 
             if (gridob == null)
+            {
                 gridob = new GameObject("Grid", typeof(Grid));
+                gridob.tag = "DrawGrid";
+            }
 
             gridob.GetComponent<Grid>().cellGap = new Vector3(-0.01f, -0.01f, 0f);
             tmpob.transform.SetParent(gridob.transform);

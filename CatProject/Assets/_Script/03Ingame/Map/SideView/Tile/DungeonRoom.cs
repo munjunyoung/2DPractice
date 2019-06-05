@@ -55,6 +55,13 @@ public class DungeonRoom
         roomGroundArray = new TileInfo[(int)roomRect.width, (int)roomRect.height];
     }
 
+    public DungeonRoom(int _roomType, int _width, int _height)
+    {
+        roomSpriteType = _roomType;
+        roomRect = new Rect(0, 0, _width, _height);
+        roomGroundArray = new TileInfo[(int)roomRect.width, (int)roomRect.height];
+    }
+
     #region Set Monster and Entrance
     /// <summary>
     /// NOTE : 저장된 NeighborRooms 정보를 통해 출입구 랜덤 생성 

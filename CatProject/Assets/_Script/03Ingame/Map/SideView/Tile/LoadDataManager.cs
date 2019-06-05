@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 enum Room_TileType { Type1 = 0, Type2 }
-public enum TileType { BackGround = 0, Entrance, Terrain }
+public enum TileType { Entrance, Terrain, Monster, Destructure, Item }
 public class LoadDataManager 
 {
     private static LoadDataManager _instance = null;

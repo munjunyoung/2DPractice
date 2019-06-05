@@ -43,7 +43,10 @@ class NewTileMapWindow : EditorWindow
             {
                 gridob = GameObject.Find("Grid");
                 if (gridob == null)
+                {
                     gridob = ObjectFactory.CreateGameObject("Grid", typeof(Grid)); // new GameObject("Grid", typeof(Grid));
+                    gridob.tag = "DrawGrid";
+                }
             }
             gridob.GetComponent<Grid>().cellGap = new Vector3(-0.01f, -0.01f, 0f);
 
