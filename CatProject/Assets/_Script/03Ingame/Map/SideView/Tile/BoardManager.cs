@@ -316,9 +316,9 @@ public class BoardManager : MonoBehaviour
                         {
                             case TileType.Entrance:
                                 GameObject tmpob = Instantiate(loadData.structurePrefab[TileType.Entrance.ToString()], new Vector3(i+0.5f, j + 1f, 0), Quaternion.identity);
-                                tmpob.GetComponent<SpriteRenderer>().sprite = loadData.tileDataArray[_roomtype].tileType[(int)_room.roomGroundArray[i, j].tileType].tile[_room.roomGroundArray[i, j].tileNumber].sprite;
+                                tmpob.GetComponent<SpriteRenderer>().sprite = loadData.tileDataArray[_roomtype].entranceTile[_room.roomGroundArray[i, j].tileNumber].sprite;
                                 tmpob.GetComponent<SpriteRenderer>().sortingLayerName = "Entrance";
-                                tmpob.GetComponent<EntranceSc>().doorOpenSprite = loadData.tileDataArray[_roomtype].tileType[(int)_room.roomGroundArray[i, j].tileType].tile[_room.roomGroundArray[i, j].tileNumber+1].sprite;
+                                tmpob.GetComponent<EntranceSc>().doorOpenSprite = loadData.tileDataArray[_roomtype].entranceTile[_room.roomGroundArray[i, j].tileNumber+1].sprite;
                                 tmpob.transform.SetParent(tmpParent.transform);
                                 foreach (EntranceConnectRoom nroom in _room.entranceInfoList)
                                 {
@@ -384,7 +384,7 @@ public class BoardManager : MonoBehaviour
         GameObject tmpParent = new GameObject("BackGroundParent");
         int count = 0;
         //배경 오브젝트 생성
-        foreach (var tmptile in loadData.tileDataArray[room.roomSpriteType].tileType[0].tile)
+        foreach (var tmptile in loadData.tileDataArray[room.roomSpriteType].backGroundTile)
         {
             GameObject backgroundob = new GameObject("BackGround", typeof(SpriteRenderer));
             backgroundob.transform.localPosition = Vector3.zero;

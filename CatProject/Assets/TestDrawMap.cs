@@ -110,6 +110,11 @@ public class TestDrawMap : MonoBehaviour
                                 tmptilemap.SetTile(new Vector3Int(x, y, 0), loadData.tileDataArray[room.roomSpriteType].terrainRuleTile);
                                 break;
                             case TileType.Entrance:
+                                GameObject tmpen = Instantiate(loadData.structurePrefab[TileType.Entrance.ToString()], new Vector3(x + 0.5f, y + 1f, 0), Quaternion.identity);
+                                tmpen.GetComponent<SpriteRenderer>().sprite = loadData.tileDataArray[room.roomSpriteType].entranceTile[room.roomGroundArray[x, y].tileNumber].sprite;
+                                tmpen.GetComponent<SpriteRenderer>().sortingLayerName = "Entrance";
+                                tmpen.GetComponent<EntranceSc>().doorOpenSprite = loadData.tileDataArray[room.roomSpriteType].entranceTile[room.roomGroundArray[x, y].tileNumber + 1].sprite;
+                                tmpen.transform.SetParent(tmpob.transform);
                                 break;
                             case TileType.Destructure:
                                 DesStructure tmpds = Instantiate(loadData.desStructurePrefab[DesStructure_TYPE.Frog.ToString()], new Vector3Int(x, y, 0), Quaternion.identity, tmptilemap.transform);

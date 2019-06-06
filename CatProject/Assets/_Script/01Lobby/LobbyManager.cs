@@ -84,7 +84,7 @@ public class LobbyManager : MonoBehaviour
         GameObject tmpParent = new GameObject("BackGroundParent");
         int count = 0;
         //배경 오브젝트 생성
-        foreach (var tmptile in loadData.tileDataArray[(int)spriteType].tileType[0].tile)
+        foreach (var tmptile in loadData.tileDataArray[(int)spriteType].backGroundTile)
         {
             GameObject backgroundob = new GameObject("BackGround", typeof(SpriteRenderer));
             backgroundob.transform.localPosition = Vector3.zero;

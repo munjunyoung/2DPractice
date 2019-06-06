@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 enum Room_TileType { Type1 = 0, Type2 }
-public enum TileType { Entrance, Terrain, Monster, Destructure, Item }
+public enum TileType {Terrain, Entrance, Monster, Destructure, Item }
 public class LoadDataManager 
 {
     private static LoadDataManager _instance = null;
@@ -62,15 +62,11 @@ public class LoadDataManager
         tmptilearray = new TypeOfTileSetType[roomTypePathArray.Length];
         for (int i = 0; i < roomTypePathArray.Length; i++)
         {
-            tmptilearray[i].tileType = new TypeOfTileSet[tileTypePathArray.Length];
-            //RuleTile 저장
             tmptilearray[i].terrainRuleTile = Resources.Load<RuleTile>("Tile/" + roomTypePathArray[i] + "/RuleTile/RuleTile_Terrain");
             //일반 Tile들 저장
-            for (int j = 0; j < tileTypePathArray.Length; j++)
-            {
-                Tile[] tmp = Resources.LoadAll<Tile>("Tile/" + roomTypePathArray[i] + "/" + tileTypePathArray[j]);
-                tmptilearray[i].tileType[j].tile = tmp;
-            }
+            tmptilearray[i].backGroundTile = Resources.LoadAll<Tile>("Tile/" + roomTypePathArray[i] + "/" + tileTypePathArray[0]);
+            tmptilearray[i].entranceTile = Resources.LoadAll<Tile>("Tile/" + roomTypePathArray[i] + "/" + tileTypePathArray[1]);
+           
         }
         return tmptilearray;
     }
@@ -149,21 +145,18 @@ public class LoadDataManager
 }
 
 /// <summary>
-/// NOTE : 타일타입의 종류를 고름 tileType : 로드된 Tile들의 배열, terrainRuleTile : RuleTile 타입 Terrain 데이터
+/// NOTE : 타일타입의 종류를 고름 배경 타일, 출입구 타일 , terrainRuleTile : RuleTile 타입 Terrain 데이터
 /// </summary>
 public struct TypeOfTileSetType
 {
-    public TypeOfTileSet[] tileType;
+    public Tile[] backGroundTile;
+    /// <summary>
+    ///  NOTE : 0번은 닫힌 문 1번은 열린 문
+    /// </summary>
+    public Tile[] entranceTile;
     public RuleTile terrainRuleTile;
 }
 
-/// <summary>
-/// NOTE : 타일의 종류 0 - 배경 1 - 출입구 
-/// </summary>
-public struct TypeOfTileSet
-{
-    public Tile[] tile;
-}
 
 /// <summary>
 /// NOTE : 생성된 배열값과 해당 사이즈 나중에 행과 열의 크기를 구하는방법을 사용하는거보다 미리 저장해서 꺼내쓰는게 좋을것 같다)

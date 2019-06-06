@@ -5,9 +5,12 @@ using System.IO;
 
 class SaveObjectWindow : EditorWindow
 {
-    string savefolderPath = "Assets/resources/GeneratedMapData";
-    static GameObject selectionOB;
+    static string savefrontfolderPath = "Assets/resources/GeneratedMapData";
     
+    string[] folderType = { "Terrain", "Puzzle", "Battle" };
+    static int toolbarint = 0;
+
+    static GameObject selectionOB;
     public GameObject saveOb = null;
 
     static Vector2 mousepos = Vector2.zero;
@@ -21,7 +24,7 @@ class SaveObjectWindow : EditorWindow
     {
         //position 설정
         if(position.position != mousepos)
-            position = new Rect(mousepos.x,mousepos.y, 320, 120);
+            position = new Rect(mousepos.x,mousepos.y, 320, 200);
 
         selectionOB = Selection.activeGameObject;
         //선택된 오브젝트가 없는경우
@@ -51,27 +54,15 @@ class SaveObjectWindow : EditorWindow
 
                 GUILayout.Label(" 해당 오브젝트는 Load Prefab입니다.",MapToolWindow.titleFont);
                 GUILayout.Space(30);
+                toolbarint = GUILayout.Toolbar(toolbarint, folderType);
                 GUILayout.BeginHorizontal("Box");
 
                 //새것으로 저장
                 if (GUILayout.Button("새로 파일 저장", GUILayout.Height(35)))
                 {
-                    //이름이 같은 파일이 있을경우 
-                    //파일체크 함수 관련
-                    var files = Resources.LoadAll<GameObject>("GeneratedMapData");
-                    foreach(var f in files)
-                    {
-                        if(f.name == saveOb.name)
-                        {
-                            EditorUtility.DisplayDialog("Same Name", "같은 이름이 존재하므로 기존이름에 '1'을 붙여 저장합니다.", "OK");
-                            //Prefab unpack
-                            PrefabUtility.UnpackPrefabInstance(saveOb, PrefabUnpackMode.Completely,InteractionMode.AutomatedAction);
-                            saveOb.name = saveOb.name + " 1";
-                            SavePrefabAndSelectAlarm(saveOb);
-                            this.Close();
-
-                        }
-                    }
+                    //Prefab unpack
+                    PrefabUtility.UnpackPrefabInstance(saveOb, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+                    SaveSameNameCondition(saveOb);
                 }
                 //기존 파일 저장(apply 프리펩)
                 if(GUILayout.Button("기존 파일 저장", GUILayout.Height(35)))
@@ -94,27 +85,14 @@ class SaveObjectWindow : EditorWindow
                 GUILayout.Label("해당 오브젝트가 맞습니까?",MapToolWindow.titleFont);
                 GUILayout.Label("(오브젝트 클릭하여 체크 가능)");
                 GUILayout.Space(20);
+                toolbarint = GUILayout.Toolbar(toolbarint, folderType);
+
+
                 GUILayout.BeginHorizontal("Box");
                 //저장 버튼
                 if (GUILayout.Button("저장", GUILayout.Height(35)))
                 {
-                    //이름이 같은 파일이 있을경우 
-                    //파일체크 함수 관련
-                    var files = Resources.LoadAll<GameObject>("GeneratedMapData");
-                    foreach (var f in files)
-                    {
-                        if (f.name == saveOb.name)
-                        {
-                            EditorUtility.DisplayDialog("Same Name", "같은 이름이 존재하므로 기존이름에 '1'을 붙여 저장합니다.", "OK");
-                            saveOb.name = saveOb.name + " 1";
-                            SavePrefabAndSelectAlarm(saveOb);
-                            this.Close();
-
-                        }
-                    }
-
-                    SavePrefabAndSelectAlarm(saveOb);
-                    this.Close();
+                    SaveSameNameCondition(saveOb);
                 }
                 if (GUILayout.Button("아니요", GUILayout.Height(35)))
                 {
@@ -124,6 +102,31 @@ class SaveObjectWindow : EditorWindow
             }
         }
     }
+    
+    /// <summary>
+    /// NOTE : 같은 이름이 존재하는 파일 저장 관련 조건
+    /// </summary>
+    /// <param name="_saveOb"></param>
+    private void SaveSameNameCondition(GameObject _saveOb)
+    {
+        //이름이 같은 파일이 있을경우 
+        //파일체크 함수 관련
+        var files = Resources.LoadAll<GameObject>("GeneratedMapData/" + folderType[toolbarint]);
+        foreach (var f in files)
+        {
+            if (f.name == _saveOb.name)
+            {
+                EditorUtility.DisplayDialog("Same Name", "같은 이름이 존재하므로 기존이름에 '1'을 붙여 저장합니다.", "OK");
+                _saveOb.name = saveOb.name + " 1";
+                SavePrefabAndSelectAlarm(_saveOb);
+                this.Close();
+
+            }
+        }
+
+        SavePrefabAndSelectAlarm(_saveOb);
+        this.Close();
+    }
 
     /// <summary>
     /// NOTE : 저장 및 해당 저장된 파일을 SELECTION하고 PINGOBJECT를 통하여 알림
@@ -131,7 +134,8 @@ class SaveObjectWindow : EditorWindow
     /// <param name="_saveOb"></param>
     private void SavePrefabAndSelectAlarm(GameObject _saveOb)
     {
-        var createdprefab = PrefabUtility.SaveAsPrefabAssetAndConnect(_saveOb, savefolderPath + "/" + _saveOb.name + ".prefab",InteractionMode.AutomatedAction);
+
+        var createdprefab = PrefabUtility.SaveAsPrefabAssetAndConnect(_saveOb, savefrontfolderPath + "/" + folderType[toolbarint] + "/" + _saveOb.name + ".prefab", InteractionMode.AutomatedAction);
 
         Selection.activeObject = createdprefab;
         EditorGUIUtility.PingObject(createdprefab);
