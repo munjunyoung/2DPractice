@@ -7,15 +7,15 @@ using UnityEditor;
 /// <summary>
 /// NOTE : Draw Map 클래스 
 /// </summary>
-public class TestDrawMap : MonoBehaviour
+public class DrawMap : MonoBehaviour
 {
-    private static TestDrawMap _instance = null;
-    public static TestDrawMap instance
+    private static DrawMap _instance = null;
+    public static DrawMap instance
     {
         get
         {
             if (_instance == null)
-                _instance = new TestDrawMap();
+                _instance = new DrawMap();
 
             return _instance;
         }
@@ -28,6 +28,12 @@ public class TestDrawMap : MonoBehaviour
     {
         loadData = LoadDataManager.instance;
         FindTilemap();
+    }
+
+    public DrawMap()
+    {
+        loadData = LoadDataManager.instance;
+        //FindTilemap();
     }
 
     /// <summary>
@@ -43,6 +49,7 @@ public class TestDrawMap : MonoBehaviour
             roomlist.Add(AnalyzeTileMap(tm));
 
         DrawTilemap(roomlist);
+        roomlist[0].roomModel.SetActive(true);
 
         tmpgrid.SetActive(false);
     }
@@ -57,29 +64,40 @@ public class TestDrawMap : MonoBehaviour
         DungeonRoom tmproom = new DungeonRoom(1, _tm.size.x, _tm.size.y);
         foreach (var tmpos in _tm.cellBounds.allPositionsWithin)
         {
+            //해당 포지션에 아무것도 없을경우 진행
             if (!_tm.HasTile(tmpos))
                 continue;
-            Debug.Log(_tm.GetTile(tmpos));
-            switch (_tm.GetTile(tmpos).name)
+            //땅일 경우 바로 생성 
+            if (_tm.GetTile(tmpos).name.Equals("RuleTile_Terrain"))
             {
-                case "RuleTile_Terrain":
-                    tmproom.roomGroundArray[tmpos.x, tmpos.y] = new TileInfo(TileType.Terrain);
+                tmproom.roomTileArray[tmpos.x, tmpos.y] = new TileInfo(TileType.Terrain);
+                continue;
+            }
+            // ex) Monster_0  -> _기준으로 구분하여 처리
+            var name = _tm.GetTile(tmpos).name;
+            int subidx = name.IndexOf("_");
+            string tiletype = name.Substring(0, subidx);
+            var tileNumber = int.Parse(name.Substring(subidx + 1).ToString());
+            switch (tiletype)
+            {
+                case "Door":
+                    tmproom.roomTileArray[tmpos.x, tmpos.y] = new TileInfo(TileType.Entrance, tileNumber);
                     break;
-                case "tile_Destructure":
-                    tmproom.roomGroundArray[tmpos.x, tmpos.y] = new TileInfo(TileType.Destructure);
+                case "Destructure":
+                    tmproom.roomTileArray[tmpos.x, tmpos.y] = new TileInfo(TileType.Destructure, tileNumber);
                     break;
-                case "tile_Monster":
-                    tmproom.roomGroundArray[tmpos.x, tmpos.y] = new TileInfo(TileType.Monster);
+                case "Monster":
+                    tmproom.roomTileArray[tmpos.x, tmpos.y] = new TileInfo(TileType.Monster, tileNumber);
                     break;
-                case "tile_Item":
-                    tmproom.roomGroundArray[tmpos.x, tmpos.y] = new TileInfo(TileType.Item);
+                case "Item":
+                    tmproom.roomTileArray[tmpos.x, tmpos.y] = new TileInfo(TileType.Item, tileNumber);
                     break;
             }
         }
         return tmproom;
     }
 
-    private void DrawTilemap(List<DungeonRoom> _rooms)
+    public void DrawTilemap(List<DungeonRoom> _rooms)
     {
         //부모 생성 
         GameObject gridob = new GameObject("TmpGrid", typeof(Grid));
@@ -96,44 +114,62 @@ public class TestDrawMap : MonoBehaviour
             tmpob.tag = "Ground";
             tmpob.layer = 8;
             Tilemap tmptilemap = tmpob.GetComponent<Tilemap>();
-            count++;
 
             for (int x = 0; x < room.roomRect.xMax; x++)
             {
                 for (int y = 0; y < room.roomRect.yMax; y++)
                 {
-                    if (room.roomGroundArray[x, y] != null)
+                    if (room.roomTileArray[x, y] != null)
                     {
-                        switch (room.roomGroundArray[x, y].tileType)
+                        switch (room.roomTileArray[x, y].tileType)
                         {
                             case TileType.Terrain:
                                 tmptilemap.SetTile(new Vector3Int(x, y, 0), loadData.tileDataArray[room.roomSpriteType].terrainRuleTile);
                                 break;
                             case TileType.Entrance:
                                 GameObject tmpen = Instantiate(loadData.structurePrefab[TileType.Entrance.ToString()], new Vector3(x + 0.5f, y + 1f, 0), Quaternion.identity);
-                                tmpen.GetComponent<SpriteRenderer>().sprite = loadData.tileDataArray[room.roomSpriteType].entranceTile[room.roomGroundArray[x, y].tileNumber].sprite;
+                                tmpen.GetComponent<SpriteRenderer>().sprite = loadData.tileDataArray[room.roomSpriteType].entranceTile[room.roomTileArray[x, y].tileNumber].sprite;
                                 tmpen.GetComponent<SpriteRenderer>().sortingLayerName = "Entrance";
-                                tmpen.GetComponent<EntranceSc>().doorOpenSprite = loadData.tileDataArray[room.roomSpriteType].entranceTile[room.roomGroundArray[x, y].tileNumber + 1].sprite;
+                                tmpen.GetComponent<EntranceSc>().doorOpenSprite = loadData.tileDataArray[room.roomSpriteType].entranceTile[room.roomTileArray[x, y].tileNumber + 1].sprite;
                                 tmpen.transform.SetParent(tmpob.transform);
+                                foreach (EntranceConnectRoom nroom in room.entranceInfoList)
+                                {
+                                    if (nroom.entrance == null)
+                                    {
+                                        tmpen.GetComponent<EntranceSc>().currentRoomNumber = room.roomNumberOfList;
+                                        nroom.entrance = tmpen.GetComponent<EntranceSc>();
+                                        break;
+                                    }
+                                }
                                 break;
                             case TileType.Destructure:
-                                DesStructure tmpds = Instantiate(loadData.desStructurePrefab[DesStructure_TYPE.Frog.ToString()], new Vector3Int(x, y, 0), Quaternion.identity, tmptilemap.transform);
+                                DesStructure_TYPE destype = (DesStructure_TYPE)room.roomTileArray[x, y].tileNumber;
+                      
+                                DesStructure tmpds = Instantiate(loadData.desStructurePrefab[destype.ToString()], new Vector3Int(x, y, 0), Quaternion.identity, tmptilemap.transform);
+                                tmpds.ownRoom = room;
+                                room.desStructureInfoList.Add(new SpawnDesStructureInfo(destype, new Vector2(x, y), tmpds));
                                 break;
                             case TileType.Monster:
-                                Monster tmpm = Instantiate(loadData.monsterPrefab[MONSTER_TYPE.Fox.ToString()], new Vector3Int(x, y, 0), Quaternion.identity, tmptilemap.transform);
+                                MONSTER_TYPE monstertype = (MONSTER_TYPE)room.roomTileArray[x, y].tileNumber;
+
+                                Monster tmpmonster = Instantiate(loadData.monsterPrefab[MONSTER_TYPE.Fox.ToString()], new Vector3Int(x, y, 0), Quaternion.identity, tmptilemap.transform);
+                                tmpmonster.ownRoom = room;
+                                room.monsterInfoList.Add(new SpawnMonsterInfo(monstertype, new Vector2(x, y), tmpmonster));
+
                                 break;
                             case TileType.Item:
                                 ItemSc tmpitem = Instantiate(loadData.itemPrefabDic[Item_TYPE.Catnip.ToString()], new Vector3Int(x, y, 0), Quaternion.identity, tmptilemap.transform);
                                 break;
                             default:
-                                Debug.Log(room.roomGroundArray[x, y].tileType.ToString());
+                                Debug.Log(room.roomTileArray[x, y].tileType.ToString());
                                 break;
                         }
                     }
                 }
             }
-
-
+            count++;
+            room.roomModel = tmpob;
+            tmpob.SetActive(false);
         }
     }
 

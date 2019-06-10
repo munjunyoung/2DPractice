@@ -115,8 +115,8 @@ public class BoardManager : MonoBehaviour
             {
                 for (int j = 0; j < selectedTerrain.size.yMax; j++)
                 {
-                    if (_tmpRoom.roomGroundArray[_tmpRoom.currentXPos + i, j] == null)
-                        _tmpRoom.roomGroundArray[_tmpRoom.currentXPos + i, j] = selectedTerrain.tileArray[i, j];
+                    if (_tmpRoom.roomTileArray[_tmpRoom.currentXPos + i, j] == null)
+                        _tmpRoom.roomTileArray[_tmpRoom.currentXPos + i, j] = selectedTerrain.tileArray[i, j];
                 }
             }
 
@@ -135,7 +135,7 @@ public class BoardManager : MonoBehaviour
             for(int i = _tmpRoom.currentXPos; i<_tmpRoom.roomRect.xMax;i++)
             {
                 for(int j = 0; j<nextheight;j++)
-                    _tmpRoom.roomGroundArray[i, j] = new TileInfo(TileType.Terrain);
+                    _tmpRoom.roomTileArray[i, j] = new TileInfo(TileType.Terrain);
             }
         }
     }
@@ -288,60 +288,12 @@ public class BoardManager : MonoBehaviour
     /// </summary>
     private void DrawRoom()
     {
-        int countroom = 1;
-        foreach (DungeonRoom _room in roomList)
-        {
-            int _roomtype = _room.roomSpriteType;
-            //부모가될 오브젝트 생성
-            GameObject tmpParent = new GameObject();
-            tmpParent.transform.position = Vector3.zero;
-            tmpParent.transform.rotation = Quaternion.identity;
-            tmpParent.name = "Room" + countroom;
-            tmpParent.transform.SetParent(parentModelOfRooms.transform);
-            
-            CreateBackGround(_room).transform.SetParent(tmpParent.transform);
+        DrawMap.instance.DrawTilemap(roomList);
 
-            //Ground TileMap 오브젝트 생성
-            //var tmpFloortilemap = CreateTileMap("Floor", "Floor", "Ground", tmpParent);
-            var tmpterraintilemapob = CreateTileMap("Ground", "Ground", "Ground", tmpParent);
-            tmpterraintilemapob = DrawRoomEdge(tmpterraintilemapob ,_room);
-            //설정한 방의 배열정보를 통하여 타일 설정 및 출입문 오브젝트 생성
-            for (int i = 0; i < _room.roomRect.xMax; i++)
-            {
-                for (int j = 0; j < _room.roomRect.yMax; j++)
-                {
-                    if (_room.roomGroundArray[i, j] != null)
-                    {
-                        switch (_room.roomGroundArray[i, j].tileType)
-                        {
-                            case TileType.Entrance:
-                                GameObject tmpob = Instantiate(loadData.structurePrefab[TileType.Entrance.ToString()], new Vector3(i+0.5f, j + 1f, 0), Quaternion.identity);
-                                tmpob.GetComponent<SpriteRenderer>().sprite = loadData.tileDataArray[_roomtype].entranceTile[_room.roomGroundArray[i, j].tileNumber].sprite;
-                                tmpob.GetComponent<SpriteRenderer>().sortingLayerName = "Entrance";
-                                tmpob.GetComponent<EntranceSc>().doorOpenSprite = loadData.tileDataArray[_roomtype].entranceTile[_room.roomGroundArray[i, j].tileNumber+1].sprite;
-                                tmpob.transform.SetParent(tmpParent.transform);
-                                foreach (EntranceConnectRoom nroom in _room.entranceInfoList)
-                                {
-                                    if (nroom.entrance == null)
-                                    {
-                                        tmpob.GetComponent<EntranceSc>().currentRoomNumber = _room.roomNumberOfList;
-                                        nroom.entrance = tmpob.GetComponent<EntranceSc>();
-                                        break;
-                                    }
-                                }
-                                break;
-                            case TileType.Terrain:
-                                tmpterraintilemapob.SetTile(new Vector3Int(i, j, 0), loadData.tileDataArray[_roomtype].terrainRuleTile);
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                }
-            }
-            countroom++;
-            _room.roomModel = tmpParent;
-            tmpParent.SetActive(false);
+        foreach(var room in roomList)
+        {
+            CreateBackGround(room);
+            DrawRoomEdge(room);
         }
     }
 
@@ -351,26 +303,27 @@ public class BoardManager : MonoBehaviour
     /// <param name="_terraintilemap"></param>
     /// <param name="_room"></param>
     /// <returns></returns>
-    private Tilemap DrawRoomEdge(Tilemap _terraintilemap, DungeonRoom _room)
+    private Tilemap DrawRoomEdge(DungeonRoom _room)
     {
+        Tilemap terraintilemap = _room.roomModel.GetComponent<Tilemap>();
         //bottom, top
         for (int i = 0; i < _room.roomRect.xMax; i++)
         {
-            _terraintilemap.SetTile(new Vector3Int(i, -1, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
-            _terraintilemap.SetTile(new Vector3Int(i, -2, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
-            _terraintilemap.SetTile(new Vector3Int(i, (int)_room.roomRect.yMax, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
-            _terraintilemap.SetTile(new Vector3Int(i, (int)_room.roomRect.yMax + 1, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
+            terraintilemap.SetTile(new Vector3Int(i, -1, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
+            terraintilemap.SetTile(new Vector3Int(i, -2, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
+            terraintilemap.SetTile(new Vector3Int(i, (int)_room.roomRect.yMax, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
+            terraintilemap.SetTile(new Vector3Int(i, (int)_room.roomRect.yMax + 1, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
         }
 
         //left, right
         for (int j = -2; j < _room.roomRect.yMax + 2; j++)
         {
-            _terraintilemap.SetTile(new Vector3Int(-1, j, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
-            _terraintilemap.SetTile(new Vector3Int(-2, j, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
-            _terraintilemap.SetTile(new Vector3Int((int)_room.roomRect.xMax, j, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
-            _terraintilemap.SetTile(new Vector3Int((int)_room.roomRect.xMax+1, j, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
+            terraintilemap.SetTile(new Vector3Int(-1, j, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
+            terraintilemap.SetTile(new Vector3Int(-2, j, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
+            terraintilemap.SetTile(new Vector3Int((int)_room.roomRect.xMax, j, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
+            terraintilemap.SetTile(new Vector3Int((int)_room.roomRect.xMax+1, j, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
         }
-        return _terraintilemap;
+        return terraintilemap;
     }
 
     /// <summary>
@@ -379,7 +332,7 @@ public class BoardManager : MonoBehaviour
     /// </summary>
     /// <param name="room"></param>
     /// <returns></returns>
-    private GameObject CreateBackGround(DungeonRoom room)
+    private void CreateBackGround(DungeonRoom room)
     {
         GameObject tmpParent = new GameObject("BackGroundParent");
         int count = 0;
@@ -397,7 +350,7 @@ public class BoardManager : MonoBehaviour
             count++;
             backgroundob.transform.SetParent(tmpParent.transform);
         }
-        return tmpParent;
+        tmpParent.transform.SetParent(room.roomModel.transform);
     }
 
     /// <summary>
@@ -491,3 +444,59 @@ public class BoardManager : MonoBehaviour
     }
     #endregion
 }
+
+//int countroom = 1;
+//        foreach (DungeonRoom _room in roomList)
+//        {
+//            int _roomtype = _room.roomSpriteType;
+////부모가될 오브젝트 생성
+//GameObject tmpParent = new GameObject();
+//tmpParent.transform.position = Vector3.zero;
+//            tmpParent.transform.rotation = Quaternion.identity;
+//            tmpParent.name = "Room" + countroom;
+//            tmpParent.transform.SetParent(parentModelOfRooms.transform);
+            
+//            CreateBackGround(_room).transform.SetParent(tmpParent.transform);
+
+//            //Ground TileMap 오브젝트 생성
+//            //var tmpFloortilemap = CreateTileMap("Floor", "Floor", "Ground", tmpParent);
+//            var tmpterraintilemapob = CreateTileMap("Ground", "Ground", "Ground", tmpParent);
+//tmpterraintilemapob = DrawRoomEdge(tmpterraintilemapob , _room);
+//            //설정한 방의 배열정보를 통하여 타일 설정 및 출입문 오브젝트 생성
+//            for (int i = 0; i<_room.roomRect.xMax; i++)
+//            {
+//                for (int j = 0; j<_room.roomRect.yMax; j++)
+//                {
+//                    if (_room.roomTileArray[i, j] != null)
+//                    {
+//                        switch (_room.roomTileArray[i, j].tileType)
+//                        {
+//                            case TileType.Entrance:
+//                                GameObject tmpob = Instantiate(loadData.structurePrefab[TileType.Entrance.ToString()], new Vector3(i + 0.5f, j + 1f, 0), Quaternion.identity);
+//tmpob.GetComponent<SpriteRenderer>().sprite = loadData.tileDataArray[_roomtype].entranceTile[_room.roomTileArray[i, j].tileNumber].sprite;
+//                                tmpob.GetComponent<SpriteRenderer>().sortingLayerName = "Entrance";
+//                                tmpob.GetComponent<EntranceSc>().doorOpenSprite = loadData.tileDataArray[_roomtype].entranceTile[_room.roomTileArray[i, j].tileNumber + 1].sprite;
+//                                tmpob.transform.SetParent(tmpParent.transform);
+//                                foreach (EntranceConnectRoom nroom in _room.entranceInfoList)
+//                                {
+//                                    if (nroom.entrance == null)
+//                                    {
+//                                        tmpob.GetComponent<EntranceSc>().currentRoomNumber = _room.roomNumberOfList;
+//                                        nroom.entrance = tmpob.GetComponent<EntranceSc>();
+//                                        break;
+//                                    }
+//                                }
+//                                break;
+//                            case TileType.Terrain:
+//                                tmpterraintilemapob.SetTile(new Vector3Int(i, j, 0), loadData.tileDataArray[_roomtype].terrainRuleTile);
+//                                break;
+//                            default:
+//                                break;
+//                        }
+//                    }
+//                }
+//            }
+//            countroom++;
+//            _room.roomModel = tmpParent;
+//            tmpParent.SetActive(false);
+//        }

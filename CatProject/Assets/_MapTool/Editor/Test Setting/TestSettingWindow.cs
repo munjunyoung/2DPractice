@@ -31,7 +31,8 @@ class TestSettingWindow : EditorWindow
 
     private void OnEnable()
     {
-        mousepos = GUIUtility.GUIToScreenPoint(Event.current.mousePosition);
+        if (GUIUtility.GUIToScreenPoint(Event.current.mousePosition)!=null)
+            mousepos = GUIUtility.GUIToScreenPoint(Event.current.mousePosition);
     }
     /// <summary>
     /// NOTE : 기본 땅 설정, 캐릭터 생성, 적 생성

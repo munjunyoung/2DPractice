@@ -16,7 +16,7 @@ public class DungeonRoom
     //object
     public GameObject roomModel = null;
     //Room info
-    public TileInfo[,] roomGroundArray;
+    public TileInfo[,] roomTileArray;
     public Rect roomRect = new Rect(0, 0, 0, 0);
     public int roomNumberOfList = -1;
     public int roomSpriteType = -1;
@@ -52,14 +52,14 @@ public class DungeonRoom
         var tmpH = Random.Range(_heightMin, _heightMax);
         roomRect = new Rect(0, 0, tmpW, tmpH);
         
-        roomGroundArray = new TileInfo[(int)roomRect.width, (int)roomRect.height];
+        roomTileArray = new TileInfo[(int)roomRect.width, (int)roomRect.height];
     }
 
     public DungeonRoom(int _roomType, int _width, int _height)
     {
         roomSpriteType = _roomType;
         roomRect = new Rect(0, 0, _width, _height);
-        roomGroundArray = new TileInfo[(int)roomRect.width, (int)roomRect.height];
+        roomTileArray = new TileInfo[(int)roomRect.width, (int)roomRect.height];
     }
 
     #region Set Monster and Entrance
@@ -77,9 +77,9 @@ public class DungeonRoom
             case Room_ClearType.Boss:
                 for (int j = 0; j < roomRect.yMax; j++)
                 {
-                    if (roomGroundArray[5, j] == null)
+                    if (roomTileArray[5, j] == null)
                     {
-                        roomGroundArray[5, j] = new TileInfo(TileType.Entrance, 0);
+                        roomTileArray[5, j] = new TileInfo(TileType.Entrance, 0);
                         break;
                     }
                 }
@@ -108,9 +108,9 @@ public class DungeonRoom
                 {
                     for (int j = 0; j < roomRect.yMax; j++)
                     {
-                        if (roomGroundArray[tmpx, j] == null)
+                        if (roomTileArray[tmpx, j] == null)
                         {
-                            roomGroundArray[tmpx, j] = new TileInfo(TileType.Entrance, 0);
+                            roomTileArray[tmpx, j] = new TileInfo(TileType.Entrance, 0);
                             break;
                         }
                     }
@@ -157,7 +157,7 @@ public class DungeonRoom
         {
             for (int j = 1; j < roomRect.yMax - 1; j++)
             {
-                if (roomGroundArray[tmpx, j] == null)
+                if (roomTileArray[tmpx, j] == null)
                 {
                     monsterInfoList.Add(new SpawnMonsterInfo(MONSTER_TYPE.Fox, new Vector2(tmpx, j + 0.5f)));
                     break;
@@ -193,7 +193,7 @@ public class DungeonRoom
         {
             for (int j = 0; j < roomRect.yMax - 1; j++)
             {
-                if (roomGroundArray[tmpx, j] == null)
+                if (roomTileArray[tmpx, j] == null)
                 {
                     itemInfoList.Add(new SpawnItemInfo(Item_TYPE.Catnip, new Vector2(tmpx, j+1)));
                     break;
@@ -236,7 +236,7 @@ public class DungeonRoom
         {
             for (int j = 1; j < roomRect.yMax - 1; j++)
             {
-                if (roomGroundArray[tmpx, j] == null)
+                if (roomTileArray[tmpx, j] == null)
                 {
                     desStructureInfoList.Add(new SpawnDesStructureInfo(DesStructure_TYPE.Frog, new Vector2(tmpx, j + 1f)));
                     break;
@@ -255,7 +255,7 @@ public class DungeonRoom
         int xpos = (int)roomRect.width - 7;
         for(int j=0; j<roomRect.height-1;j++)
         {
-            if (roomGroundArray[xpos, j] == null)
+            if (roomTileArray[xpos, j] == null)
                 startpos = new Vector2(xpos, j);
         }
         bossInfoList.Add(new SpawnBossInfo(MONSTER_TYPE.Dog, startpos));
@@ -398,6 +398,13 @@ public class SpawnMonsterInfo
         startPos = _startpos;
         monsterModel = null;
     }
+
+    public SpawnMonsterInfo(MONSTER_TYPE _mtype, Vector2 _startpos, Monster ob)
+    {
+        mType = _mtype;
+        startPos = _startpos;
+        monsterModel = ob;
+    }
 }
 
 /// <summary>
@@ -415,6 +422,13 @@ public class SpawnDesStructureInfo
         startPos = _startpos;
         desStructureModel = null;
     }   
+
+    public SpawnDesStructureInfo(DesStructure_TYPE _dstype, Vector2 _startpos, DesStructure ob)
+    {
+        dsType = _dstype;
+        startPos = _startpos;
+        desStructureModel = ob;
+    }
 }
 
 /// <summary>
@@ -475,6 +489,7 @@ public class TileInfo
 {
     public TileType tileType;
     public int tileNumber;
+    
 
     public TileInfo(TileType _tiletype, int _tilenumber)
     {
