@@ -388,7 +388,7 @@ public class BoardManager : MonoBehaviour
             {
                 case Room_ClearType.Battle:
                     //몬스터 생성
-                    room.SetMonstersPos();
+                    room.SetObPos(room.monsterInfoList);
 
                     foreach (SpawnMonsterInfo monsterinfo in room.monsterInfoList)
                     {
@@ -399,7 +399,7 @@ public class BoardManager : MonoBehaviour
 
                     break;
                 case Room_ClearType.Puzzle:
-                    room.SetDesStructurePos();
+                    room.SetObPos(room.desStructureInfoList);
 
                     foreach(SpawnDesStructureInfo dsinfo in room.desStructureInfoList)
                     {
@@ -435,7 +435,7 @@ public class BoardManager : MonoBehaviour
     /// <param name="room"></param>
     private void DrawItem(DungeonRoom room)
     {
-        room.SetItemPos();
+        room.SetObPos(room.itemInfoList);
         foreach (SpawnItemInfo iteminfo in room.itemInfoList)
         {
             ItemSc tmpitem = Instantiate(loadData.itemPrefabDic[iteminfo.iType.ToString()], iteminfo.startpos, Quaternion.identity, room.roomModel.transform);

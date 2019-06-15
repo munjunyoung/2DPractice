@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum Room_ClearType {None = 0, Battle , Puzzle, Boss }
+public enum Room_ClearType { None = 0, Battle, Puzzle, Boss }
 
-public enum MONSTER_TYPE { Fox = 0, Dog = 1};
+public enum MONSTER_TYPE { Fox = 0, Dog = 1 };
 public enum DesStructure_TYPE { Frog = 0 };
 public enum Item_TYPE { Catnip = 0 };
 /// <summary>
@@ -32,7 +32,7 @@ public class DungeonRoom
     //Terrain
     public GeneratedTerrainData beforeTerrainData = null;
     public int currentXPos;
-    
+
 
     /// <summary>
     /// NOTE : 방의 사이즈 랜덤 설정 생성자
@@ -45,13 +45,15 @@ public class DungeonRoom
     /// <param name="_heightMax"></param>
     public DungeonRoom(int _roomNumber, int _roomSpriteType, int _widthMin, int _widthMax, int _heightMin, int _heightMax)
     {
+        SetObPos(monsterInfoList);
+
         roomNumberOfList = _roomNumber;
         roomSpriteType = _roomSpriteType;
 
         var tmpW = Random.Range(_widthMin, _widthMax);
         var tmpH = Random.Range(_heightMin, _heightMax);
         roomRect = new Rect(0, 0, tmpW, tmpH);
-        
+
         roomTileArray = new TileInfo[(int)roomRect.width, (int)roomRect.height];
     }
 
@@ -71,7 +73,7 @@ public class DungeonRoom
     int distanceOtherObject = 3;
     public void SetEntrancePos()
     {
-        switch(roomClearType)
+        switch (roomClearType)
         {
             case Room_ClearType.None:
             case Room_ClearType.Boss:
@@ -94,7 +96,7 @@ public class DungeonRoom
                     //같은 값이 있는지 체크?
                     for (int j = 0; j < posX.Count; j++)
                     {
-                        if (posX[j]-distanceOtherObject>randomXvalue&&posX[j]+distanceOtherObject<randomXvalue)
+                        if (posX[j] - distanceOtherObject > randomXvalue && posX[j] + distanceOtherObject < randomXvalue)
                         {
                             randomXvalue = (int)Random.Range(2, roomRect.xMax - 2);
                             //다시 처음부터 확인하기 위함
@@ -117,27 +119,23 @@ public class DungeonRoom
                 }
                 break;
         }
-       
+
     }
 
     /// <summary>
-    /// NOTE : 몬스터 생성 위치 설정
+    /// NOTE : NormalPosition 설정
     /// </summary>
-    public void SetMonstersPos()
+    /// <param name="_obnumber"></param>
+    /// <returns></returns>
+    private List<Vector2> NormalPosSet(int _obnumber)
     {
-        //각 방의 몬스터 숫자설정
-        //..level에따른 설정 
-        //Test를 위해 1로만 설정
-        //현재는 레벨만큼 몬스터 생성
-        int numberofmonster = level;
-
-        //몬스터 숫자만큼 x포지션 저장
+        List<Vector2> pos = new List<Vector2>();
         List<int> posX = new List<int>();
-        for (int i = 0; i < numberofmonster; i++)
+        for (int i = 0; i < _obnumber; i++)
         {
             var tmpvalue = (int)Random.Range(1, roomRect.xMax - 1);
 
-            
+
             //같은 값이 있는지 체크?
             for (int j = 0; j < posX.Count; j++)
             {
@@ -152,6 +150,7 @@ public class DungeonRoom
 
             posX.Add(tmpvalue);
         }
+
         //저장한 x포지션을 기준으로 y값을 순회하여 roomarray의 0 값을 검색하여 설정
         foreach (int tmpx in posX)
         {
@@ -159,11 +158,71 @@ public class DungeonRoom
             {
                 if (roomTileArray[tmpx, j] == null)
                 {
-                    monsterInfoList.Add(new SpawnMonsterInfo(MONSTER_TYPE.Fox, new Vector2(tmpx, j + 0.5f)));
+                    pos.Add(new Vector2(tmpx, j + 1));
                     break;
                 }
             }
         }
+        return pos;
+    }
+
+    /// <summary>
+    /// NOTE : 오브젝트 포지션
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="_data"></param>
+    public void SetObPos<T>(T _data)
+    {
+        var type = _data.GetType();
+
+        //갯수 설정 Level에 따라 다름
+        int obnumber = level; //(int)(level * 0.5f) + 1;
+        List<Vector2> pos = new List<Vector2>(); 
+            pos = NormalPosSet(obnumber);
+        Debug.Log(pos.Count);
+        if (type.Equals(monsterInfoList.GetType()))
+        {
+            foreach(var p in pos)
+                monsterInfoList.Add(new SpawnMonsterInfo(MONSTER_TYPE.Fox, p));
+        }
+        else if (type.Equals(desStructureInfoList.GetType()))
+        {
+            foreach (var p in pos)
+                desStructureInfoList.Add(new SpawnDesStructureInfo(DesStructure_TYPE.Frog, p));
+        }
+        else if (type.Equals(itemInfoList.GetType()))
+        {
+            foreach (var p in pos)
+                itemInfoList.Add(new SpawnItemInfo(Item_TYPE.Catnip, p));
+        }
+    }
+
+    /// <summary>
+    /// NOTE : 몬스터 생성 위치 설정
+    /// </summary>
+    public void SetMonstersPos()
+    {
+        //각 방의 몬스터 숫자설정
+        //..level에따른 설정 
+        //Test를 위해 1로만 설정
+        //현재는 레벨만큼 몬스터 생성
+        int obnumber = (int)(level * 0.5f) + 1;
+
+        if (monsterInfoList.Count != 0)
+        {
+            //원래 리스트 숫자와 카운트가 다를경우 
+            if (obnumber <= monsterInfoList.Count)
+                return;
+            else
+                obnumber -= monsterInfoList.Count;
+        }
+
+        //몬스터 숫자만큼 x포지션 저장
+        List<int> posX = new List<int>();
+
+
+        //monsterInfoList.Add(new SpawnMonsterInfo(MONSTER_TYPE.Fox, new Vector2(tmpx, j + 0.5f)));
+
     }
 
     /// <summary>
@@ -172,14 +231,14 @@ public class DungeonRoom
     public void SetItemPos()
     {
         List<int> posX = new List<int>();
-        int itemnumber = Random.Range(1, 10);
+        int itemnumber = level;
 
-        for(int i = 0; i< itemnumber; i++)
+        for (int i = 0; i < itemnumber; i++)
         {
             var tmpvalue = (int)Random.Range(1, roomRect.xMax - 1);
-            for(int j=0; j< posX.Count; j++)
+            for (int j = 0; j < posX.Count; j++)
             {
-                if(posX[j].Equals(tmpvalue))
+                if (posX[j].Equals(tmpvalue))
                 {
                     //random값을 다시 설정하고 j를 0으로 바꿈으로써 다시 체크
                     tmpvalue = (int)Random.Range(1, roomRect.xMax - 1);
@@ -195,7 +254,7 @@ public class DungeonRoom
             {
                 if (roomTileArray[tmpx, j] == null)
                 {
-                    itemInfoList.Add(new SpawnItemInfo(Item_TYPE.Catnip, new Vector2(tmpx, j+1)));
+                    itemInfoList.Add(new SpawnItemInfo(Item_TYPE.Catnip, new Vector2(tmpx, j + 1)));
                     break;
                 }
             }
@@ -251,9 +310,9 @@ public class DungeonRoom
     /// </summary>
     public void SetBossPos()
     {
-        Vector2 startpos = Vector2.zero; 
+        Vector2 startpos = Vector2.zero;
         int xpos = (int)roomRect.width - 7;
-        for(int j=0; j<roomRect.height-1;j++)
+        for (int j = 0; j < roomRect.height - 1; j++)
         {
             if (roomTileArray[xpos, j] == null)
                 startpos = new Vector2(xpos, j);
@@ -294,7 +353,7 @@ public class DungeonRoom
         }
         return checkcomplete;
     }
-    
+
     /// <summary>
     /// NOTE : 퍼즐관련 체크 현재는 부서지는 구조물을 부셨느냐 만 체크함
     /// </summary>
@@ -303,9 +362,9 @@ public class DungeonRoom
     {
         bool checkcomplete = true;
 
-        if(desStructureInfoList.Count>0)
+        if (desStructureInfoList.Count > 0)
         {
-            foreach(var dsinfo in desStructureInfoList)
+            foreach (var dsinfo in desStructureInfoList)
             {
                 if (dsinfo.desStructureModel.isAlive)
                     checkcomplete = false;
@@ -343,7 +402,7 @@ public class DungeonRoom
         //..
         return checkcomplete;
     }
-    
+
     /// <summary>
     /// NOTE : 방의 체크리스트를 모두 확인한 후 조건을 모두 통과할 경우 통로 오픈
     /// </summary>
@@ -363,18 +422,18 @@ public class DungeonRoom
     {
         foreach (var monsterinfo in monsterInfoList)
         {
-            if(monsterinfo.monsterModel.isActiveAndEnabled)
-            monsterinfo.monsterModel.StopAction(_stopcount);
+            if (monsterinfo.monsterModel.isActiveAndEnabled)
+                monsterinfo.monsterModel.StopAction(_stopcount);
         }
     }
-    
+
     /// <summary>
     /// NOTE : 아이템 trigger 처리 기능 정지
     /// </summary>
     /// <param name="_stopcount"></param>
     public void ItemStop(float _stopcount)
     {
-        foreach(var iteminfo in itemInfoList)
+        foreach (var iteminfo in itemInfoList)
         {
             if (iteminfo.itemModel.isActiveAndEnabled)
                 iteminfo.itemModel.StopAction(_stopcount);
@@ -421,7 +480,7 @@ public class SpawnDesStructureInfo
         dsType = _dstype;
         startPos = _startpos;
         desStructureModel = null;
-    }   
+    }
 
     public SpawnDesStructureInfo(DesStructure_TYPE _dstype, Vector2 _startpos, DesStructure ob)
     {
@@ -456,7 +515,7 @@ public class SpawnItemInfo
     public Item_TYPE iType;
     public Vector2 startpos;
     public ItemSc itemModel;
-    
+
     public SpawnItemInfo(Item_TYPE _itype, Vector2 _startpos)
     {
         iType = _itype;
@@ -489,7 +548,7 @@ public class TileInfo
 {
     public TileType tileType;
     public int tileNumber;
-    
+
 
     public TileInfo(TileType _tiletype, int _tilenumber)
     {
