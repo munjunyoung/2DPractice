@@ -99,15 +99,12 @@ public class MapToolWindow : EditorWindow
             GetWindow<TestSettingWindow>();
         }
 
-        if(GUILayout.Button("Clear All Character",GUILayout.Height(buttonHeight)))
+        if(GUILayout.Button("Clear Player Character",GUILayout.Height(buttonHeight)))
         {
-            if (EditorUtility.DisplayDialog("All Delete", "All Delete Player and Monster in Hierarchy, Really?", "Yes", "No"))
+            if (EditorUtility.DisplayDialog("All Delete", "All Delete Player in Hierarchy, Really?", "Yes", "No"))
             {
                 var playerob = GameObject.FindGameObjectWithTag("Player");
                 DestroyImmediate(playerob);
-                var monsterobs = GameObject.FindGameObjectsWithTag("Monster");
-                foreach (var m in monsterobs)
-                    DestroyImmediate(m);
             }
         }
 

@@ -46,7 +46,11 @@ public class DrawMap : MonoBehaviour
         Tilemap[] tilemaps = tmpgrid.transform.GetComponentsInChildren<Tilemap>();
 
         foreach (var tm in tilemaps)
-            roomlist.Add(AnalyzeTileMap(tm));
+        {
+            DungeonRoom tmproom = new DungeonRoom(1, tm.size.x, tm.size.y);
+            tmproom.roomTileArray = loadData.AnalyzeTileMap(tm);
+            roomlist.Add(tmproom);
+        }
 
         DrawTilemap(roomlist);
         roomlist[0].roomModel.SetActive(true);
@@ -54,49 +58,10 @@ public class DrawMap : MonoBehaviour
         tmpgrid.SetActive(false);
     }
 
-
     /// <summary>
-    /// NOTE : Tilemap 을 Tileinfo array로 변경
+    /// NOTE : Tileinfo를 통하여 Draw
     /// </summary>
-    /// <param name="_tilemaps"></param>
-    private DungeonRoom AnalyzeTileMap(Tilemap _tm)
-    {
-        DungeonRoom tmproom = new DungeonRoom(1, _tm.size.x, _tm.size.y);
-        foreach (var tmpos in _tm.cellBounds.allPositionsWithin)
-        {
-            //해당 포지션에 아무것도 없을경우 진행
-            if (!_tm.HasTile(tmpos))
-                continue;
-            //땅일 경우 바로 생성 
-            if (_tm.GetTile(tmpos).name.Equals("RuleTile_Terrain"))
-            {
-                tmproom.roomTileArray[tmpos.x, tmpos.y] = new TileInfo(TileType.Terrain);
-                continue;
-            }
-            // ex) Monster_0  -> _기준으로 구분하여 처리
-            var name = _tm.GetTile(tmpos).name;
-            int subidx = name.IndexOf("_");
-            string tiletype = name.Substring(0, subidx);
-            var tileNumber = int.Parse(name.Substring(subidx + 1).ToString());
-            switch (tiletype)
-            {
-                case "Door":
-                    tmproom.roomTileArray[tmpos.x, tmpos.y] = new TileInfo(TileType.Entrance, tileNumber);
-                    break;
-                case "Destructure":
-                    tmproom.roomTileArray[tmpos.x, tmpos.y] = new TileInfo(TileType.Destructure, tileNumber);
-                    break;
-                case "Monster":
-                    tmproom.roomTileArray[tmpos.x, tmpos.y] = new TileInfo(TileType.Monster, tileNumber);
-                    break;
-                case "Item":
-                    tmproom.roomTileArray[tmpos.x, tmpos.y] = new TileInfo(TileType.Item, tileNumber);
-                    break;
-            }
-        }
-        return tmproom;
-    }
-
+    /// <param name="_rooms"></param>
     public void DrawTilemap(List<DungeonRoom> _rooms)
     {
         //부모 생성 

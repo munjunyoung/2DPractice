@@ -84,9 +84,13 @@ public class BoardManager : MonoBehaviour
         //Terrain을 배치할때 각 Terrain마다 높이를 고려해야 하므로
         int possibleJumpHeightValue = 5;
         var remainXSize = _tmpRoom.roomRect.xMax - _tmpRoom.currentXPos;
-        List<GeneratedTerrainData> possibleTerrain = new List<GeneratedTerrainData>();
 
-        foreach (var tmpt in loadData.terrainDataList)
+        List<GeneratedTerrainData> possibleTerrain = new List<GeneratedTerrainData>();
+        
+
+        GeneratedTerrainData selectedTypeTerrain = loadData.terrainDataDic[_tmpRoom.roomClearType.ToString()][Random.Range(0, loadData.terrainDataDic[_tmpRoom.roomClearType.ToString()].Count)];
+        List<GeneratedTerrainData> terrainlist = loadData.terrainDataDic["Terrain"];
+        foreach (var tmpt in terrainlist)
         {
             //현재 남아있는 Xsize와 ysize를 방에 들어갈수있는지 체크하고 임시 생성한 리스트에 추가
             if (remainXSize > tmpt.size.xMax && (_tmpRoom.roomRect.yMax) > tmpt.size.yMax)
@@ -388,7 +392,7 @@ public class BoardManager : MonoBehaviour
             {
                 case Room_ClearType.Battle:
                     //몬스터 생성
-                    room.SetObPos(room.monsterInfoList);
+                    room.SetPrefabInfoList(room.monsterInfoList);
 
                     foreach (SpawnMonsterInfo monsterinfo in room.monsterInfoList)
                     {
@@ -399,7 +403,7 @@ public class BoardManager : MonoBehaviour
 
                     break;
                 case Room_ClearType.Puzzle:
-                    room.SetObPos(room.desStructureInfoList);
+                    room.SetPrefabInfoList(room.desStructureInfoList);
 
                     foreach(SpawnDesStructureInfo dsinfo in room.desStructureInfoList)
                     {
@@ -435,7 +439,7 @@ public class BoardManager : MonoBehaviour
     /// <param name="room"></param>
     private void DrawItem(DungeonRoom room)
     {
-        room.SetObPos(room.itemInfoList);
+        room.SetPrefabInfoList(room.itemInfoList);
         foreach (SpawnItemInfo iteminfo in room.itemInfoList)
         {
             ItemSc tmpitem = Instantiate(loadData.itemPrefabDic[iteminfo.iType.ToString()], iteminfo.startpos, Quaternion.identity, room.roomModel.transform);

@@ -45,7 +45,7 @@ public class DungeonRoom
     /// <param name="_heightMax"></param>
     public DungeonRoom(int _roomNumber, int _roomSpriteType, int _widthMin, int _widthMax, int _heightMin, int _heightMax)
     {
-        SetObPos(monsterInfoList);
+        SetPrefabInfoList(monsterInfoList);
 
         roomNumberOfList = _roomNumber;
         roomSpriteType = _roomSpriteType;
@@ -151,7 +151,7 @@ public class DungeonRoom
             posX.Add(tmpvalue);
         }
 
-        //저장한 x포지션을 기준으로 y값을 순회하여 roomarray의 0 값을 검색하여 설정
+        //저장한 x포지션을 기준으로 y값을 순회하여 roomarray의 0 값을 검색하여 설정 
         foreach (int tmpx in posX)
         {
             for (int j = 1; j < roomRect.yMax - 1; j++)
@@ -171,7 +171,7 @@ public class DungeonRoom
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="_data"></param>
-    public void SetObPos<T>(T _data)
+    public void SetPrefabInfoList<T>(T _data)
     {
         var type = _data.GetType();
 
@@ -179,7 +179,7 @@ public class DungeonRoom
         int obnumber = level; //(int)(level * 0.5f) + 1;
         List<Vector2> pos = new List<Vector2>(); 
             pos = NormalPosSet(obnumber);
-        Debug.Log(pos.Count);
+
         if (type.Equals(monsterInfoList.GetType()))
         {
             foreach(var p in pos)
@@ -196,115 +196,7 @@ public class DungeonRoom
                 itemInfoList.Add(new SpawnItemInfo(Item_TYPE.Catnip, p));
         }
     }
-
-    /// <summary>
-    /// NOTE : 몬스터 생성 위치 설정
-    /// </summary>
-    public void SetMonstersPos()
-    {
-        //각 방의 몬스터 숫자설정
-        //..level에따른 설정 
-        //Test를 위해 1로만 설정
-        //현재는 레벨만큼 몬스터 생성
-        int obnumber = (int)(level * 0.5f) + 1;
-
-        if (monsterInfoList.Count != 0)
-        {
-            //원래 리스트 숫자와 카운트가 다를경우 
-            if (obnumber <= monsterInfoList.Count)
-                return;
-            else
-                obnumber -= monsterInfoList.Count;
-        }
-
-        //몬스터 숫자만큼 x포지션 저장
-        List<int> posX = new List<int>();
-
-
-        //monsterInfoList.Add(new SpawnMonsterInfo(MONSTER_TYPE.Fox, new Vector2(tmpx, j + 0.5f)));
-
-    }
-
-    /// <summary>
-    /// NOTE : 아이템 숫자 및 포지션 설정
-    /// </summary>
-    public void SetItemPos()
-    {
-        List<int> posX = new List<int>();
-        int itemnumber = level;
-
-        for (int i = 0; i < itemnumber; i++)
-        {
-            var tmpvalue = (int)Random.Range(1, roomRect.xMax - 1);
-            for (int j = 0; j < posX.Count; j++)
-            {
-                if (posX[j].Equals(tmpvalue))
-                {
-                    //random값을 다시 설정하고 j를 0으로 바꿈으로써 다시 체크
-                    tmpvalue = (int)Random.Range(1, roomRect.xMax - 1);
-                    j = 0;
-                }
-            }
-            posX.Add(tmpvalue);
-        }
-        //저장한 x포지션을 기준으로 y값을 순회하여 roomarray의 0 값을 검색하여 설정
-        foreach (int tmpx in posX)
-        {
-            for (int j = 0; j < roomRect.yMax - 1; j++)
-            {
-                if (roomTileArray[tmpx, j] == null)
-                {
-                    itemInfoList.Add(new SpawnItemInfo(Item_TYPE.Catnip, new Vector2(tmpx, j + 1)));
-                    break;
-                }
-            }
-        }
-    }
-
-    /// <summary>
-    /// NOTE : 파괴되는 구조물의 위치 설정
-    /// </summary>
-    public void SetDesStructurePos()
-    {
-        //각 방의 몬스터 숫자설정
-        //..level에따른 설정 
-        //Test를 위해 1로만 설정
-        //현재는 레벨만큼 몬스터 생성
-        int number = level;
-
-        //몬스터 숫자만큼 x포지션 저장
-        List<int> posX = new List<int>();
-        for (int i = 0; i < number; i++)
-        {
-            var tmpvalue = (int)Random.Range(2, roomRect.xMax - 2);
-
-            //같은 값이 있는지 체크?
-            for (int j = 0; j < posX.Count; j++)
-            {
-                if (posX[j].Equals(tmpvalue))
-                {
-                    tmpvalue = (int)Random.Range(2, roomRect.xMax - 2);
-                    //다시 처음부터 확인하기 위함
-                    j = 0;
-                }
-            }
-            posX.Add(tmpvalue);
-        }
-        //저장한 x포지션을 기준으로 y값을 순회하여 roomarray의 0 값을 검색하여 설정
-        foreach (int tmpx in posX)
-        {
-            for (int j = 1; j < roomRect.yMax - 1; j++)
-            {
-                if (roomTileArray[tmpx, j] == null)
-                {
-                    desStructureInfoList.Add(new SpawnDesStructureInfo(DesStructure_TYPE.Frog, new Vector2(tmpx, j + 1f)));
-                    break;
-                }
-            }
-        }
-
-    }
-
+    
     /// <summary>
     /// NOTE : 보스 포지션 설정
     /// </summary>

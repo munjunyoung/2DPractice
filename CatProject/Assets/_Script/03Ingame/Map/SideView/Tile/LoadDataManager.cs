@@ -5,7 +5,7 @@ using UnityEngine.Tilemaps;
 
 enum Room_TileType { Type1 = 0, Type2 }
 public enum TileType {Terrain, Entrance, Monster, Destructure, Item }
-public class LoadDataManager 
+public class LoadDataManager
 {
     private static LoadDataManager _instance = null;
     public static LoadDataManager instance
@@ -29,6 +29,7 @@ public class LoadDataManager
     private readonly string itemPrefabPath = "Item";
     //Tile 
     public TypeOfTileSetType[] tileDataArray;
+    public Dictionary<string, List<GeneratedTerrainData>> terrainDataDic = new Dictionary<string, List<GeneratedTerrainData>>();
     public List<GeneratedTerrainData> terrainDataList = new List<GeneratedTerrainData>();
     //Prefab
     public Dictionary<string, Monster> monsterPrefab = new Dictionary<string, Monster>();
@@ -43,7 +44,7 @@ public class LoadDataManager
     public LoadDataManager()
     {
         tileDataArray = LoadAllTile();
-        terrainDataList = LoadAllTerrainData();
+        terrainDataDic = LoadAllTerrainData();
 
         SetLoadData(itemPrefabDic, itemPrefabPath);
         SetLoadData(skillSpriteDic, skillSpritePath);
@@ -75,23 +76,26 @@ public class LoadDataManager
     /// NOTE : 미리 생성해둔 지형 데이터 TileInfo 배열로 전환
     /// </summary>
     /// <returns></returns>
-    private List<GeneratedTerrainData> LoadAllTerrainData()
+    private Dictionary<string,List<GeneratedTerrainData>> LoadAllTerrainData()
+    {
+        Dictionary<string, List<GeneratedTerrainData>> tmpterrainDataDic = new Dictionary<string, List<GeneratedTerrainData>>();
+        Tilemap[] puzzleloadprefab = Resources.LoadAll<Tilemap>("GeneratedMapData/Puzzle");
+        Tilemap[] battleloadprefab = Resources.LoadAll<Tilemap>("GeneratedMapData/Battle");
+        Tilemap[] terrainloadprefab = Resources.LoadAll<Tilemap>("GeneratedMapData/Terrain");
+        tmpterrainDataDic.Add("Puzzle", SetTerrainList(puzzleloadprefab));
+        tmpterrainDataDic.Add("Battle", SetTerrainList(puzzleloadprefab));
+        tmpterrainDataDic.Add("Terrain", SetTerrainList(puzzleloadprefab));
+
+        return tmpterrainDataDic;
+    }
+
+    private List<GeneratedTerrainData> SetTerrainList(Tilemap[] _prefab)
     {
         List<GeneratedTerrainData> tmpterrainlist = new List<GeneratedTerrainData>();
-
-        Tilemap[] tmploadprefab = Resources.LoadAll<Tilemap>("GeneratedMapData");
-        foreach (var tilemapdata in tmploadprefab)
+        foreach (var tilemapdata in _prefab)
         {
             //데이터를 저장할 맵 배열 생성
-            TileInfo[,] tmptileinfoarray = new TileInfo[tilemapdata.cellBounds.xMax, tilemapdata.cellBounds.yMax];
-            //해당 tilemapdata의 모든 포지션을 검색하여 tile이 설정되어있는 부분을 체크
-            foreach (var tilepos in tilemapdata.cellBounds.allPositionsWithin)
-            {
-                //현재 포지션에 타일이 존재하지 않을경우 
-                if (!tilemapdata.HasTile(tilepos))
-                    continue;
-                tmptileinfoarray[tilepos.x, tilepos.y] = new TileInfo(TileType.Terrain);
-            }
+            TileInfo[,] tmptileinfoarray = AnalyzeTileMap(tilemapdata);
 
             //시작과 끝지점의 가장 아래지형의 바닥의 높이 저장
             int startHeight = -2;
@@ -122,7 +126,50 @@ public class LoadDataManager
 
         return tmpterrainlist;
     }
-    
+
+    /// <summary>
+    /// NOTE : Tilemap 을 Tileinfo array로 변경
+    /// </summary>
+    /// <param name="_tilemaps"></param>
+    public TileInfo[,] AnalyzeTileMap(Tilemap _tm)
+    {
+        TileInfo[,] tmptilearray = new TileInfo[_tm.size.x, _tm.size.y];
+        foreach (var tmpos in _tm.cellBounds.allPositionsWithin)
+        {
+            //해당 포지션에 아무것도 없을경우 진행
+            if (!_tm.HasTile(tmpos))
+                continue;
+            //땅일 경우 바로 생성 
+            if (_tm.GetTile(tmpos).name.Equals("RuleTile_Terrain"))
+            {
+                tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Terrain);
+                continue;
+            }
+            // ex) Monster_0  -> _기준으로 구분하여 처리
+            var name = _tm.GetTile(tmpos).name;
+            int subidx = name.IndexOf("_");
+            string tiletype = name.Substring(0, subidx);
+            var tileNumber = int.Parse(name.Substring(subidx + 1).ToString());
+            switch (tiletype)
+            {
+                case "Door":
+                    tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Entrance, tileNumber);
+                    break;
+                case "Destructure":
+                    tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Destructure, tileNumber);
+                    break;
+                case "Monster":
+                    tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Monster, tileNumber);
+                    break;
+                case "Item":
+                    tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Item, tileNumber);
+                    break;
+            }
+        }
+        return tmptilearray;
+    }
+
+
     /// <summary>
     /// NOTE : dictionary와 path를 변수를 선언하고 파라미터 입력, 해당 데이터 로드하고 dictionary 초기화
     /// </summary>
