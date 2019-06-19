@@ -7,7 +7,7 @@ class SaveObjectWindow : EditorWindow
 {
     static string savefrontfolderPath = "Assets/resources/GeneratedMapData";
     
-    string[] folderType = { "Terrain", "Puzzle", "Battle" };
+    string[] folderType = { "Terrain", "Puzzle" };
     static int toolbarint = 0;
 
     static GameObject selectionOB;

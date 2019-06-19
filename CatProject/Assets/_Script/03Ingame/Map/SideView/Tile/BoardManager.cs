@@ -25,8 +25,8 @@ public class BoardManager : MonoBehaviour
     private int heightMinSize;
     [SerializeField, Range(60, 100)]
     private int heightMaxSize;
-    
-    
+
+
 
     #region Create Room
     /// <summary>
@@ -44,9 +44,12 @@ public class BoardManager : MonoBehaviour
         //RoomLevel설정
         SetRoomLevel();
         //0레벨을 제외한 나머지 랜덤 Terrain 설정
-        for(int i = 1;i<roomList.Count-1;i++)
+        for (int i = 1; i < roomList.Count - 1; i++)
         {
-            SetRandomTerrainRoom(roomList[i]);
+            if (roomList[i].roomClearType.Equals(Room_ClearType.Puzzle))
+                SetPuzzleTypeRoom(roomList[i]);
+            else
+                SetRandomTerrainRoom(roomList[i]);
         }
         //Rooms 연결
         RandomEdgeConnect();
@@ -75,34 +78,35 @@ public class BoardManager : MonoBehaviour
         parentModelOfRooms.transform.localScale = Vector3.one;
         parentModelOfRooms.name = "Rooms";
     }
-    
+
     /// <summary>
     /// NOTE : 미리 저장해둔 지형들을 사이즈를 검색하여 랜덤으로 선택하고 배치
     /// </summary>
-    private void SetRandomTerrainRoom(DungeonRoom _tmpRoom)
+    private void SetRandomTerrainRoom(DungeonRoom _tmproom)
     {
+
         //Terrain을 배치할때 각 Terrain마다 높이를 고려해야 하므로
         int possibleJumpHeightValue = 5;
-        var remainXSize = _tmpRoom.roomRect.xMax - _tmpRoom.currentXPos;
+
 
         List<GeneratedTerrainData> possibleTerrain = new List<GeneratedTerrainData>();
-        
-
-        GeneratedTerrainData selectedTypeTerrain = loadData.terrainDataDic[_tmpRoom.roomClearType.ToString()][Random.Range(0, loadData.terrainDataDic[_tmpRoom.roomClearType.ToString()].Count)];
         List<GeneratedTerrainData> terrainlist = loadData.terrainDataDic["Terrain"];
+
+        var remainXSize = _tmproom.roomRect.xMax - _tmproom.currentXPos;
+
         foreach (var tmpt in terrainlist)
         {
             //현재 남아있는 Xsize와 ysize를 방에 들어갈수있는지 체크하고 임시 생성한 리스트에 추가
-            if (remainXSize > tmpt.size.xMax && (_tmpRoom.roomRect.yMax) > tmpt.size.yMax)
+            if (remainXSize > tmpt.size.xMax && (_tmproom.roomRect.yMax) > tmpt.size.yMax)
             {
                 //Terrain을 처음 생성할 때
-                if (_tmpRoom.beforeTerrainData == null)
+                if (_tmproom.beforeTerrainData == null)
                 {
                     possibleTerrain.Add(tmpt);
                 }
                 else
                 {
-                    if (Mathf.Abs(_tmpRoom.beforeTerrainData.endHeight - tmpt.startHeight) <= possibleJumpHeightValue)
+                    if (Mathf.Abs(_tmproom.beforeTerrainData.endHeight - tmpt.startHeight) <= possibleJumpHeightValue)
                         possibleTerrain.Add(tmpt);
                 }
             }
@@ -119,30 +123,51 @@ public class BoardManager : MonoBehaviour
             {
                 for (int j = 0; j < selectedTerrain.size.yMax; j++)
                 {
-                    if (_tmpRoom.roomTileArray[_tmpRoom.currentXPos + i, j] == null)
-                        _tmpRoom.roomTileArray[_tmpRoom.currentXPos + i, j] = selectedTerrain.tileArray[i, j];
+                    if (_tmproom.roomTileArray[_tmproom.currentXPos + i, j] == null)
+                        _tmproom.roomTileArray[_tmproom.currentXPos + i, j] = selectedTerrain.tileArray[i, j];
                 }
             }
 
-            _tmpRoom.beforeTerrainData = selectedTerrain;
-            _tmpRoom.currentXPos = _tmpRoom.currentXPos + selectedTerrain.size.xMax;
-           
-            
-            SetRandomTerrainRoom(_tmpRoom);
+            _tmproom.beforeTerrainData = selectedTerrain;
+            _tmproom.currentXPos = _tmproom.currentXPos + selectedTerrain.size.xMax;
+
+
+            SetRandomTerrainRoom(_tmproom);
         }
         //없을 경우 마지막으로 끝나는 지형의 나머지 값을 체크
         else
         {
             //음수처리 안해도될듯 하다
-            int nextheight = Random.Range(_tmpRoom.beforeTerrainData.endHeight - possibleJumpHeightValue, _tmpRoom.beforeTerrainData.endHeight + possibleJumpHeightValue);
-            
-            for(int i = _tmpRoom.currentXPos; i<_tmpRoom.roomRect.xMax;i++)
+            int nextheight = Random.Range(_tmproom.beforeTerrainData.endHeight - possibleJumpHeightValue, _tmproom.beforeTerrainData.endHeight + possibleJumpHeightValue);
+
+            for (int i = _tmproom.currentXPos; i < _tmproom.roomRect.xMax; i++)
             {
-                for(int j = 0; j<nextheight;j++)
-                    _tmpRoom.roomTileArray[i, j] = new TileInfo(TileType.Terrain);
+                for (int j = 0; j < nextheight; j++)
+                    _tmproom.roomTileArray[i, j] = new TileInfo(TileType.Terrain);
             }
         }
+
     }
+
+    private void SetPuzzleTypeRoom(DungeonRoom _tmproom)
+    {
+        GeneratedTerrainData puzzleTerrain = loadData.terrainDataDic["Puzzle"][0];//Random.Range(0,loadData.terrainDataDic["Puzzle"].Count)-1];
+        int sizex = puzzleTerrain.size.xMax;
+        int sizey = puzzleTerrain.size.yMax;
+        _tmproom.roomRect = new Rect(0, 0,sizex, sizey+ 30);
+
+        _tmproom.roomTileArray = new TileInfo[sizex, sizey+ 30];
+        for(int x =0; x<sizex; x++)
+        {
+            for(int y=0; y<sizey; y++)
+            {
+                if (puzzleTerrain.tileArray[x, y] != null)
+                    _tmproom.roomTileArray[x, y] = puzzleTerrain.tileArray[x, y];
+            }
+        }
+            
+    }
+
     #endregion
 
     #region ConnectRoom
@@ -167,7 +192,7 @@ public class BoardManager : MonoBehaviour
         for (int i = 1; i < roomList.Count - 1; i++)
         {
             roomList[i].level = levelCount;
-            roomList[i].roomClearType = (Room_ClearType)(Random.Range(0,100)<50?1:2);
+            roomList[i].roomClearType = (Room_ClearType)(Random.Range(0, 100) < 50 ? 1 : 2);
             LevelRoomDic[levelCount].Add(roomList[i]);
 
             if (Random.Range(0, 100) > setSameLevelPer)
@@ -188,7 +213,7 @@ public class BoardManager : MonoBehaviour
             levelCount++;
             LevelRoomDic.Add(levelCount, new List<DungeonRoom>());
             setSameLevelPer = 50;
-        }   
+        }
 
         roomList[roomList.Count - 1].level = levelCount;
         roomList[roomList.Count - 1].roomClearType = Room_ClearType.Boss;
@@ -244,7 +269,7 @@ public class BoardManager : MonoBehaviour
             {
                 Debug.Log(" 레벨 [" + lvl + "] 를 가진 방이 존재하지 않습니다.");
             }
-        }        
+        }
     }
 
     /// <summary>
@@ -294,7 +319,7 @@ public class BoardManager : MonoBehaviour
     {
         DrawMap.instance.DrawTilemap(roomList);
 
-        foreach(var room in roomList)
+        foreach (var room in roomList)
         {
             CreateBackGround(room);
             DrawRoomEdge(room);
@@ -325,7 +350,7 @@ public class BoardManager : MonoBehaviour
             terraintilemap.SetTile(new Vector3Int(-1, j, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
             terraintilemap.SetTile(new Vector3Int(-2, j, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
             terraintilemap.SetTile(new Vector3Int((int)_room.roomRect.xMax, j, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
-            terraintilemap.SetTile(new Vector3Int((int)_room.roomRect.xMax+1, j, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
+            terraintilemap.SetTile(new Vector3Int((int)_room.roomRect.xMax + 1, j, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
         }
         return terraintilemap;
     }
@@ -405,7 +430,7 @@ public class BoardManager : MonoBehaviour
                 case Room_ClearType.Puzzle:
                     room.SetPrefabInfoList(room.desStructureInfoList);
 
-                    foreach(SpawnDesStructureInfo dsinfo in room.desStructureInfoList)
+                    foreach (SpawnDesStructureInfo dsinfo in room.desStructureInfoList)
                     {
                         DesStructure tmpds = Instantiate(loadData.desStructurePrefab[dsinfo.dsType.ToString()], dsinfo.startPos, Quaternion.identity, room.roomModel.transform);
                         tmpds.ownRoom = room;
@@ -417,7 +442,7 @@ public class BoardManager : MonoBehaviour
                     room.SetBossPos();
                     foreach (SpawnBossInfo bossinfo in room.bossInfoList)
                     {
-                        Monster tmpboss = Instantiate(loadData.monsterPrefab[bossinfo.mType.ToString()],bossinfo.startPos , Quaternion.identity, room.roomModel.transform);
+                        Monster tmpboss = Instantiate(loadData.monsterPrefab[bossinfo.mType.ToString()], bossinfo.startPos, Quaternion.identity, room.roomModel.transform);
                         tmpboss.GetComponent<Monster>().isBoss = true;
                         tmpboss.ownRoom = room;
                         bossinfo.monsterModel = tmpboss;
@@ -459,7 +484,7 @@ public class BoardManager : MonoBehaviour
 //            tmpParent.transform.rotation = Quaternion.identity;
 //            tmpParent.name = "Room" + countroom;
 //            tmpParent.transform.SetParent(parentModelOfRooms.transform);
-            
+
 //            CreateBackGround(_room).transform.SetParent(tmpParent.transform);
 
 //            //Ground TileMap 오브젝트 생성

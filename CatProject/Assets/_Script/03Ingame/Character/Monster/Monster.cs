@@ -101,6 +101,8 @@ public class Monster : MonoBehaviour
     private bool isGrounded = false;
     public bool isStopped;
 
+    private float traceOffDistance = 10f;
+    private float traceOnDistance = 7f;
     //HP UI
     [SerializeField]
     private MonsterHPSliderSc hpSliderUI;
@@ -146,7 +148,7 @@ public class Monster : MonoBehaviour
             return;
         if (isKnockbackState)
             return;
-
+        AggroCheck();
         switch (OrderState)
         {
             case ORDER_STATE.Idle:
@@ -172,6 +174,49 @@ public class Monster : MonoBehaviour
         SetAnimationState();
     }
 
+    /// <summary>
+    /// NOTE : 캐릭터 정면으로 발사하는RAY를 통하여 플레이어를 발견하였을 경우 추적
+    /// </summary>
+    private void AggroCheck()
+    {
+        if (OrderState.Equals(ORDER_STATE.Trace))
+            return;
+
+        Vector2 dir = sR.flipX.Equals(true) ? -Vector2.right : Vector2.right;
+        Debug.DrawRay(transform.position, dir *traceOnDistance, Color.green, 0.1f, false);
+        RaycastHit2D checkRay = Physics2D.Raycast(transform.position, dir, traceOnDistance);
+
+        if(checkRay.collider!=null)
+        {
+            Debug.Log(checkRay.collider.tag);
+            if (checkRay.collider.CompareTag("Player"))
+                TraceON(checkRay.collider.transform);
+        }
+        //RaycastHit2D playerCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, ))
+    }
+
+    /// <summary>
+    /// NOTE : TARGET 설정 ORDER STATE TRACE 로 변경
+    /// </summary>
+    /// <param name="target"></param>
+    private void TraceON(Transform target)
+    {
+        if (OrderState.Equals(ORDER_STATE.Trace))
+            return; 
+        OrderState = ORDER_STATE.Trace;
+        targetOb = target;
+    }
+    
+    /// <summary>
+    /// NOTE : 일정 거리 이상으로 벌어질 경우 Trace Off
+    /// </summary>
+    private void TraceOFF()
+    {
+        float dis = Vector2.Distance(transform.position, targetOb.transform.position);
+        if(dis>traceOffDistance)
+            OrderState = Random.Range(0, 100) > 35 ? ORDER_STATE.Idle : ORDER_STATE.Patroll;
+    }
+    
     /// <summary>
     /// NOTE : 구조물에서 길이 없거나 벽에 부딪혔을경우 방향 순회 (속도는 maxspeed의 절반)
     /// TODO : 벽에 부딪혔을 경우에는 점프를 하도록 구현 여지
@@ -221,6 +266,8 @@ public class Monster : MonoBehaviour
         sR.flipX = (int)(transform.position.x) > (int)(targetOb.position.x) ? true : false;
 
         rb2D.velocity = new Vector2(dir.x * currentMoveSpeed, rb2D.velocity.y);
+
+        TraceOFF();
     }
 
     /// <summary>
@@ -280,7 +327,7 @@ public class Monster : MonoBehaviour
     {
         if (!isAlive)
             return;
-
+        TraceON(targetpos.parent);
         CurrentHP -= damage;
         //체력 UI 시작 및 설정
         if (!hpSliderUI.isActiveAndEnabled)

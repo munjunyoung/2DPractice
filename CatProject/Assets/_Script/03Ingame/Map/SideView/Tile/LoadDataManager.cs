@@ -30,7 +30,6 @@ public class LoadDataManager
     //Tile 
     public TypeOfTileSetType[] tileDataArray;
     public Dictionary<string, List<GeneratedTerrainData>> terrainDataDic = new Dictionary<string, List<GeneratedTerrainData>>();
-    public List<GeneratedTerrainData> terrainDataList = new List<GeneratedTerrainData>();
     //Prefab
     public Dictionary<string, Monster> monsterPrefab = new Dictionary<string, Monster>();
     public Dictionary<string, GameObject> structurePrefab = new Dictionary<string, GameObject>();
@@ -80,15 +79,18 @@ public class LoadDataManager
     {
         Dictionary<string, List<GeneratedTerrainData>> tmpterrainDataDic = new Dictionary<string, List<GeneratedTerrainData>>();
         Tilemap[] puzzleloadprefab = Resources.LoadAll<Tilemap>("GeneratedMapData/Puzzle");
-        Tilemap[] battleloadprefab = Resources.LoadAll<Tilemap>("GeneratedMapData/Battle");
         Tilemap[] terrainloadprefab = Resources.LoadAll<Tilemap>("GeneratedMapData/Terrain");
         tmpterrainDataDic.Add("Puzzle", SetTerrainList(puzzleloadprefab));
-        tmpterrainDataDic.Add("Battle", SetTerrainList(puzzleloadprefab));
-        tmpterrainDataDic.Add("Terrain", SetTerrainList(puzzleloadprefab));
+        tmpterrainDataDic.Add("Terrain", SetTerrainList(terrainloadprefab));
 
         return tmpterrainDataDic;
     }
 
+    /// <summary>
+    /// NOTE : Tilemap 데이터 Tileinfo array로 변환 및 시작과 끝 높이 저장
+    /// </summary>
+    /// <param name="_prefab"></param>
+    /// <returns></returns>
     private List<GeneratedTerrainData> SetTerrainList(Tilemap[] _prefab)
     {
         List<GeneratedTerrainData> tmpterrainlist = new List<GeneratedTerrainData>();
