@@ -421,7 +421,7 @@ public class BoardManager : MonoBehaviour
 
                     foreach (SpawnMonsterInfo monsterinfo in room.monsterInfoList)
                     {
-                        Monster tmpm = Instantiate(loadData.monsterPrefab[monsterinfo.mType.ToString()], monsterinfo.startPos, Quaternion.identity, room.roomModel.transform);
+                        Monster tmpm = Instantiate(loadData.monsterPrefabDic[monsterinfo.mType.ToString()], monsterinfo.startPos, Quaternion.identity, room.roomModel.transform);
                         tmpm.ownRoom = room;
                         monsterinfo.monsterModel = tmpm;
                     }
@@ -432,7 +432,7 @@ public class BoardManager : MonoBehaviour
 
                     foreach (SpawnDesStructureInfo dsinfo in room.desStructureInfoList)
                     {
-                        DesStructure tmpds = Instantiate(loadData.desStructurePrefab[dsinfo.dsType.ToString()], dsinfo.startPos, Quaternion.identity, room.roomModel.transform);
+                        DesStructure tmpds = Instantiate(loadData.desStructurePrefabDic[dsinfo.dsType.ToString()], dsinfo.startPos, Quaternion.identity, room.roomModel.transform);
                         tmpds.ownRoom = room;
                         dsinfo.desStructureModel = tmpds;
 
@@ -442,7 +442,7 @@ public class BoardManager : MonoBehaviour
                     room.SetBossPos();
                     foreach (SpawnBossInfo bossinfo in room.bossInfoList)
                     {
-                        Monster tmpboss = Instantiate(loadData.monsterPrefab[bossinfo.mType.ToString()], bossinfo.startPos, Quaternion.identity, room.roomModel.transform);
+                        Monster tmpboss = Instantiate(loadData.monsterPrefabDic[bossinfo.mType.ToString()], bossinfo.startPos, Quaternion.identity, room.roomModel.transform);
                         tmpboss.GetComponent<Monster>().isBoss = true;
                         tmpboss.ownRoom = room;
                         bossinfo.monsterModel = tmpboss;

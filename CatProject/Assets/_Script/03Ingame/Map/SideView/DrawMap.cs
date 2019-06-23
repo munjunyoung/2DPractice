@@ -92,10 +92,15 @@ public class DrawMap : MonoBehaviour
                                 tmptilemap.SetTile(new Vector3Int(x, y, 0), loadData.tileDataArray[room.roomSpriteType].terrainRuleTile);
                                 break;
                             case TileType.Entrance:
-                                GameObject tmpen = Instantiate(loadData.structurePrefab[TileType.Entrance.ToString()], new Vector3(x + 0.5f, y + 1f, 0), Quaternion.identity);
+                                GameObject tmpen = Instantiate(loadData.structurePrefabDic[TileType.Entrance.ToString()], new Vector3(x + 0.5f, y + 1f, 0), Quaternion.identity);
+                                //Maptool에서 사용할경우 대비
+                                if (room.entranceInfoList.Count==0)
+                                    room.entranceInfoList.Add(new EntranceConnectRoom(null, new Vector2(x + 0.5f, y + 0.5f), tmpen.GetComponent<EntranceSc>()));
+                           
                                 tmpen.GetComponent<SpriteRenderer>().sprite = loadData.tileDataArray[room.roomSpriteType].entranceTile[room.roomTileArray[x, y].tileNumber].sprite;
                                 tmpen.GetComponent<SpriteRenderer>().sortingLayerName = "Entrance";
                                 tmpen.GetComponent<EntranceSc>().doorOpenSprite = loadData.tileDataArray[room.roomSpriteType].entranceTile[room.roomTileArray[x, y].tileNumber + 1].sprite;
+                                tmpen.GetComponent<EntranceSc>().doorCloseSprite = loadData.tileDataArray[room.roomSpriteType].entranceTile[room.roomTileArray[x, y].tileNumber].sprite;
                                 tmpen.transform.SetParent(tmpob.transform);
                                 foreach (EntranceConnectRoom nroom in room.entranceInfoList)
                                 {
@@ -110,20 +115,26 @@ public class DrawMap : MonoBehaviour
                             case TileType.Destructure:
                                 DesStructure_TYPE destype = (DesStructure_TYPE)room.roomTileArray[x, y].tileNumber;
                       
-                                DesStructure tmpds = Instantiate(loadData.desStructurePrefab[destype.ToString()], new Vector3Int(x, y, 0), Quaternion.identity, tmptilemap.transform);
+                                DesStructure tmpds = Instantiate(loadData.desStructurePrefabDic[destype.ToString()], new Vector3Int(x   , y+1, 0), Quaternion.identity, tmptilemap.transform);
                                 tmpds.ownRoom = room;
                                 room.desStructureInfoList.Add(new SpawnDesStructureInfo(destype, new Vector2(x, y), tmpds));
                                 break;
                             case TileType.Monster:
                                 MONSTER_TYPE monstertype = (MONSTER_TYPE)room.roomTileArray[x, y].tileNumber;
 
-                                Monster tmpmonster = Instantiate(loadData.monsterPrefab[MONSTER_TYPE.Fox.ToString()], new Vector3Int(x, y, 0), Quaternion.identity, tmptilemap.transform);
+                                Monster tmpmonster = Instantiate(loadData.monsterPrefabDic[MONSTER_TYPE.Fox.ToString()], new Vector3Int(x, y, 0), Quaternion.identity, tmptilemap.transform);
                                 tmpmonster.ownRoom = room;
                                 room.monsterInfoList.Add(new SpawnMonsterInfo(monstertype, new Vector2(x, y), tmpmonster));
 
                                 break;
                             case TileType.Item:
                                 ItemSc tmpitem = Instantiate(loadData.itemPrefabDic[Item_TYPE.Catnip.ToString()], new Vector3Int(x, y, 0), Quaternion.identity, tmptilemap.transform);
+                                break;
+
+                            case TileType.Switch:
+                                SwitchObSc tmpswitch = Instantiate(loadData.switchPrefabDic[Switch_TYPE.SwitchNormal.ToString()], new Vector3(x+0.5f, y+0.5f, 0), Quaternion.identity, tmptilemap.transform);
+                                tmpswitch.ownRoom = room;
+                                room.SwitchInfoList.Add(new SpawnSwitchInfo(new Vector2(x, y), tmpswitch));
                                 break;
                             default:
                                 Debug.Log(room.roomTileArray[x, y].tileType.ToString());

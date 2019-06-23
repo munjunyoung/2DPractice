@@ -10,6 +10,8 @@ TagManager:
   - Monster
   - PlayerAttackEffect
   - DrawGrid
+  - Switch
+  - Obstacle
   layers:
   - Default
   - TransparentFX
@@ -56,11 +58,14 @@ TagManager:
   - name: Ground
     uniqueID: 2177671213
     locked: 0
-  - name: Obstacle
-    uniqueID: 1601502383
+  - name: Switch
+    uniqueID: 1636642343
     locked: 0
   - name: Entrance
     uniqueID: 1010700307
+    locked: 0
+  - name: Obstacle
+    uniqueID: 1601502383
     locked: 0
   - name: Item
     uniqueID: 2693753647

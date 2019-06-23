@@ -4,8 +4,8 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 enum Room_TileType { Type1 = 0, Type2 }
-public enum TileType {Terrain, Entrance, Monster, Destructure, Item }
-public class LoadDataManager
+public enum TileType {Terrain, Entrance, Monster, Destructure, Item , Switch}
+public class LoadDataManager : MonoBehaviour
 {
     private static LoadDataManager _instance = null;
     public static LoadDataManager instance
@@ -13,9 +13,8 @@ public class LoadDataManager
         get
         {
             if(_instance==null)
-            {
                 _instance = new LoadDataManager();
-            }
+
             return _instance;
         }
     }
@@ -27,15 +26,30 @@ public class LoadDataManager
     private readonly string destructibleStructurePrefabPath = "DestructibleStructure";
     private readonly string skillSpritePath = "SkillSprite";
     private readonly string itemPrefabPath = "Item";
+    private readonly string switchPrefabPath = "PuzzleStructure";
     //Tile 
     public TypeOfTileSetType[] tileDataArray;
     public Dictionary<string, List<GeneratedTerrainData>> terrainDataDic = new Dictionary<string, List<GeneratedTerrainData>>();
     //Prefab
-    public Dictionary<string, Monster> monsterPrefab = new Dictionary<string, Monster>();
-    public Dictionary<string, GameObject> structurePrefab = new Dictionary<string, GameObject>();
-    public Dictionary<string, DesStructure> desStructurePrefab = new Dictionary<string, DesStructure>();
+    public Dictionary<string, Monster> monsterPrefabDic = new Dictionary<string, Monster>();
+    public Dictionary<string, GameObject> structurePrefabDic = new Dictionary<string, GameObject>();
+    public Dictionary<string, DesStructure> desStructurePrefabDic = new Dictionary<string, DesStructure>();
     public Dictionary<string, Sprite> skillSpriteDic = new Dictionary<string, Sprite>();
     public Dictionary<string, ItemSc> itemPrefabDic = new Dictionary<string, ItemSc>();
+    public Dictionary<string, SwitchObSc> switchPrefabDic = new Dictionary<string, SwitchObSc>();
+
+    //private void Start()
+    //{
+    //    tileDataArray = LoadAllTile();
+    //    terrainDataDic = LoadAllTerrainData();
+
+    //    SetLoadData(itemPrefabDic, itemPrefabPath);
+    //    SetLoadData(skillSpriteDic, skillSpritePath);
+    //    SetLoadData(monsterPrefabDic, monsterPrefabPath);
+    //    SetLoadData(structurePrefabDic, structurePefabPath);
+    //    SetLoadData(desStructurePrefabDic, destructibleStructurePrefabPath);
+    //    SetLoadData(switchPrefabDic, switchPrefabPath);
+    //}
 
     /// <summary>
     /// NOTE : 필요한 데이터들 한번에 로드
@@ -47,9 +61,10 @@ public class LoadDataManager
 
         SetLoadData(itemPrefabDic, itemPrefabPath);
         SetLoadData(skillSpriteDic, skillSpritePath);
-        SetLoadData(monsterPrefab, monsterPrefabPath);
-        SetLoadData(structurePrefab, structurePefabPath);
-        SetLoadData(desStructurePrefab, destructibleStructurePrefabPath);
+        SetLoadData(monsterPrefabDic, monsterPrefabPath);
+        SetLoadData(structurePrefabDic, structurePefabPath);
+        SetLoadData(desStructurePrefabDic, destructibleStructurePrefabPath);
+        SetLoadData(switchPrefabDic, switchPrefabPath);
     }
 
     /// <summary>a
@@ -165,6 +180,9 @@ public class LoadDataManager
                     break;
                 case "Item":
                     tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Item, tileNumber);
+                    break;
+                case "Switch":
+                    tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Switch, tileNumber);
                     break;
             }
         }

@@ -188,7 +188,6 @@ public class Monster : MonoBehaviour
 
         if(checkRay.collider!=null)
         {
-            Debug.Log(checkRay.collider.tag);
             if (checkRay.collider.CompareTag("Player"))
                 TraceON(checkRay.collider.transform);
         }
@@ -403,7 +402,11 @@ public class Monster : MonoBehaviour
     IEnumerator ActiveOff()
     {
         yield return new WaitForSeconds(2f);
-        ownRoom.CheckLockRoom();
+
+        if (isBoss)
+            ownRoom.BossClearCheck();
+        else
+            ownRoom.CheckLockRoom();
         gameObject.SetActive(false);
     }
 

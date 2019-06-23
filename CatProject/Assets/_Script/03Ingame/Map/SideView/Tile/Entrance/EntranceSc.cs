@@ -14,6 +14,7 @@ public class EntranceSc : MonoBehaviour
     public EntranceSc connectedNextEntrance = null;
     [HideInInspector]
     public Sprite doorOpenSprite = null;
+    public Sprite doorCloseSprite = null;
     
     private void OnTriggerStay2D(Collider2D collision)
     {
@@ -42,5 +43,14 @@ public class EntranceSc : MonoBehaviour
             Debug.Log("Entrance Open Sprite가 존재하지 않습니다.");
         //sprite 변경 및 
         unLockState = true;
+    }
+
+    /// <summary>
+    /// NOTE : 문 잠 
+    /// </summary>
+    public void LockEntracne()
+    {
+        GetComponent<SpriteRenderer>().sprite = doorCloseSprite;
+        unLockState = false;
     }
 }

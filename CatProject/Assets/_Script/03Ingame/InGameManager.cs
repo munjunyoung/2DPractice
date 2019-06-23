@@ -104,17 +104,9 @@ public class InGameManager : MonoBehaviour
     /// <summary>
     /// NOTE : Stage Clear, 알람패널 실행
     /// </summary>
-    public void CheckAllStageClear()
+    public void CheckStageClear()
     {
-        bool allclearCheck = true;
-        foreach(var room in roomList)
-        {
-            if (!room.clearCheck)
-                allclearCheck = false;
-        }
-
-        if(allclearCheck)
-            PlayerUIManager.instance.ShowAlaramPanel(Alarm_State.CLEAR);
+        PlayerUIManager.instance.ShowAlaramPanel(Alarm_State.CLEAR);
     }
 
     /// <summary>

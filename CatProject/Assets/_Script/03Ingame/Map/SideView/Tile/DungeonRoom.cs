@@ -7,6 +7,7 @@ public enum Room_ClearType { None = 0, Battle, Puzzle, Boss }
 public enum MONSTER_TYPE { Fox = 0, Dog = 1 };
 public enum DesStructure_TYPE { Frog = 0 };
 public enum Item_TYPE { Catnip = 0 };
+public enum Switch_TYPE { SwitchNormal =0};
 /// <summary>
 /// NOTE : DungeonRoom 클래스
 /// TODO : 함수와 클래스 변수들을 분리해야하는 개선 사항 가능성
@@ -22,13 +23,13 @@ public class DungeonRoom
     public int roomSpriteType = -1;
     public Room_ClearType roomClearType = Room_ClearType.None;
     public int level = -1;
-    public bool clearCheck = false;
 
     public List<EntranceConnectRoom> entranceInfoList = new List<EntranceConnectRoom>();
     public List<SpawnMonsterInfo> monsterInfoList = new List<SpawnMonsterInfo>();
     public List<SpawnDesStructureInfo> desStructureInfoList = new List<SpawnDesStructureInfo>();
     public List<SpawnBossInfo> bossInfoList = new List<SpawnBossInfo>();
     public List<SpawnItemInfo> itemInfoList = new List<SpawnItemInfo>();
+    public List<SpawnSwitchInfo> SwitchInfoList = new List<SpawnSwitchInfo>();
     //Terrain
     public GeneratedTerrainData beforeTerrainData = null;
     public int currentXPos;
@@ -73,6 +74,18 @@ public class DungeonRoom
     int distanceOtherObject = 3;
     public void SetEntrancePos()
     {
+
+        int entranceCount = entranceInfoList.Count;
+        //이미 그려져있는 출입문 체크
+        foreach (var t in roomTileArray)
+        {
+            if (t.Equals(TileType.Entrance))
+                entranceCount--;
+        }
+        //만약 랜덤설정할 필요가 없을경우 패스
+        if (entranceCount < 0)
+            return;
+
         switch (roomClearType)
         {
             case Room_ClearType.None:
@@ -89,7 +102,7 @@ public class DungeonRoom
             default:
                 List<int> posX = new List<int>();
                 //Entrance갯수 만큼 x포지션 저장
-                for (int i = 0; i < entranceInfoList.Count; i++)
+                for (int i = 0; i < entranceCount; i++)
                 {
                     var randomXvalue = (int)Random.Range(2, roomRect.xMax - 2);
 
@@ -221,13 +234,12 @@ public class DungeonRoom
     public void CheckLockRoom()
     {
         // 몬스터 , 보스 , 아이템 체크 후 출입구 개방
-        if (CheckMonsterAlive() && PuzzleClearCheck() && BossAliveCheck() && GetItemCheck())
-        {
+        if (CheckMonsterAlive() && CheckPuzzleClear() && GetItemCheck() &&CheckSwitchClear())
             UnLockEntrances();
-            clearCheck = true;
-            InGameManager.instance.CheckAllStageClear();
-        }
+        else
+            LockEntrance();
     }
+    
     /// <summary>
     /// NOTE : ROOM CHECK UN LOCK
     /// TODO : 현재는 몬스터의 존재 유무로만 LOCK 해제, 이후에 추가적으로 방의 타입에 따라 룸을 해제하는 방식을 변경 해야한다.
@@ -250,9 +262,11 @@ public class DungeonRoom
     /// NOTE : 퍼즐관련 체크 현재는 부서지는 구조물을 부셨느냐 만 체크함
     /// </summary>
     /// <returns></returns>
-    private bool PuzzleClearCheck()
+    private bool CheckPuzzleClear()
     {
         bool checkcomplete = true;
+        if (SwitchInfoList.Count > 0)
+            return checkcomplete;
 
         if (desStructureInfoList.Count > 0)
         {
@@ -265,11 +279,31 @@ public class DungeonRoom
 
         return checkcomplete;
     }
+    
+    /// <summary>
+    /// NOTE : Switch Check
+    /// </summary>
+    /// <returns></returns>
+    private bool CheckSwitchClear()
+    {
+        bool checkcomplete = true;
 
+        if(SwitchInfoList.Count>0)
+        {
+            foreach(var swinfo in SwitchInfoList)
+            {
+                if (!swinfo.switchModel.SwitchOn)
+                    checkcomplete = false;
+            }
+        }
+
+        return checkcomplete;
+    }
+    
     /// <summary>
     /// 보스 관련 체크 
     /// </summary>
-    private bool BossAliveCheck()
+    public void BossClearCheck()
     {
         bool checkcomplete = true;
 
@@ -281,8 +315,10 @@ public class DungeonRoom
                     checkcomplete = false;
             }
         }
-        //..
-        return checkcomplete;
+
+        if (checkcomplete)
+            InGameManager.instance.CheckStageClear();
+            
     }
 
     /// <summary>
@@ -303,6 +339,12 @@ public class DungeonRoom
         foreach (var entranceinfo in entranceInfoList)
             entranceinfo.entrance.UnLockEntrance();
         Debug.Log("UNLOCK ROOM [" + roomNumberOfList + "]");
+    }
+
+    private void LockEntrance()
+    {
+        foreach (var entranceinfo in entranceInfoList)
+            entranceinfo.entrance.LockEntracne();
     }
     #endregion
 
@@ -417,6 +459,22 @@ public class SpawnItemInfo
 }
 
 /// <summary>
+/// NOTE : 퍼즐형 스위치 클래스
+/// </summary>
+public class SpawnSwitchInfo
+{
+    public Vector2 startpos;
+    public SwitchObSc switchModel;
+    
+    public SpawnSwitchInfo(Vector2 _startpos, SwitchObSc ob)
+    {
+        startpos = _startpos;
+        switchModel = ob;
+    }
+    
+}
+
+/// <summary>
 /// NOTE : 출입구 클래스 연결된 방과 해당 오브젝트 (struct으로 구현하였다가 foreach문에서 반복 변수 초기화가 불가하여 class로 변경(구조체 : 값복사, 클래스 : 참조복사)
 /// </summary>
 public class EntranceConnectRoom
@@ -430,6 +488,13 @@ public class EntranceConnectRoom
         connectedRoom = _room;
         startPos = Vector2.zero;
         entrance = null;
+    }
+
+    public EntranceConnectRoom(DungeonRoom _room, Vector2 _startpos, EntranceSc ob)
+    {
+        connectedRoom = _room;
+        startPos = _startpos;
+        entrance = ob;
     }
 }
 
