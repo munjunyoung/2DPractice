@@ -73,7 +73,7 @@ public class InGameManager : MonoBehaviour
         roomList[currentnum].roomModel.SetActive(false);
         roomList[nextnum].roomModel.SetActive(true);
         currentRoom = roomList[nextnum];
-        Debug.Log("Change Room ! : CurrentRoom[" + currentnum + "] -> [" + nextnum + "]");
+        Debug.Log("Change Room ! : CurrentRoom[" + currentnum + "]" +" Type : " + roomList[currentnum].roomClearType + " -> [" + nextnum + "]" + "Type : " + roomList[nextnum].roomClearType);
         currentRoom.CheckLockRoom();
 
         StopAllCharacter(changeRoomStopCount);

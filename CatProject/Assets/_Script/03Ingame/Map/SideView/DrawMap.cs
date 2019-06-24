@@ -51,8 +51,8 @@ public class DrawMap : MonoBehaviour
             tmproom.roomTileArray = loadData.AnalyzeTileMap(tm);
             roomlist.Add(tmproom);
         }
-
-        DrawTilemap(roomlist);
+        foreach(var room in roomlist)
+            DrawTilemap(room);
         roomlist[0].roomModel.SetActive(true);
 
         tmpgrid.SetActive(false);
@@ -62,91 +62,117 @@ public class DrawMap : MonoBehaviour
     /// NOTE : Tileinfo를 통하여 Draw
     /// </summary>
     /// <param name="_rooms"></param>
-    public void DrawTilemap(List<DungeonRoom> _rooms)
+    public GameObject DrawTilemap(DungeonRoom room)
     {
-        //부모 생성 
-        GameObject gridob = new GameObject("TmpGrid", typeof(Grid));
-        gridob.GetComponent<Grid>().cellGap = new Vector3(-0.001f, -0.001f, 0);
+        //Tilemap 생성 및 초기화
+        var tmpob = new GameObject("Room" + room.roomNumberOfList, typeof(Tilemap), typeof(CompositeCollider2D));
+        tmpob.AddComponent<TilemapCollider2D>().usedByComposite = true;
+        tmpob.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
+        tmpob.AddComponent<TilemapRenderer>().sortingLayerName = "Ground";
+        tmpob.tag = "Ground";
+        tmpob.layer = 8;
+        Tilemap tmptilemap = tmpob.GetComponent<Tilemap>();
 
-        int count = 0;
-        foreach (var room in _rooms)
+        //Edge생성
+        for (int i = 0; i < room.roomRect.xMax; i++)
         {
-            var tmpob = new GameObject("Room" + count, typeof(Tilemap), typeof(CompositeCollider2D));
-            tmpob.transform.SetParent(gridob.transform);
-            tmpob.AddComponent<TilemapCollider2D>().usedByComposite = true;
-            tmpob.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
-            tmpob.AddComponent<TilemapRenderer>().sortingLayerName = "Ground";
-            tmpob.tag = "Ground";
-            tmpob.layer = 8;
-            Tilemap tmptilemap = tmpob.GetComponent<Tilemap>();
+            tmptilemap.SetTile(new Vector3Int(i, -1, 0), loadData.tileDataArray[room.roomSpriteType].terrainRuleTile);
+            tmptilemap.SetTile(new Vector3Int(i, -2, 0), loadData.tileDataArray[room.roomSpriteType].terrainRuleTile);
+            tmptilemap.SetTile(new Vector3Int(i, (int)room.roomRect.yMax, 0), loadData.tileDataArray[room.roomSpriteType].terrainRuleTile);
+            tmptilemap.SetTile(new Vector3Int(i, (int)room.roomRect.yMax + 1, 0), loadData.tileDataArray[room.roomSpriteType].terrainRuleTile);
+        }
 
-            for (int x = 0; x < room.roomRect.xMax; x++)
+        //left, right
+        for (int j = -2; j < room.roomRect.yMax + 2; j++)
+        {
+            tmptilemap.SetTile(new Vector3Int(-1, j, 0), loadData.tileDataArray[room.roomSpriteType].terrainRuleTile);
+            tmptilemap.SetTile(new Vector3Int(-2, j, 0), loadData.tileDataArray[room.roomSpriteType].terrainRuleTile);
+            tmptilemap.SetTile(new Vector3Int((int)room.roomRect.xMax, j, 0), loadData.tileDataArray[room.roomSpriteType].terrainRuleTile);
+            tmptilemap.SetTile(new Vector3Int((int)room.roomRect.xMax + 1, j, 0), loadData.tileDataArray[room.roomSpriteType].terrainRuleTile);
+        }
+        //내부 생성
+        for (int x = 0; x < room.roomRect.xMax; x++)
+        {
+            for (int y = 0; y < room.roomRect.yMax; y++)
             {
-                for (int y = 0; y < room.roomRect.yMax; y++)
+                if (room.roomTileArray[x, y] != null)
                 {
-                    if (room.roomTileArray[x, y] != null)
+                    switch (room.roomTileArray[x, y].tileType)
                     {
-                        switch (room.roomTileArray[x, y].tileType)
-                        {
-                            case TileType.Terrain:
-                                tmptilemap.SetTile(new Vector3Int(x, y, 0), loadData.tileDataArray[room.roomSpriteType].terrainRuleTile);
-                                break;
-                            case TileType.Entrance:
-                                GameObject tmpen = Instantiate(loadData.structurePrefabDic[TileType.Entrance.ToString()], new Vector3(x + 0.5f, y + 1f, 0), Quaternion.identity);
-                                //Maptool에서 사용할경우 대비
-                                if (room.entranceInfoList.Count==0)
-                                    room.entranceInfoList.Add(new EntranceConnectRoom(null, new Vector2(x + 0.5f, y + 0.5f), tmpen.GetComponent<EntranceSc>()));
-                           
-                                tmpen.GetComponent<SpriteRenderer>().sprite = loadData.tileDataArray[room.roomSpriteType].entranceTile[room.roomTileArray[x, y].tileNumber].sprite;
-                                tmpen.GetComponent<SpriteRenderer>().sortingLayerName = "Entrance";
-                                tmpen.GetComponent<EntranceSc>().doorOpenSprite = loadData.tileDataArray[room.roomSpriteType].entranceTile[room.roomTileArray[x, y].tileNumber + 1].sprite;
-                                tmpen.GetComponent<EntranceSc>().doorCloseSprite = loadData.tileDataArray[room.roomSpriteType].entranceTile[room.roomTileArray[x, y].tileNumber].sprite;
-                                tmpen.transform.SetParent(tmpob.transform);
-                                foreach (EntranceConnectRoom nroom in room.entranceInfoList)
+                        case TileType.Terrain:
+                            tmptilemap.SetTile(new Vector3Int(x, y, 0), loadData.tileDataArray[room.roomSpriteType].terrainRuleTile);
+                            break;
+                        case TileType.Entrance:
+                            GameObject tmpen = Instantiate(loadData.structurePrefabDic[TileType.Entrance.ToString()], new Vector3(x + 0.5f, y + 1f, 0), Quaternion.identity);
+                            //Maptool에서 사용할경우 대비
+                            if (room.entranceInfoList.Count == 0)
+                                room.entranceInfoList.Add(new EntranceConnectRoom(null, new Vector2(x + 0.5f, y + 0.5f), tmpen.GetComponent<EntranceSc>()));
+
+                            tmpen.GetComponent<SpriteRenderer>().sprite = loadData.tileDataArray[room.roomSpriteType].entranceTile[room.roomTileArray[x, y].tileNumber].sprite;
+                            tmpen.GetComponent<SpriteRenderer>().sortingLayerName = "Entrance";
+                            tmpen.GetComponent<EntranceSc>().doorOpenSprite = loadData.tileDataArray[room.roomSpriteType].entranceTile[room.roomTileArray[x, y].tileNumber + 1].sprite;
+                            tmpen.GetComponent<EntranceSc>().doorCloseSprite = loadData.tileDataArray[room.roomSpriteType].entranceTile[room.roomTileArray[x, y].tileNumber].sprite;
+                            tmpen.transform.SetParent(tmpob.transform);
+                            foreach (EntranceConnectRoom nroom in room.entranceInfoList)
+                            {
+                                if (nroom.entrance == null)
                                 {
-                                    if (nroom.entrance == null)
-                                    {
-                                        tmpen.GetComponent<EntranceSc>().currentRoomNumber = room.roomNumberOfList;
-                                        nroom.entrance = tmpen.GetComponent<EntranceSc>();
-                                        break;
-                                    }
+                                    tmpen.GetComponent<EntranceSc>().currentRoomNumber = room.roomNumberOfList;
+                                    nroom.entrance = tmpen.GetComponent<EntranceSc>();
+                                    break;
                                 }
-                                break;
-                            case TileType.Destructure:
-                                DesStructure_TYPE destype = (DesStructure_TYPE)room.roomTileArray[x, y].tileNumber;
-                      
-                                DesStructure tmpds = Instantiate(loadData.desStructurePrefabDic[destype.ToString()], new Vector3Int(x   , y+1, 0), Quaternion.identity, tmptilemap.transform);
-                                tmpds.ownRoom = room;
-                                room.desStructureInfoList.Add(new SpawnDesStructureInfo(destype, new Vector2(x, y), tmpds));
-                                break;
-                            case TileType.Monster:
-                                MONSTER_TYPE monstertype = (MONSTER_TYPE)room.roomTileArray[x, y].tileNumber;
+                            }
+                            break;
+                        case TileType.Destructure:
+                            DesStructure_TYPE destype = (DesStructure_TYPE)room.roomTileArray[x, y].tileNumber;
 
-                                Monster tmpmonster = Instantiate(loadData.monsterPrefabDic[MONSTER_TYPE.Fox.ToString()], new Vector3Int(x, y, 0), Quaternion.identity, tmptilemap.transform);
-                                tmpmonster.ownRoom = room;
-                                room.monsterInfoList.Add(new SpawnMonsterInfo(monstertype, new Vector2(x, y), tmpmonster));
+                            DesStructure tmpds = Instantiate(loadData.desStructurePrefabDic[destype.ToString()], new Vector3Int(x, y + 1, 0), Quaternion.identity, tmptilemap.transform);
+                            tmpds.ownRoom = room;
+                            room.desStructureInfoList.Add(new SpawnDesStructureInfo(destype, new Vector2(x, y), tmpds));
+                            break;
+                        case TileType.Monster:
+                            MONSTER_TYPE monstertype = (MONSTER_TYPE)room.roomTileArray[x, y].tileNumber;
 
-                                break;
-                            case TileType.Item:
-                                ItemSc tmpitem = Instantiate(loadData.itemPrefabDic[Item_TYPE.Catnip.ToString()], new Vector3Int(x, y, 0), Quaternion.identity, tmptilemap.transform);
-                                break;
-
-                            case TileType.Switch:
-                                SwitchObSc tmpswitch = Instantiate(loadData.switchPrefabDic[Switch_TYPE.SwitchNormal.ToString()], new Vector3(x+0.5f, y+0.5f, 0), Quaternion.identity, tmptilemap.transform);
-                                tmpswitch.ownRoom = room;
-                                room.SwitchInfoList.Add(new SpawnSwitchInfo(new Vector2(x, y), tmpswitch));
-                                break;
-                            default:
-                                Debug.Log(room.roomTileArray[x, y].tileType.ToString());
-                                break;
-                        }
+                            Monster tmpmonster = Instantiate(loadData.monsterPrefabDic[MONSTER_TYPE.Fox.ToString()], new Vector3Int(x, y, 0), Quaternion.identity, tmptilemap.transform);
+                            tmpmonster.ownRoom = room;
+                            room.monsterInfoList.Add(new SpawnMonsterInfo(monstertype, new Vector2(x, y), tmpmonster));
+                            break;
+                        case TileType.Item:
+                            ItemSc tmpitem = Instantiate(loadData.itemPrefabDic[Item_TYPE.Catnip.ToString()], new Vector3Int(x, y, 0), Quaternion.identity, tmptilemap.transform);
+                            break;
+                        case TileType.Switch:
+                            SwitchObSc tmpswitch = Instantiate(loadData.switchPrefabDic[Switch_TYPE.SwitchNormal.ToString()], new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity, tmptilemap.transform);
+                            tmpswitch.ownRoom = room;
+                            room.SwitchInfoList.Add(new SpawnSwitchInfo(new Vector2(x, y), tmpswitch));
+                            break;
+                        default:
+                            Debug.Log(room.roomTileArray[x, y].tileType.ToString());
+                            break;
                     }
                 }
             }
-            count++;
-            room.roomModel = tmpob;
-            tmpob.SetActive(false);
         }
+        //배경 생성 
+        GameObject tmpParent = new GameObject("BackGroundParent");
+        int count = 0;
+        foreach (var tmptile in loadData.tileDataArray[room.roomSpriteType].backGroundTile)
+        {
+            GameObject backgroundob = new GameObject("BackGround", typeof(SpriteRenderer));
+            backgroundob.transform.localPosition = Vector3.zero;
+            backgroundob.transform.localRotation = Quaternion.identity;
+            backgroundob.GetComponent<SpriteRenderer>().sortingLayerName = "BackGround";
+            backgroundob.GetComponent<SpriteRenderer>().drawMode = SpriteDrawMode.Sliced;
+            backgroundob.GetComponent<SpriteRenderer>().sprite = tmptile.sprite;
+            backgroundob.GetComponent<SpriteRenderer>().size = room.roomRect.size;
+            backgroundob.GetComponent<SpriteRenderer>().sortingOrder = count;
+            count++;
+            backgroundob.transform.SetParent(tmpParent.transform);
+        }
+        tmpParent.transform.SetParent(tmpob.transform);
+        room.roomModel = tmpob;
+        tmpob.SetActive(false);
+
+        return tmpob;
     }
 
 }

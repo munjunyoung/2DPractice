@@ -11,12 +11,13 @@ public class DesStructure : MonoBehaviour
     public Sprite[] spriteArray;
     private int hp = 0;
     public bool isAlive = false;
-
+    private Vector2 startpos;
     private void Awake()
     {
         hp = spriteArray.Length;
         isAlive = true;
         spRenderer = GetComponent<SpriteRenderer>();
+        startpos = transform.localPosition;
     }
 
     /// <summary>
@@ -24,6 +25,8 @@ public class DesStructure : MonoBehaviour
     /// </summary>
     private void TakeDamage()
     {
+        if (!isAlive)
+            return;
         hp -= 1;
         if (hp > 0)
             spRenderer.sprite = spriteArray[hp - 1];
@@ -41,10 +44,18 @@ public class DesStructure : MonoBehaviour
     {
         isAlive = false;
         spRenderer.sprite = null;
+        GetComponent<Rigidbody2D>().simulated = false;
         GetComponent<BoxCollider2D>().isTrigger = true;
+        GetComponent<SpriteRenderer>().sprite = null;
         yield return new WaitForSeconds(count);
-        ownRoom.CheckLockRoom();
-        gameObject.SetActive(false);
+        transform.localPosition = startpos;
+        transform.localRotation = Quaternion.identity;
+        hp = spriteArray.Length;
+        GetComponent<Rigidbody2D>().simulated = true;
+        GetComponent<BoxCollider2D>().isTrigger = false;
+        
+        spRenderer.sprite = spriteArray[hp-1];
+        isAlive = true;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

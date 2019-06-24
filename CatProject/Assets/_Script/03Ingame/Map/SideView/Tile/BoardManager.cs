@@ -26,7 +26,7 @@ public class BoardManager : MonoBehaviour
     [SerializeField, Range(60, 100)]
     private int heightMaxSize;
 
-
+    public GameObject gridOb;
 
     #region Create Room
     /// <summary>
@@ -58,7 +58,7 @@ public class BoardManager : MonoBehaviour
             room.SetEntrancePos();
         PrintLogRoomNeighbors();
         //Rooms Draw
-        DrawRoom();
+        DrawRooms();
         //출입문 진입시 출현할 포지션 설정
         SetConnectedEntrance();
         //적생성
@@ -192,7 +192,7 @@ public class BoardManager : MonoBehaviour
         for (int i = 1; i < roomList.Count - 1; i++)
         {
             roomList[i].level = levelCount;
-            roomList[i].roomClearType = (Room_ClearType)(Random.Range(0, 100) < 50 ? 1 : 2);
+            roomList[i].roomClearType = (Room_ClearType)(Random.Range(0, 100) <0 ? 1 : 2);
             LevelRoomDic[levelCount].Add(roomList[i]);
 
             if (Random.Range(0, 100) > setSameLevelPer)
@@ -313,46 +313,16 @@ public class BoardManager : MonoBehaviour
 
     #region Draw
     /// <summary>
-    /// NOTE : 생성해둔 DungeonRoomByTile객체의 정보를 통하여 설정
+    /// NOTE : Grid 오브젝트를 생성 하고 생성해둔 DungeonRoomByTile객체의 정보를 통하여 설정
     /// </summary>
-    private void DrawRoom()
+    private void DrawRooms()
     {
-        DrawMap.instance.DrawTilemap(roomList);
+        //부모 생성 
+        gridOb = new GameObject("Rooms", typeof(Grid));
+        gridOb.GetComponent<Grid>().cellGap = new Vector3(-0.001f, -0.001f, 0);
 
         foreach (var room in roomList)
-        {
-            CreateBackGround(room);
-            DrawRoomEdge(room);
-        }
-    }
-
-    /// <summary>
-    /// NOTE : 모든 방의 테두리 생성
-    /// </summary>
-    /// <param name="_terraintilemap"></param>
-    /// <param name="_room"></param>
-    /// <returns></returns>
-    private Tilemap DrawRoomEdge(DungeonRoom _room)
-    {
-        Tilemap terraintilemap = _room.roomModel.GetComponent<Tilemap>();
-        //bottom, top
-        for (int i = 0; i < _room.roomRect.xMax; i++)
-        {
-            terraintilemap.SetTile(new Vector3Int(i, -1, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
-            terraintilemap.SetTile(new Vector3Int(i, -2, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
-            terraintilemap.SetTile(new Vector3Int(i, (int)_room.roomRect.yMax, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
-            terraintilemap.SetTile(new Vector3Int(i, (int)_room.roomRect.yMax + 1, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
-        }
-
-        //left, right
-        for (int j = -2; j < _room.roomRect.yMax + 2; j++)
-        {
-            terraintilemap.SetTile(new Vector3Int(-1, j, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
-            terraintilemap.SetTile(new Vector3Int(-2, j, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
-            terraintilemap.SetTile(new Vector3Int((int)_room.roomRect.xMax, j, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
-            terraintilemap.SetTile(new Vector3Int((int)_room.roomRect.xMax + 1, j, 0), loadData.tileDataArray[_room.roomSpriteType].terrainRuleTile);
-        }
-        return terraintilemap;
+            DrawMap.instance.DrawTilemap(room).transform.SetParent(gridOb.transform);
     }
 
     /// <summary>
@@ -428,15 +398,6 @@ public class BoardManager : MonoBehaviour
 
                     break;
                 case Room_ClearType.Puzzle:
-                    room.SetPrefabInfoList(room.desStructureInfoList);
-
-                    foreach (SpawnDesStructureInfo dsinfo in room.desStructureInfoList)
-                    {
-                        DesStructure tmpds = Instantiate(loadData.desStructurePrefabDic[dsinfo.dsType.ToString()], dsinfo.startPos, Quaternion.identity, room.roomModel.transform);
-                        tmpds.ownRoom = room;
-                        dsinfo.desStructureModel = tmpds;
-
-                    }
                     break;
                 case Room_ClearType.Boss:
                     room.SetBossPos();

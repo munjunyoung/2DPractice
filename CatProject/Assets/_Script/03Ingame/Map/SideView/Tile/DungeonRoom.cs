@@ -7,7 +7,7 @@ public enum Room_ClearType { None = 0, Battle, Puzzle, Boss }
 public enum MONSTER_TYPE { Fox = 0, Dog = 1 };
 public enum DesStructure_TYPE { Frog = 0 };
 public enum Item_TYPE { Catnip = 0 };
-public enum Switch_TYPE { SwitchNormal =0};
+public enum Switch_TYPE { SwitchNormal = 0 };
 /// <summary>
 /// NOTE : DungeonRoom 클래스
 /// TODO : 함수와 클래스 변수들을 분리해야하는 개선 사항 가능성
@@ -46,7 +46,6 @@ public class DungeonRoom
     /// <param name="_heightMax"></param>
     public DungeonRoom(int _roomNumber, int _roomSpriteType, int _widthMin, int _widthMax, int _heightMin, int _heightMax)
     {
-        SetPrefabInfoList(monsterInfoList);
 
         roomNumberOfList = _roomNumber;
         roomSpriteType = _roomSpriteType;
@@ -71,21 +70,32 @@ public class DungeonRoom
     /// TODO : 현재는 가로값을 랜덤으로 설정하고 높이는 무조건 땅위에 생성하도록 설정하여 개선 가능성이 매우 높음
     /// </summary>
     /// 
-    int distanceOtherObject = 3;
+
     public void SetEntrancePos()
     {
 
         int entranceCount = entranceInfoList.Count;
+        List<int> posXisalready = new List<int>();
         //이미 그려져있는 출입문 체크
-        foreach (var t in roomTileArray)
+        for (int x = 0; x < roomRect.xMax; x++)
         {
-            if (t.Equals(TileType.Entrance))
-                entranceCount--;
+            for (int y = 0; y < roomRect.yMax; y++)
+            {
+                if (roomTileArray[x, y] != null)
+                {
+                    if (roomTileArray[x, y].tileType.Equals(TileType.Entrance))
+                    {
+                        posXisalready.Add(x);
+                        entranceCount--;
+                    }
+                }
+            }
         }
         //만약 랜덤설정할 필요가 없을경우 패스
         if (entranceCount < 0)
+        {
             return;
-
+        }
         switch (roomClearType)
         {
             case Room_ClearType.None:
@@ -100,33 +110,96 @@ public class DungeonRoom
                 }
                 break;
             default:
-                List<int> posX = new List<int>();
-                //Entrance갯수 만큼 x포지션 저장
+                //int distanceOtherObject = 3;
+                //List<int> posX = new List<int>();
+                ////Entrance갯수 만큼 x포지션 저장
+                //for (int i = 0; i < entranceCount; i++)
+                //{
+                //    var randomXvalue = (int)Random.Range(2, roomRect.xMax - 2);
+
+                //    //같은 값이 있는지 체크?
+                //    for (int j = 0; j < posX.Count; j++)
+                //    {
+                //        if (posX[j] - distanceOtherObject >= randomXvalue && posX[j] + distanceOtherObject <= randomXvalue)
+                //        {
+                //                foreach (var tmpx in posXisalready)
+                //                {
+                //                    if (tmpx - distanceOtherObject >= randomXvalue && tmpx + distanceOtherObject <= randomXvalue)
+                //                    {
+                //                        randomXvalue = (int)Random.Range(2, roomRect.xMax - 2);
+                //                        //다시 처음부터 확인하기 위함
+                //                        j = 0;
+                //                    }
+                //                }
+                //        }
+                //    }
+                //    posX.Add(randomXvalue);
+                //}
+                ////저장한 x포지션을 기준으로 y값을 순회하여 roomarray의 0 값을 검색하여 설정
+                //foreach (int tmpx in posX)
+                //{
+                //    var tx = tmpx;
+                //    for (int j = 0; j < roomRect.yMax; j++)
+                //    {
+                //        if (roomTileArray[tmpx, j] == null)
+                //        {
+                //            if (roomTileArray[tmpx + 1, j].Equals(TileType.Switch))
+                //                tx = tmpx + 1;
+                //            else if(roomTileArray[tmpx-1,j].Equals(TileType.Switch))
+                //            roomTileArray[tx, j] = new TileInfo(TileType.Entrance, 0);
+                //            break;
+                //        }
+                //    }
+                //}
                 for (int i = 0; i < entranceCount; i++)
                 {
-                    var randomXvalue = (int)Random.Range(2, roomRect.xMax - 2);
+                    var rx = (int)Random.Range(2, roomRect.xMax - 2);
+                    for (int y = 0; y < roomRect.yMax; y++)
+                    {
+                        if (roomTileArray[rx, y] == null)
+                        {
+                            if (y != 0)
+                            {
+                                //아래가 지형일 경우에만 
+                                if (roomTileArray[rx, y - 1].tileType.Equals(TileType.Terrain))
+                                {
+                                    //양옆에 아무것도 없을때만
+                                    if (roomTileArray[rx - 1, y] == null && roomTileArray[rx + 1, y] == null)
+                                    {
+                                        roomTileArray[rx, y] = new TileInfo(TileType.Entrance, 0);
+                                        break;
+                                    }
+                                    //리셋 
+                                    else
+                                    {
+                                        i--;
+                                        break;
+                                    }
 
-                    //같은 값이 있는지 체크?
-                    for (int j = 0; j < posX.Count; j++)
-                    {
-                        if (posX[j] - distanceOtherObject > randomXvalue && posX[j] + distanceOtherObject < randomXvalue)
-                        {
-                            randomXvalue = (int)Random.Range(2, roomRect.xMax - 2);
-                            //다시 처음부터 확인하기 위함
-                            j = 0;
-                        }
-                    }
-                    posX.Add(randomXvalue);
-                }
-                //저장한 x포지션을 기준으로 y값을 순회하여 roomarray의 0 값을 검색하여 설정
-                foreach (int tmpx in posX)
-                {
-                    for (int j = 0; j < roomRect.yMax; j++)
-                    {
-                        if (roomTileArray[tmpx, j] == null)
-                        {
-                            roomTileArray[tmpx, j] = new TileInfo(TileType.Entrance, 0);
-                            break;
+                                }
+                                //리셋 
+                                else
+                                {
+                                    i--;
+                                    break;
+                                }
+                            }
+                            //y값이 0일 때는
+                            else
+                            {
+                                if (roomTileArray[rx - 1, y] == null && roomTileArray[rx + 1, y] == null)
+                                {
+                                    roomTileArray[rx, y] = new TileInfo(TileType.Entrance, 0);
+                                    break;
+                                }
+                                //리셋 
+                                else
+                                {
+                                    i--;
+                                    break;
+                                }
+
+                            }
                         }
                     }
                 }
@@ -144,15 +217,14 @@ public class DungeonRoom
     {
         List<Vector2> pos = new List<Vector2>();
         List<int> posX = new List<int>();
+
         for (int i = 0; i < _obnumber; i++)
         {
             var tmpvalue = (int)Random.Range(1, roomRect.xMax - 1);
 
-
             //같은 값이 있는지 체크?
             for (int j = 0; j < posX.Count; j++)
             {
-
                 if (posX[j].Equals(tmpvalue))
                 {
                     tmpvalue = (int)Random.Range(1, roomRect.xMax - 1);
@@ -160,10 +232,10 @@ public class DungeonRoom
                     j = 0;
                 }
             }
-
             posX.Add(tmpvalue);
         }
 
+        Debug.Log(_obnumber + " / " + posX.Count);
         //저장한 x포지션을 기준으로 y값을 순회하여 roomarray의 0 값을 검색하여 설정 
         foreach (int tmpx in posX)
         {
@@ -190,12 +262,12 @@ public class DungeonRoom
 
         //갯수 설정 Level에 따라 다름
         int obnumber = level; //(int)(level * 0.5f) + 1;
-        List<Vector2> pos = new List<Vector2>(); 
-            pos = NormalPosSet(obnumber);
+        List<Vector2> pos = new List<Vector2>();
+        pos = NormalPosSet(obnumber);
 
         if (type.Equals(monsterInfoList.GetType()))
         {
-            foreach(var p in pos)
+            foreach (var p in pos)
                 monsterInfoList.Add(new SpawnMonsterInfo(MONSTER_TYPE.Fox, p));
         }
         else if (type.Equals(desStructureInfoList.GetType()))
@@ -209,7 +281,7 @@ public class DungeonRoom
                 itemInfoList.Add(new SpawnItemInfo(Item_TYPE.Catnip, p));
         }
     }
-    
+
     /// <summary>
     /// NOTE : 보스 포지션 설정
     /// </summary>
@@ -234,12 +306,12 @@ public class DungeonRoom
     public void CheckLockRoom()
     {
         // 몬스터 , 보스 , 아이템 체크 후 출입구 개방
-        if (CheckMonsterAlive() && CheckPuzzleClear() && GetItemCheck() &&CheckSwitchClear())
+        if (CheckMonsterAlive() && CheckPuzzleClear() && GetItemCheck() && CheckSwitchClear())
             UnLockEntrances();
         else
             LockEntrance();
     }
-    
+
     /// <summary>
     /// NOTE : ROOM CHECK UN LOCK
     /// TODO : 현재는 몬스터의 존재 유무로만 LOCK 해제, 이후에 추가적으로 방의 타입에 따라 룸을 해제하는 방식을 변경 해야한다.
@@ -279,7 +351,7 @@ public class DungeonRoom
 
         return checkcomplete;
     }
-    
+
     /// <summary>
     /// NOTE : Switch Check
     /// </summary>
@@ -288,9 +360,9 @@ public class DungeonRoom
     {
         bool checkcomplete = true;
 
-        if(SwitchInfoList.Count>0)
+        if (SwitchInfoList.Count > 0)
         {
-            foreach(var swinfo in SwitchInfoList)
+            foreach (var swinfo in SwitchInfoList)
             {
                 if (!swinfo.switchModel.SwitchOn)
                     checkcomplete = false;
@@ -299,7 +371,7 @@ public class DungeonRoom
 
         return checkcomplete;
     }
-    
+
     /// <summary>
     /// 보스 관련 체크 
     /// </summary>
@@ -318,7 +390,7 @@ public class DungeonRoom
 
         if (checkcomplete)
             InGameManager.instance.CheckStageClear();
-            
+
     }
 
     /// <summary>
@@ -465,13 +537,13 @@ public class SpawnSwitchInfo
 {
     public Vector2 startpos;
     public SwitchObSc switchModel;
-    
+
     public SpawnSwitchInfo(Vector2 _startpos, SwitchObSc ob)
     {
         startpos = _startpos;
         switchModel = ob;
     }
-    
+
 }
 
 /// <summary>
