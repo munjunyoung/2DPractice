@@ -5,7 +5,7 @@ using UnityEngine;
 public enum Room_ClearType { None = 0, Battle, Puzzle, Boss }
 
 public enum MONSTER_TYPE { Fox = 0, Dog = 1 };
-public enum DesStructure_TYPE { Frog = 0 };
+public enum DesStructure_TYPE { Box = 0 };
 public enum Item_TYPE { Catnip = 0 };
 public enum Switch_TYPE { SwitchNormal = 0 };
 /// <summary>
@@ -273,7 +273,7 @@ public class DungeonRoom
         else if (type.Equals(desStructureInfoList.GetType()))
         {
             foreach (var p in pos)
-                desStructureInfoList.Add(new SpawnDesStructureInfo(DesStructure_TYPE.Frog, p));
+                desStructureInfoList.Add(new SpawnDesStructureInfo(DesStructure_TYPE.Box, p));
         }
         else if (type.Equals(itemInfoList.GetType()))
         {

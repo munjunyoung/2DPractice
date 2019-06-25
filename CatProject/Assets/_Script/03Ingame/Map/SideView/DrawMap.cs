@@ -23,6 +23,8 @@ public class DrawMap : MonoBehaviour
 
     private List<Tilemap> tilemapOb;
     private LoadDataManager loadData;
+    public GameObject gridOb;
+
 
     private void Start()
     {
@@ -51,10 +53,14 @@ public class DrawMap : MonoBehaviour
             tmproom.roomTileArray = loadData.AnalyzeTileMap(tm);
             roomlist.Add(tmproom);
         }
-        foreach(var room in roomlist)
-            DrawTilemap(room);
-        roomlist[0].roomModel.SetActive(true);
 
+        gridOb = new GameObject("Rooms", typeof(Grid));
+        gridOb.GetComponent<Grid>().cellGap = new Vector3(-0.001f, -0.001f, 0);
+
+        foreach (var room in roomlist)
+            DrawTilemap(room, false).transform.SetParent(gridOb.transform);
+        roomlist[0].roomModel.SetActive(true);
+        
         tmpgrid.SetActive(false);
     }
 
@@ -62,7 +68,7 @@ public class DrawMap : MonoBehaviour
     /// NOTE : Tileinfo를 통하여 Draw
     /// </summary>
     /// <param name="_rooms"></param>
-    public GameObject DrawTilemap(DungeonRoom room)
+    public GameObject DrawTilemap(DungeonRoom room, bool ingame)
     {
         //Tilemap 생성 및 초기화
         var tmpob = new GameObject("Room" + room.roomNumberOfList, typeof(Tilemap), typeof(CompositeCollider2D));
@@ -73,23 +79,6 @@ public class DrawMap : MonoBehaviour
         tmpob.layer = 8;
         Tilemap tmptilemap = tmpob.GetComponent<Tilemap>();
 
-        //Edge생성
-        for (int i = 0; i < room.roomRect.xMax; i++)
-        {
-            tmptilemap.SetTile(new Vector3Int(i, -1, 0), loadData.tileDataArray[room.roomSpriteType].terrainRuleTile);
-            tmptilemap.SetTile(new Vector3Int(i, -2, 0), loadData.tileDataArray[room.roomSpriteType].terrainRuleTile);
-            tmptilemap.SetTile(new Vector3Int(i, (int)room.roomRect.yMax, 0), loadData.tileDataArray[room.roomSpriteType].terrainRuleTile);
-            tmptilemap.SetTile(new Vector3Int(i, (int)room.roomRect.yMax + 1, 0), loadData.tileDataArray[room.roomSpriteType].terrainRuleTile);
-        }
-
-        //left, right
-        for (int j = -2; j < room.roomRect.yMax + 2; j++)
-        {
-            tmptilemap.SetTile(new Vector3Int(-1, j, 0), loadData.tileDataArray[room.roomSpriteType].terrainRuleTile);
-            tmptilemap.SetTile(new Vector3Int(-2, j, 0), loadData.tileDataArray[room.roomSpriteType].terrainRuleTile);
-            tmptilemap.SetTile(new Vector3Int((int)room.roomRect.xMax, j, 0), loadData.tileDataArray[room.roomSpriteType].terrainRuleTile);
-            tmptilemap.SetTile(new Vector3Int((int)room.roomRect.xMax + 1, j, 0), loadData.tileDataArray[room.roomSpriteType].terrainRuleTile);
-        }
         //내부 생성
         for (int x = 0; x < room.roomRect.xMax; x++)
         {
@@ -152,23 +141,45 @@ public class DrawMap : MonoBehaviour
                 }
             }
         }
-        //배경 생성 
-        GameObject tmpParent = new GameObject("BackGroundParent");
-        int count = 0;
-        foreach (var tmptile in loadData.tileDataArray[room.roomSpriteType].backGroundTile)
+
+        //인게임일 경우에만 생성 (맵툴의 경우에는 배경을 남겨두므로 제외)
+        if (ingame)
         {
-            GameObject backgroundob = new GameObject("BackGround", typeof(SpriteRenderer));
-            backgroundob.transform.localPosition = Vector3.zero;
-            backgroundob.transform.localRotation = Quaternion.identity;
-            backgroundob.GetComponent<SpriteRenderer>().sortingLayerName = "BackGround";
-            backgroundob.GetComponent<SpriteRenderer>().drawMode = SpriteDrawMode.Sliced;
-            backgroundob.GetComponent<SpriteRenderer>().sprite = tmptile.sprite;
-            backgroundob.GetComponent<SpriteRenderer>().size = room.roomRect.size;
-            backgroundob.GetComponent<SpriteRenderer>().sortingOrder = count;
-            count++;
-            backgroundob.transform.SetParent(tmpParent.transform);
+            //Edge생성
+            for (int i = 0; i < room.roomRect.xMax; i++)
+            {
+                tmptilemap.SetTile(new Vector3Int(i, -1, 0), loadData.tileDataArray[room.roomSpriteType].terrainRuleTile);
+                tmptilemap.SetTile(new Vector3Int(i, -2, 0), loadData.tileDataArray[room.roomSpriteType].terrainRuleTile);
+                tmptilemap.SetTile(new Vector3Int(i, (int)room.roomRect.yMax, 0), loadData.tileDataArray[room.roomSpriteType].terrainRuleTile);
+                tmptilemap.SetTile(new Vector3Int(i, (int)room.roomRect.yMax + 1, 0), loadData.tileDataArray[room.roomSpriteType].terrainRuleTile);
+            }
+
+            //left, right
+            for (int j = -2; j < room.roomRect.yMax + 2; j++)
+            {
+                tmptilemap.SetTile(new Vector3Int(-1, j, 0), loadData.tileDataArray[room.roomSpriteType].terrainRuleTile);
+                tmptilemap.SetTile(new Vector3Int(-2, j, 0), loadData.tileDataArray[room.roomSpriteType].terrainRuleTile);
+                tmptilemap.SetTile(new Vector3Int((int)room.roomRect.xMax, j, 0), loadData.tileDataArray[room.roomSpriteType].terrainRuleTile);
+                tmptilemap.SetTile(new Vector3Int((int)room.roomRect.xMax + 1, j, 0), loadData.tileDataArray[room.roomSpriteType].terrainRuleTile);
+            }
+            //배경 생성 
+            GameObject tmpParent = new GameObject("BackGroundParent");
+            int count = 0;
+            foreach (var tmptile in loadData.tileDataArray[room.roomSpriteType].backGroundTile)
+            {
+                GameObject backgroundob = new GameObject("BackGround", typeof(SpriteRenderer));
+                backgroundob.transform.localPosition = Vector3.zero;
+                backgroundob.transform.localRotation = Quaternion.identity;
+                backgroundob.GetComponent<SpriteRenderer>().sortingLayerName = "BackGround";
+                backgroundob.GetComponent<SpriteRenderer>().drawMode = SpriteDrawMode.Sliced;
+                backgroundob.GetComponent<SpriteRenderer>().sprite = tmptile.sprite;
+                backgroundob.GetComponent<SpriteRenderer>().size = room.roomRect.size;
+                backgroundob.GetComponent<SpriteRenderer>().sortingOrder = count;
+                count++;
+                backgroundob.transform.SetParent(tmpParent.transform);
+            }
+            tmpParent.transform.SetParent(tmpob.transform);
         }
-        tmpParent.transform.SetParent(tmpob.transform);
         room.roomModel = tmpob;
         tmpob.SetActive(false);
 

@@ -322,7 +322,7 @@ public class BoardManager : MonoBehaviour
         gridOb.GetComponent<Grid>().cellGap = new Vector3(-0.001f, -0.001f, 0);
 
         foreach (var room in roomList)
-            DrawMap.instance.DrawTilemap(room).transform.SetParent(gridOb.transform);
+            DrawMap.instance.DrawTilemap(room, true).transform.SetParent(gridOb.transform);
     }
 
     /// <summary>

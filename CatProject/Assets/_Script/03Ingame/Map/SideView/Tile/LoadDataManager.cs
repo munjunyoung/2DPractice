@@ -21,20 +21,23 @@ public class LoadDataManager : MonoBehaviour
     //Resouces Load Path
     private static readonly string[] roomTypePathArray = { "TileType1", "TileType2" };
     private static readonly string[] tileTypePathArray = { "0.BackGround", "1.Entrance" };
-    private readonly string structurePefabPath = "Structure";
-    private readonly string monsterPrefabPath = "Character/Monster";
-    private readonly string destructibleStructurePrefabPath = "DestructibleStructure";
+
     private readonly string skillSpritePath = "SkillSprite";
-    private readonly string itemPrefabPath = "Item";
-    private readonly string switchPrefabPath = "PuzzleStructure";
+
+    private readonly string structurePefabPath = "Prefab/Structure";
+    private readonly string monsterPrefabPath = "Prefab/Character/Monster";
+    private readonly string destructibleStructurePrefabPath = "Prefab/DestructibleStructure";
+    private readonly string itemPrefabPath = "Prefab/Item";
+    private readonly string switchPrefabPath = "Prefab/PuzzleStructure";
     //Tile 
     public TypeOfTileSetType[] tileDataArray;
     public Dictionary<string, List<GeneratedTerrainData>> terrainDataDic = new Dictionary<string, List<GeneratedTerrainData>>();
+   
+    public Dictionary<string, Sprite> skillSpriteDic = new Dictionary<string, Sprite>();
     //Prefab
     public Dictionary<string, Monster> monsterPrefabDic = new Dictionary<string, Monster>();
     public Dictionary<string, GameObject> structurePrefabDic = new Dictionary<string, GameObject>();
     public Dictionary<string, DesStructure> desStructurePrefabDic = new Dictionary<string, DesStructure>();
-    public Dictionary<string, Sprite> skillSpriteDic = new Dictionary<string, Sprite>();
     public Dictionary<string, ItemSc> itemPrefabDic = new Dictionary<string, ItemSc>();
     public Dictionary<string, SwitchObSc> switchPrefabDic = new Dictionary<string, SwitchObSc>();
 
@@ -200,7 +203,8 @@ public class LoadDataManager : MonoBehaviour
     {
         //T 타입 데이터 캐스팅 로드
         var loadob = Resources.LoadAll(_path, typeof(T)).Cast<T>().ToArray();
-        
+
+
         foreach (var lo in loadob)
         {
             //key값의 name설정을 위한 object로 타입 변환
