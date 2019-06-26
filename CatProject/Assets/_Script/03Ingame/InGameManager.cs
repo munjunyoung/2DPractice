@@ -14,7 +14,7 @@ public class InGameManager : MonoBehaviour
     
     //Player
     private Player playerOb;
-    private string playerPath = "Character/Player/";
+    private string playerPath = "Prefab/Character/Player/";
     //Stop
     private float changeRoomStopCount = 2f;
 

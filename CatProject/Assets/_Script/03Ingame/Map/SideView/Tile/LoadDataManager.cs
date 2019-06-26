@@ -37,9 +37,7 @@ public class LoadDataManager : MonoBehaviour
     //Prefab
     public Dictionary<string, Monster> monsterPrefabDic = new Dictionary<string, Monster>();
     public Dictionary<string, GameObject> structurePrefabDic = new Dictionary<string, GameObject>();
-    public Dictionary<string, DesStructure> desStructurePrefabDic = new Dictionary<string, DesStructure>();
     public Dictionary<string, ItemSc> itemPrefabDic = new Dictionary<string, ItemSc>();
-    public Dictionary<string, SwitchObSc> switchPrefabDic = new Dictionary<string, SwitchObSc>();
 
     //private void Start()
     //{
@@ -66,8 +64,6 @@ public class LoadDataManager : MonoBehaviour
         SetLoadData(skillSpriteDic, skillSpritePath);
         SetLoadData(monsterPrefabDic, monsterPrefabPath);
         SetLoadData(structurePrefabDic, structurePefabPath);
-        SetLoadData(desStructurePrefabDic, destructibleStructurePrefabPath);
-        SetLoadData(switchPrefabDic, switchPrefabPath);
     }
 
     /// <summary>a
@@ -169,23 +165,23 @@ public class LoadDataManager : MonoBehaviour
             var name = _tm.GetTile(tmpos).name;
             int subidx = name.IndexOf("_");
             string tiletype = name.Substring(0, subidx);
-            var tileNumber = int.Parse(name.Substring(subidx + 1).ToString());
+            var tilename = name.Substring(subidx + 1).ToString();
             switch (tiletype)
             {
                 case "Door":
-                    tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Entrance, tileNumber);
+                    tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Entrance, tilename);
                     break;
                 case "Destructure":
-                    tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Destructure, tileNumber);
+                    tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Destructure, tilename);
                     break;
                 case "Monster":
-                    tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Monster, tileNumber);
+                    tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Monster, tilename);
                     break;
                 case "Item":
-                    tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Item, tileNumber);
+                    tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Item, tilename);
                     break;
                 case "Switch":
-                    tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Switch, tileNumber);
+                    tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Switch, tilename);
                     break;
             }
         }

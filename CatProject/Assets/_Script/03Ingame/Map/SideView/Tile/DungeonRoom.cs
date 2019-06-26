@@ -479,7 +479,7 @@ public class SpawnDesStructureInfo
 {
     public DesStructure_TYPE dsType;
     public Vector2 startPos;
-    public DesStructure desStructureModel;
+    public StructureObject desStructureModel;
 
     public SpawnDesStructureInfo(DesStructure_TYPE _dstype, Vector2 _startpos)
     {
@@ -488,7 +488,7 @@ public class SpawnDesStructureInfo
         desStructureModel = null;
     }
 
-    public SpawnDesStructureInfo(DesStructure_TYPE _dstype, Vector2 _startpos, DesStructure ob)
+    public SpawnDesStructureInfo(DesStructure_TYPE _dstype, Vector2 _startpos, StructureObject ob)
     {
         dsType = _dstype;
         startPos = _startpos;
@@ -576,18 +576,18 @@ public class EntranceConnectRoom
 public class TileInfo
 {
     public TileType tileType;
-    public int tileNumber;
+    public string obname;
 
 
-    public TileInfo(TileType _tiletype, int _tilenumber)
+    public TileInfo(TileType _tiletype, string _obname)
     {
         tileType = _tiletype;
-        tileNumber = _tilenumber;
+        obname = _obname;
     }
 
     public TileInfo(TileType _tiletype)
     {
         tileType = _tiletype;
-        tileNumber = 0;
+        obname = null;
     }
 }

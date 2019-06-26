@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DesStructure : MonoBehaviour
+public class StructureObject : MonoBehaviour
 {
     public DungeonRoom ownRoom = null;
 
