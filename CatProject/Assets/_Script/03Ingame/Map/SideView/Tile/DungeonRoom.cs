@@ -22,10 +22,11 @@ public class DungeonRoom
 
     public List<EntranceConnectRoom> entranceInfoList = new List<EntranceConnectRoom>();
     public List<SpawnMonsterInfo> monsterInfoList = new List<SpawnMonsterInfo>();
-    public List<SpawnStructureInfo> desStructureInfoList = new List<SpawnStructureInfo>();
+   
     public List<SpawnBossInfo> bossInfoList = new List<SpawnBossInfo>();
     public List<SpawnItemInfo> itemInfoList = new List<SpawnItemInfo>();
-    public List<SpawnSwitchInfo> SwitchInfoList = new List<SpawnSwitchInfo>();
+    public List<SpawnSwitchInfo> switchInfoList = new List<SpawnSwitchInfo>();
+    public List<SpawnBoxInfo> boxInfoList = new List<SpawnBoxInfo>();
     //Terrain
     public GeneratedTerrainData beforeTerrainData = null;
     public int currentXPos;
@@ -69,8 +70,9 @@ public class DungeonRoom
 
     public void SetEntrancePos()
     {
-
         int entranceCount = entranceInfoList.Count;
+
+        Debug.Log("1 : " + entranceCount);
         List<int> posXisalready = new List<int>();
         //이미 그려져있는 출입문 체크
         for (int x = 0; x < roomRect.xMax; x++)
@@ -79,14 +81,18 @@ public class DungeonRoom
             {
                 if (roomTileArray[x, y] != null)
                 {
-                    if (roomTileArray[x, y].tileType.Equals(TileType.Structure))
+                    if (roomTileArray[x, y].tileName != null)
                     {
-                        posXisalready.Add(x);
-                        entranceCount--;
+                        if (roomTileArray[x, y].tileName.Equals("Entrance"))
+                        {
+                            posXisalready.Add(x);
+                            entranceCount--;
+                        }
                     }
                 }
             }
         }
+        Debug.Log("2 : " + entranceCount);
         //만약 랜덤설정할 필요가 없을경우 패스
         if (entranceCount < 0)
         {
@@ -100,53 +106,12 @@ public class DungeonRoom
                 {
                     if (roomTileArray[5, j] == null)
                     {
-                        roomTileArray[5, j] = new TileInfo(TileType.Structure);
+                        roomTileArray[5, j] = new TileInfo(TileType.Structure, "Entrance", "Normal" );
                         break;
                     }
                 }
                 break;
             default:
-                //int distanceOtherObject = 3;
-                //List<int> posX = new List<int>();
-                ////Entrance갯수 만큼 x포지션 저장
-                //for (int i = 0; i < entranceCount; i++)
-                //{
-                //    var randomXvalue = (int)Random.Range(2, roomRect.xMax - 2);
-
-                //    //같은 값이 있는지 체크?
-                //    for (int j = 0; j < posX.Count; j++)
-                //    {
-                //        if (posX[j] - distanceOtherObject >= randomXvalue && posX[j] + distanceOtherObject <= randomXvalue)
-                //        {
-                //                foreach (var tmpx in posXisalready)
-                //                {
-                //                    if (tmpx - distanceOtherObject >= randomXvalue && tmpx + distanceOtherObject <= randomXvalue)
-                //                    {
-                //                        randomXvalue = (int)Random.Range(2, roomRect.xMax - 2);
-                //                        //다시 처음부터 확인하기 위함
-                //                        j = 0;
-                //                    }
-                //                }
-                //        }
-                //    }
-                //    posX.Add(randomXvalue);
-                //}
-                ////저장한 x포지션을 기준으로 y값을 순회하여 roomarray의 0 값을 검색하여 설정
-                //foreach (int tmpx in posX)
-                //{
-                //    var tx = tmpx;
-                //    for (int j = 0; j < roomRect.yMax; j++)
-                //    {
-                //        if (roomTileArray[tmpx, j] == null)
-                //        {
-                //            if (roomTileArray[tmpx + 1, j].Equals(TileType.Switch))
-                //                tx = tmpx + 1;
-                //            else if(roomTileArray[tmpx-1,j].Equals(TileType.Switch))
-                //            roomTileArray[tx, j] = new TileInfo(TileType.Entrance, 0);
-                //            break;
-                //        }
-                //    }
-                //}
                 for (int i = 0; i < entranceCount; i++)
                 {
                     var rx = (int)Random.Range(2, roomRect.xMax - 2);
@@ -162,7 +127,7 @@ public class DungeonRoom
                                     //양옆에 아무것도 없을때만
                                     if (roomTileArray[rx - 1, y] == null && roomTileArray[rx + 1, y] == null)
                                     {
-                                        roomTileArray[rx, y] = new TileInfo(TileType.Structure);
+                                        roomTileArray[rx, y] = new TileInfo(TileType.Structure, "Entrance", "Normal");
                                         break;
                                     }
                                     //리셋 
@@ -185,7 +150,7 @@ public class DungeonRoom
                             {
                                 if (roomTileArray[rx - 1, y] == null && roomTileArray[rx + 1, y] == null)
                                 {
-                                    roomTileArray[rx, y] = new TileInfo(TileType.Structure);
+                                    roomTileArray[rx, y] = new TileInfo(TileType.Structure, "Entrance", "Normal");
                                     break;
                                 }
                                 //리셋 
@@ -266,11 +231,6 @@ public class DungeonRoom
             foreach (var p in pos)
                 monsterInfoList.Add(new SpawnMonsterInfo(MONSTER_TYPE.Fox, p));
         }
-        else if (type.Equals(desStructureInfoList.GetType()))
-        {
-            foreach (var p in pos)
-                desStructureInfoList.Add(new SpawnStructureInfo(Structure_Type.Box, p));
-        }
         else if (type.Equals(itemInfoList.GetType()))
         {
             foreach (var p in pos)
@@ -302,7 +262,7 @@ public class DungeonRoom
     public void CheckLockRoom()
     {
         // 몬스터 , 보스 , 아이템 체크 후 출입구 개방
-        if (CheckMonsterAlive() && CheckPuzzleClear() && GetItemCheck() && CheckSwitchClear())
+        if (CheckMonsterAlive() && GetItemCheck() && CheckSwitchClear())
             UnLockEntrances();
         else
             LockEntrance();
@@ -327,28 +287,6 @@ public class DungeonRoom
     }
 
     /// <summary>
-    /// NOTE : 퍼즐관련 체크 현재는 부서지는 구조물을 부셨느냐 만 체크함
-    /// </summary>
-    /// <returns></returns>
-    private bool CheckPuzzleClear()
-    {
-        bool checkcomplete = true;
-        if (SwitchInfoList.Count > 0)
-            return checkcomplete;
-
-        if (desStructureInfoList.Count > 0)
-        {
-            foreach (var dsinfo in desStructureInfoList)
-            {
-                if (dsinfo.structureModel.isAlive)
-                    checkcomplete = false;
-            }
-        }
-
-        return checkcomplete;
-    }
-
-    /// <summary>
     /// NOTE : Switch Check
     /// </summary>
     /// <returns></returns>
@@ -356,11 +294,11 @@ public class DungeonRoom
     {
         bool checkcomplete = true;
 
-        if (SwitchInfoList.Count > 0)
+        if (switchInfoList.Count > 0)
         {
-            foreach (var swinfo in SwitchInfoList)
+            foreach (var swinfo in switchInfoList)
             {
-                if (!swinfo.switchModel.SwitchOn)
+                if (!swinfo.switchModel.StateOn)
                     checkcomplete = false;
             }
         }
@@ -471,42 +409,38 @@ public class SpawnMonsterInfo
 /// <summary>
 /// NOTE : DungeonRoom 클래스에서 설정하는 파괴되는구조물 정보 
 /// </summary>
-public class SpawnStructureInfo
+public class SpawnBoxInfo
 {
-    public Structure_Type sType;
-    public Vector2 startPos;
+    public string bType;
     public StructureObject structureModel;
 
-    public SpawnStructureInfo(Structure_Type _stype, Vector2 _startpos)
+    public SpawnBoxInfo(string _btype)
     {
-        sType = _stype;
-        startPos = _startpos;
+        bType = _btype;
         structureModel = null;
     }
 
-    public SpawnStructureInfo(Structure_Type _stype, Vector2 _startpos, StructureObject ob)
+    public SpawnBoxInfo(string _btype, StructureObject ob)
     {
-        sType = _stype;
-        startPos = _startpos;
+        bType = _btype;
         structureModel = ob;
     }
 }
 
 /// <summary>
-/// NOTE : BOSS INFO 클래스
+/// NOTE : 퍼즐형 스위치 클래스
 /// </summary>
-public class SpawnBossInfo
+public class SpawnSwitchInfo
 {
-    public MONSTER_TYPE mType;
-    public Vector2 startPos;
-    public Monster monsterModel;
+    public string sType;
+    public StructureObject switchModel;
 
-    public SpawnBossInfo(MONSTER_TYPE _mtype, Vector2 _startpos)
+    public SpawnSwitchInfo(string _stype, StructureObject ob)
     {
-        mType = _mtype;
-        startPos = _startpos;
-        monsterModel = null;
+        sType = _stype;
+        switchModel = ob;
     }
+
 }
 
 /// <summary>
@@ -526,20 +460,22 @@ public class SpawnItemInfo
     }
 }
 
+
 /// <summary>
-/// NOTE : 퍼즐형 스위치 클래스
+/// NOTE : BOSS INFO 클래스
 /// </summary>
-public class SpawnSwitchInfo
+public class SpawnBossInfo
 {
-    public Vector2 startpos;
-    public SwitchObSc switchModel;
+    public MONSTER_TYPE mType;
+    public Vector2 startPos;
+    public Monster monsterModel;
 
-    public SpawnSwitchInfo(Vector2 _startpos, SwitchObSc ob)
+    public SpawnBossInfo(MONSTER_TYPE _mtype, Vector2 _startpos)
     {
-        startpos = _startpos;
-        switchModel = ob;
+        mType = _mtype;
+        startPos = _startpos;
+        monsterModel = null;
     }
-
 }
 
 /// <summary>
@@ -547,21 +483,18 @@ public class SpawnSwitchInfo
 /// </summary>
 public class EntranceConnectRoom
 {
-    public Vector2 startPos;
-    public DungeonRoom connectedRoom;
     public EntranceSc entrance;
+    public DungeonRoom connectedRoom;
 
     public EntranceConnectRoom(DungeonRoom _room)
     {
         connectedRoom = _room;
-        startPos = Vector2.zero;
         entrance = null;
     }
 
-    public EntranceConnectRoom(DungeonRoom _room, Vector2 _startpos, EntranceSc ob)
+    public EntranceConnectRoom(DungeonRoom _room, EntranceSc ob)
     {
         connectedRoom = _room;
-        startPos = _startpos;
         entrance = ob;
     }
 }
@@ -573,17 +506,27 @@ public class TileInfo
 {
     public TileType tileType;
     public string tileName;
+    public string tileNamesType;
 
+
+    public TileInfo(TileType _tiletype, string _tilename, string _tilenamestype)
+    {
+        tileType = _tiletype;
+        tileName = _tilename;
+        tileNamesType = _tilenamestype;
+    }
 
     public TileInfo(TileType _tiletype, string _tilename)
     {
         tileType = _tiletype;
         tileName = _tilename;
+        tileNamesType = "Normal";
     }
 
     public TileInfo(TileType _tiletype)
     {
         tileType = _tiletype;
         tileName = null;
+        tileNamesType = "Normal";
     }
 }

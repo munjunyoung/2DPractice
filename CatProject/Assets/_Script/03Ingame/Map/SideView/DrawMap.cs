@@ -60,7 +60,7 @@ public class DrawMap : MonoBehaviour
         foreach (var room in roomlist)
             DrawTilemap(room, false).transform.SetParent(gridOb.transform);
         roomlist[0].roomModel.SetActive(true);
-        
+        Debug.Log("ttttttttttt");
         tmpgrid.SetActive(false);
     }
 
@@ -93,46 +93,39 @@ public class DrawMap : MonoBehaviour
                             tmptilemap.SetTile(new Vector3Int(x, y, 0), loadData.tileDataArray[room.roomSpriteType].terrainRuleTile);
                             break;
                         case TileType.Structure:
-                            StructureObject tmpobject = Instantiate(loadData.structurePrefabDic[tmpdata.tileName], new Vector3(x + 0.5f, y + 1f, 0), Quaternion.identity));
-                            if (tmpdata.tileName == Structure_Type.Entrance.ToString())
+                            StructureObject tmpen = Instantiate(loadData.structurePrefabDic[tmpdata.tileName], new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity, tmptilemap.transform);
+                            tmpen.ownRoom = room;
+                            if (tmpdata.tileName == STRUCTURE_TYPE.Entrance.ToString())
                             {
-                                GameObject tmpen = Instantiate(loadData.structurePrefabDic[TileType.Structure.ToString()], new Vector3(x + 0.5f, y + 1f, 0), Quaternion.identity);
+                                tmpen.transform.localPosition += new Vector3(0, 0.5f ,0);
                                 //Maptool에서 사용할경우 대비
                                 if (room.entranceInfoList.Count == 0)
-                                    room.entranceInfoList.Add(new EntranceConnectRoom(null, new Vector2(x + 0.5f, y + 0.5f), tmpen.GetComponent<EntranceSc>()));
+                                    room.entranceInfoList.Add(new EntranceConnectRoom(null, tmpen.GetComponent<EntranceSc>()));
 
-                                tmpen.GetComponent<SpriteRenderer>().sprite = loadData.tileDataArray[room.roomSpriteType].entranceSprite[0];
-                                tmpen.GetComponent<SpriteRenderer>().sortingLayerName = "Entrance";
-                                tmpen.GetComponent<EntranceSc>().doorOpenSprite = loadData.tileDataArray[room.roomSpriteType].entranceSprite[1];
-                                tmpen.GetComponent<EntranceSc>().doorCloseSprite = loadData.tileDataArray[room.roomSpriteType].entranceSprite[0];
+                                tmpen.ownSpRenderer.sprite = loadData.tileDataArray[room.roomSpriteType].entranceSprite[0];
+                                tmpen.ownSpRenderer.sortingLayerName = "Entrance";
+                                tmpen.GetComponent<EntranceSc>().spriteArray[0] = loadData.tileDataArray[room.roomSpriteType].entranceSprite[0];
+                                tmpen.GetComponent<EntranceSc>().spriteArray[1] = loadData.tileDataArray[room.roomSpriteType].entranceSprite[1];
                                 tmpen.transform.SetParent(tmpob.transform);
                                 foreach (EntranceConnectRoom nroom in room.entranceInfoList)
                                 {
                                     if (nroom.entrance == null)
                                     {
-                                        tmpen.GetComponent<EntranceSc>().currentRoomNumber = room.roomNumberOfList;
+                                        tmpen.GetComponent<EntranceSc>().ownRoom = room;
                                         nroom.entrance = tmpen.GetComponent<EntranceSc>();
                                         break;
                                     }
                                 }
                             }
-                            else if(tmpdata.tileName == Structure_Type.Box.ToString())
+                            else if(tmpdata.tileName == STRUCTURE_TYPE.Box.ToString())
                             {
-                                DesStructure_TYPE destype = (DesStructure_TYPE)room.roomTileArray[x, y].tileNumber;
-
-                                DesStructure tmpds = Instantiate(loadData.desStructurePrefabDic[destype.ToString()], new Vector3Int(x, y + 1, 0), Quaternion.identity, tmptilemap.transform);
-                                tmpds.ownRoom = room;
-                                room.desStructureInfoList.Add(new SpawnDesStructureInfo(destype, new Vector2(x, y), tmpds));
-                                break;
+                                room.boxInfoList.Add(new SpawnBoxInfo(tmpdata.tileNamesType.ToString(), tmpen));
+                            }
+                            else if(tmpdata.tileName == STRUCTURE_TYPE.Switch.ToString())
+                            {
+                                room.switchInfoList.Add(new SpawnSwitchInfo(tmpdata.tileNamesType ,tmpen));
                             }
                             break;
-                        //case TileType.Structure:
-                        //    //DesStructure_TYPE destype = (DesStructure_TYPE)room.roomTileArray[x, y].tileNumber;
-
-                        //DesStructure tmpds = Instantiate(loadData.desStructurePrefabDic[destype.ToString()], new Vector3Int(x, y + 1, 0), Quaternion.identity, tmptilemap.transform);
-                        //    //tmpds.ownRoom = room;
-                        //    //room.desStructureInfoList.Add(new SpawnDesStructureInfo(destype, new Vector2(x, y), tmpds));
-                        //    //break;
                         case TileType.Monster:
                             Monster tmpmonster = Instantiate(loadData.monsterPrefabDic[room.roomTileArray[x, y].tileName], new Vector3Int(x, y, 0), Quaternion.identity, tmptilemap.transform);
                             tmpmonster.ownRoom = room;
@@ -141,11 +134,6 @@ public class DrawMap : MonoBehaviour
                         case TileType.Item:
                             ItemSc tmpitem = Instantiate(loadData.itemPrefabDic[Item_TYPE.Catnip.ToString()], new Vector3Int(x, y, 0), Quaternion.identity, tmptilemap.transform);
                             break;
-                        //case TileType.Structure:
-                        //    //SwitchObSc tmpswitch = Instantiate(loadData.switchPrefabDic[Switch_TYPE.SwitchNormal.ToString()], new Vector3(x + 0.5f, y + 0.5f, 0), Quaternion.identity, tmptilemap.transform);
-                        //    //tmpswitch.ownRoom = room;
-                        //    //room.SwitchInfoList.Add(new SpawnSwitchInfo(new Vector2(x, y), tmpswitch));
-                        //    //break;
                         default:
                             Debug.Log(room.roomTileArray[x, y].tileType.ToString());
                             break;

@@ -4,16 +4,12 @@ using UnityEngine;
 
 public class SwitchObSc : StructureObject
 {
-    public DungeonRoom ownRoom = null;
-    public bool SwitchOn = false;
-    public Sprite[] switchImage;
-    
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Obstacle"))
         {
-            GetComponent<SpriteRenderer>().sprite = switchImage[1];
-            SwitchOn = true;
+            ownSpRenderer.sprite = spriteArray[1];
+            StateOn = true;
             ownRoom.CheckLockRoom();
         }
     }
@@ -21,8 +17,8 @@ public class SwitchObSc : StructureObject
     {
         if (collision.CompareTag("Obstacle"))
         {
-            GetComponent<SpriteRenderer>().sprite = switchImage[0];
-            SwitchOn = false;
+            ownSpRenderer.sprite = spriteArray[0];
+            StateOn = false;
             ownRoom.CheckLockRoom();
         }
         

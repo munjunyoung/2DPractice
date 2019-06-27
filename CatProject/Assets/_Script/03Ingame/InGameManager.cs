@@ -66,14 +66,14 @@ public class InGameManager : MonoBehaviour
     /// NOTE : 출입문에 진입시 해당 함수를 호출 currentnum와 nextnum는 출입문 오브젝트를 생성할때 저장해둔 변수값
     /// TODO : 해당 함수를 EntranceSc 트리거함수에 구현 하는게되면 roomList를 여러군데에서 참조하게 될것같아서 변경
     /// </summary>
-    /// <param name="currentnum"></param>
-    /// <param name="nextnum"></param>
-    public void ChangeCurrentRoom(int currentnum, int nextnum)
+    /// <param name="_currentroom"></param>
+    /// <param name="_nextroom"></param>
+    public void ChangeCurrentRoom(DungeonRoom _currentroom, DungeonRoom _nextroom)
     {
-        roomList[currentnum].roomModel.SetActive(false);
-        roomList[nextnum].roomModel.SetActive(true);
-        currentRoom = roomList[nextnum];
-        Debug.Log("Change Room ! : CurrentRoom[" + currentnum + "]" +" Type : " + roomList[currentnum].roomClearType + " -> [" + nextnum + "]" + "Type : " + roomList[nextnum].roomClearType);
+        _currentroom.roomModel.SetActive(false);
+        _nextroom.roomModel.SetActive(true);
+        currentRoom = _nextroom;
+        Debug.Log("Change Room ! : CurrentRoom[" + _currentroom.roomNumberOfList + "]" +" Type : " + _currentroom.roomClearType + " -> [" + _nextroom.roomNumberOfList + "]" + "Type : " + _nextroom.roomClearType);
         currentRoom.CheckLockRoom();
 
         StopAllCharacter(changeRoomStopCount);

@@ -5,9 +5,15 @@ using UnityEngine.Tilemaps;
 
 enum Room_TileType { Type1 = 0, Type2 }
 public enum TileType {Terrain, Structure , Monster, Item}
-public enum Structure_Type { Entrance ,Box, Switch}
-public enum MONSTER_TYPE { Fox = 0, Dog = 1 };
+public enum STRUCTURE_TYPE { Entrance ,Box, Switch}
+public enum Box_Type { Normal }
+public enum Switch_Type {  Normal }
+
+public enum MONSTER_TYPE { Fox = 0 , Dog = 1 };
+public enum Fox_Type { Normal }
+
 public enum Item_TYPE { Catnip = 0 };
+public enum Catnip_Type { Normal }
 public class LoadDataManager : MonoBehaviour
 {
     private static LoadDataManager _instance = null;
@@ -29,9 +35,7 @@ public class LoadDataManager : MonoBehaviour
 
     private readonly string structurePefabPath = "Prefab/Structure";
     private readonly string monsterPrefabPath = "Prefab/Character/Monster";
-    private readonly string destructibleStructurePrefabPath = "Prefab/DestructibleStructure";
     private readonly string itemPrefabPath = "Prefab/Item";
-    private readonly string switchPrefabPath = "Prefab/PuzzleStructure";
     //Tile 
     public TypeOfTileSetType[] tileDataArray;
     public Dictionary<string, List<GeneratedTerrainData>> terrainDataDic = new Dictionary<string, List<GeneratedTerrainData>>();
@@ -39,7 +43,7 @@ public class LoadDataManager : MonoBehaviour
     public Dictionary<string, Sprite> skillSpriteDic = new Dictionary<string, Sprite>();
     //Prefab
     public Dictionary<string, Monster> monsterPrefabDic = new Dictionary<string, Monster>();
-    public Dictionary<string, GameObject> structurePrefabDic = new Dictionary<string, GameObject>();
+    public Dictionary<string, StructureObject> structurePrefabDic = new Dictionary<string, StructureObject>();
     public Dictionary<string, ItemSc> itemPrefabDic = new Dictionary<string, ItemSc>();
 
     //private void Start()
@@ -168,20 +172,27 @@ public class LoadDataManager : MonoBehaviour
             var name = _tm.GetTile(tmpos).name;
             int subidx = name.IndexOf("_");
             string tiletype = name.Substring(0, subidx);
-            var tilename = name.Substring(subidx + 1).ToString();
+            string secondstring = name.Substring(subidx + 1).ToString();
+
+            int secondsubidx = secondstring.IndexOf("_");
+            string tilename = secondstring.Substring(0, secondsubidx);
+            string tilenamestype = secondstring.Substring(secondsubidx + 1);
+            
+            //Debug.Log(_tm.GetTile(tmpos).name);
+            //Debug.Log("load data - type : " + tiletype + " name : " + tilename + " typename : " + tilenamestype);
             switch (tiletype)
             {
                 case "Structure":   
-                    tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Structure, tilename);
+                    tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Structure, tilename, tilenamestype);
                     break;
                 case "Monster":
-                    tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Monster, tilename);
+                    tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Monster, tilename, tilenamestype);
                     break;
                 case "Item":
-                    tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Item, tilename);
+                    tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Item, tilename, tilenamestype);
                     break;
                 case "Switch":
-                    tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Structure, tilename);
+                    tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Structure, tilename, tilenamestype);
                     break;
             }
         }

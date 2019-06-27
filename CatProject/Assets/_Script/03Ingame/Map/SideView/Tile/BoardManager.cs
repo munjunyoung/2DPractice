@@ -55,7 +55,9 @@ public class BoardManager : MonoBehaviour
         RandomEdgeConnect();
         //Rooms Entrance 오브젝트 생성
         foreach (DungeonRoom room in roomList)
+        {
             room.SetEntrancePos();
+        }
         PrintLogRoomNeighbors();
         //Rooms Draw
         DrawRooms();
@@ -301,9 +303,13 @@ public class BoardManager : MonoBehaviour
                 //이웃룸의 연결된 다음 방의 이웃들 순회 하여 entranceSc에 다음방 포지션 변수 초기화
                 foreach (EntranceConnectRoom nextroomneighbor in roomList[currentroomneigbor.connectedRoom.roomNumberOfList].entranceInfoList)
                 {
-                    //연결된 방의 통로중 현재 방이 nextroom일 경우 체크하여 position 저장
-                    if (currentroomneigbor.entrance.currentRoomNumber.Equals(nextroomneighbor.connectedRoom.roomNumberOfList))
+                    Debug.Log(room.roomNumberOfList);
+                    //if (currentroomneigbor.entrance.currentRoomNumber.Equals(nextroomneighbor.connectedRoom.roomNumberOfList))
+                    if (currentroomneigbor.entrance.ownRoom.roomNumberOfList.Equals(nextroomneighbor.connectedRoom.roomNumberOfList))
                         currentroomneigbor.entrance.connectedNextEntrance = nextroomneighbor.entrance;
+                    //if (currentroomneigbor.entrance.currentRoomNumber.Equals(nextroomneighbor.connectedRoom.roomNumberOfList))
+                    //    currentroomneigbor.entrance.connectedNextEntrance = nextroomneighbor.entrance;
+
                 }
 
             }
