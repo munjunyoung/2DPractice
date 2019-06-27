@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EntranceSc : MonoBehaviour
+public class EntranceSc : StructureObject
 {
     /// <summary>
     /// NOTE : 자신이 현재 존재하는 방과 연결된 다음 방

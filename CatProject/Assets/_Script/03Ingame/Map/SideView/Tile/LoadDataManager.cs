@@ -4,7 +4,10 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 enum Room_TileType { Type1 = 0, Type2 }
-public enum TileType {Terrain, Entrance, Monster, Destructure, Item , Switch}
+public enum TileType {Terrain, Structure , Monster, Item}
+public enum Structure_Type { Entrance ,Box, Switch}
+public enum MONSTER_TYPE { Fox = 0, Dog = 1 };
+public enum Item_TYPE { Catnip = 0 };
 public class LoadDataManager : MonoBehaviour
 {
     private static LoadDataManager _instance = null;
@@ -60,8 +63,8 @@ public class LoadDataManager : MonoBehaviour
         tileDataArray = LoadAllTile();
         terrainDataDic = LoadAllTerrainData();
 
-        SetLoadData(itemPrefabDic, itemPrefabPath);
         SetLoadData(skillSpriteDic, skillSpritePath);
+        SetLoadData(itemPrefabDic, itemPrefabPath);
         SetLoadData(monsterPrefabDic, monsterPrefabPath);
         SetLoadData(structurePrefabDic, structurePefabPath);
     }
@@ -79,7 +82,7 @@ public class LoadDataManager : MonoBehaviour
             tmptilearray[i].terrainRuleTile = Resources.Load<RuleTile>("Tile/" + roomTypePathArray[i] + "/RuleTile/RuleTile_Terrain");
             //일반 Tile들 저장
             tmptilearray[i].backGroundTile = Resources.LoadAll<Tile>("Tile/" + roomTypePathArray[i] + "/" + tileTypePathArray[0]);
-            tmptilearray[i].entranceTile = Resources.LoadAll<Tile>("Tile/" + roomTypePathArray[i] + "/" + tileTypePathArray[1]);
+            tmptilearray[i].entranceSprite = Resources.LoadAll<Sprite>("Tile/" + roomTypePathArray[i] + "/" + tileTypePathArray[1]);
            
         }
         return tmptilearray;
@@ -168,11 +171,8 @@ public class LoadDataManager : MonoBehaviour
             var tilename = name.Substring(subidx + 1).ToString();
             switch (tiletype)
             {
-                case "Door":
-                    tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Entrance, tilename);
-                    break;
-                case "Destructure":
-                    tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Destructure, tilename);
+                case "Structure":   
+                    tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Structure, tilename);
                     break;
                 case "Monster":
                     tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Monster, tilename);
@@ -181,7 +181,7 @@ public class LoadDataManager : MonoBehaviour
                     tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Item, tilename);
                     break;
                 case "Switch":
-                    tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Switch, tilename);
+                    tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Structure, tilename);
                     break;
             }
         }
@@ -220,7 +220,7 @@ public struct TypeOfTileSetType
     /// <summary>
     ///  NOTE : 0번은 닫힌 문 1번은 열린 문
     /// </summary>
-    public Tile[] entranceTile;
+    public Sprite[] entranceSprite;
     public RuleTile terrainRuleTile;
 }
 

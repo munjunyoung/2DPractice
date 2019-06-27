@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SwitchObSc : MonoBehaviour
+public class SwitchObSc : StructureObject
 {
     public DungeonRoom ownRoom = null;
     public bool SwitchOn = false;

@@ -4,10 +4,6 @@ using UnityEngine;
 
 public enum Room_ClearType { None = 0, Battle, Puzzle, Boss }
 
-public enum MONSTER_TYPE { Fox = 0, Dog = 1 };
-public enum DesStructure_TYPE { Box = 0 };
-public enum Item_TYPE { Catnip = 0 };
-public enum Switch_TYPE { SwitchNormal = 0 };
 /// <summary>
 /// NOTE : DungeonRoom 클래스
 /// TODO : 함수와 클래스 변수들을 분리해야하는 개선 사항 가능성
@@ -26,7 +22,7 @@ public class DungeonRoom
 
     public List<EntranceConnectRoom> entranceInfoList = new List<EntranceConnectRoom>();
     public List<SpawnMonsterInfo> monsterInfoList = new List<SpawnMonsterInfo>();
-    public List<SpawnDesStructureInfo> desStructureInfoList = new List<SpawnDesStructureInfo>();
+    public List<SpawnStructureInfo> desStructureInfoList = new List<SpawnStructureInfo>();
     public List<SpawnBossInfo> bossInfoList = new List<SpawnBossInfo>();
     public List<SpawnItemInfo> itemInfoList = new List<SpawnItemInfo>();
     public List<SpawnSwitchInfo> SwitchInfoList = new List<SpawnSwitchInfo>();
@@ -83,7 +79,7 @@ public class DungeonRoom
             {
                 if (roomTileArray[x, y] != null)
                 {
-                    if (roomTileArray[x, y].tileType.Equals(TileType.Entrance))
+                    if (roomTileArray[x, y].tileType.Equals(TileType.Structure))
                     {
                         posXisalready.Add(x);
                         entranceCount--;
@@ -104,7 +100,7 @@ public class DungeonRoom
                 {
                     if (roomTileArray[5, j] == null)
                     {
-                        roomTileArray[5, j] = new TileInfo(TileType.Entrance, 0);
+                        roomTileArray[5, j] = new TileInfo(TileType.Structure);
                         break;
                     }
                 }
@@ -166,7 +162,7 @@ public class DungeonRoom
                                     //양옆에 아무것도 없을때만
                                     if (roomTileArray[rx - 1, y] == null && roomTileArray[rx + 1, y] == null)
                                     {
-                                        roomTileArray[rx, y] = new TileInfo(TileType.Entrance, 0);
+                                        roomTileArray[rx, y] = new TileInfo(TileType.Structure);
                                         break;
                                     }
                                     //리셋 
@@ -189,7 +185,7 @@ public class DungeonRoom
                             {
                                 if (roomTileArray[rx - 1, y] == null && roomTileArray[rx + 1, y] == null)
                                 {
-                                    roomTileArray[rx, y] = new TileInfo(TileType.Entrance, 0);
+                                    roomTileArray[rx, y] = new TileInfo(TileType.Structure);
                                     break;
                                 }
                                 //리셋 
@@ -273,7 +269,7 @@ public class DungeonRoom
         else if (type.Equals(desStructureInfoList.GetType()))
         {
             foreach (var p in pos)
-                desStructureInfoList.Add(new SpawnDesStructureInfo(DesStructure_TYPE.Box, p));
+                desStructureInfoList.Add(new SpawnStructureInfo(Structure_Type.Box, p));
         }
         else if (type.Equals(itemInfoList.GetType()))
         {
@@ -344,7 +340,7 @@ public class DungeonRoom
         {
             foreach (var dsinfo in desStructureInfoList)
             {
-                if (dsinfo.desStructureModel.isAlive)
+                if (dsinfo.structureModel.isAlive)
                     checkcomplete = false;
             }
         }
@@ -475,24 +471,24 @@ public class SpawnMonsterInfo
 /// <summary>
 /// NOTE : DungeonRoom 클래스에서 설정하는 파괴되는구조물 정보 
 /// </summary>
-public class SpawnDesStructureInfo
+public class SpawnStructureInfo
 {
-    public DesStructure_TYPE dsType;
+    public Structure_Type sType;
     public Vector2 startPos;
-    public StructureObject desStructureModel;
+    public StructureObject structureModel;
 
-    public SpawnDesStructureInfo(DesStructure_TYPE _dstype, Vector2 _startpos)
+    public SpawnStructureInfo(Structure_Type _stype, Vector2 _startpos)
     {
-        dsType = _dstype;
+        sType = _stype;
         startPos = _startpos;
-        desStructureModel = null;
+        structureModel = null;
     }
 
-    public SpawnDesStructureInfo(DesStructure_TYPE _dstype, Vector2 _startpos, StructureObject ob)
+    public SpawnStructureInfo(Structure_Type _stype, Vector2 _startpos, StructureObject ob)
     {
-        dsType = _dstype;
+        sType = _stype;
         startPos = _startpos;
-        desStructureModel = ob;
+        structureModel = ob;
     }
 }
 
@@ -576,18 +572,18 @@ public class EntranceConnectRoom
 public class TileInfo
 {
     public TileType tileType;
-    public string obname;
+    public string tileName;
 
 
-    public TileInfo(TileType _tiletype, string _obname)
+    public TileInfo(TileType _tiletype, string _tilename)
     {
         tileType = _tiletype;
-        obname = _obname;
+        tileName = _tilename;
     }
 
     public TileInfo(TileType _tiletype)
     {
         tileType = _tiletype;
-        obname = null;
+        tileName = null;
     }
 }
