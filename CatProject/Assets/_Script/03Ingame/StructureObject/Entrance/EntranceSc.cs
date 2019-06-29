@@ -21,6 +21,12 @@ public class EntranceSc : StructureObject
             {
                 if (collision.GetComponent<Player>().attackButtonPress)
                 {
+                    if(connectedNextEntrance==null)
+                    {
+                        Debug.Log("연결된 방이 없습니다.");
+                        return;
+                    }
+
                     InGameManager.GetInstance().ChangeCurrentRoom(ownRoom, connectedNextEntrance.ownRoom);
                     collision.transform.position = connectedNextEntrance.transform.position;
                 }

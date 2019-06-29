@@ -60,7 +60,6 @@ public class DrawMap : MonoBehaviour
         foreach (var room in roomlist)
             DrawTilemap(room, false).transform.SetParent(gridOb.transform);
         roomlist[0].roomModel.SetActive(true);
-        Debug.Log("ttttttttttt");
         tmpgrid.SetActive(false);
     }
 

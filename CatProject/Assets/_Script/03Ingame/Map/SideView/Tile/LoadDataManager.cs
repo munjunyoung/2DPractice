@@ -5,7 +5,7 @@ using UnityEngine.Tilemaps;
 
 enum Room_TileType { Type1 = 0, Type2 }
 public enum TileType {Terrain, Structure , Monster, Item}
-public enum STRUCTURE_TYPE { Entrance ,Box, Switch}
+public enum STRUCTURE_TYPE { Entrance ,Box, Switch, Garbage }
 public enum Box_Type { Normal }
 public enum Switch_Type {  Normal }
 
@@ -156,6 +156,7 @@ public class LoadDataManager : MonoBehaviour
     /// <param name="_tilemaps"></param>
     public TileInfo[,] AnalyzeTileMap(Tilemap _tm)
     {
+        
         TileInfo[,] tmptilearray = new TileInfo[_tm.size.x, _tm.size.y];
         foreach (var tmpos in _tm.cellBounds.allPositionsWithin)
         {

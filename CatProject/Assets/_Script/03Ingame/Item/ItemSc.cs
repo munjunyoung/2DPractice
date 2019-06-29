@@ -16,7 +16,7 @@ public class ItemSc : MonoBehaviour
             gameObject.SetActive(false);
         }
     }
-
+    
     public void StopAction(float _stopcount)
     {
         StartCoroutine(StopCoroutine(_stopcount));
