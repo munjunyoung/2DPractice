@@ -6,7 +6,7 @@ public class SwitchObSc : StructureObject
 {
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Obstacle"))
+        if (collision.CompareTag("Box"))
         {
             ownSpRenderer.sprite = spriteArray[1];
             StateOn = true;
@@ -15,7 +15,7 @@ public class SwitchObSc : StructureObject
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.CompareTag("Obstacle"))
+        if (collision.CompareTag("Box"))
         {
             ownSpRenderer.sprite = spriteArray[0];
             StateOn = false;

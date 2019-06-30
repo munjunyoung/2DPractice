@@ -10,8 +10,9 @@ TagManager:
   - Monster
   - PlayerAttackEffect
   - DrawGrid
-  - Switch
-  - Obstacle
+  - Box
+  - Structure
+  - FxTemporaire
   layers:
   - Default
   - TransparentFX
@@ -24,8 +25,8 @@ TagManager:
   - Tile
   - Player
   - Monster
-  - 
-  - 
+  - Item
+  - Structure
   - 
   - 
   - 

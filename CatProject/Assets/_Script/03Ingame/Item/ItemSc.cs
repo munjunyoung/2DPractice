@@ -4,25 +4,15 @@ using UnityEngine;
 
 public class ItemSc : MonoBehaviour
 {
-    bool isStop = false;
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (isStop)
-            return;
-        if(collision.CompareTag("Player"))
-        {
-            collision.GetComponent<Player>().CatnipItemNumber += 5;
-            gameObject.SetActive(false);
-        }
-    }
+    protected bool isStop = false;
+    protected int catnipamount;
     
     public void StopAction(float _stopcount)
     {
         StartCoroutine(StopCoroutine(_stopcount));
     }
 
-    private IEnumerator StopCoroutine(float _stopcount)
+    protected IEnumerator StopCoroutine(float _stopcount)
     {
         isStop = true;
         yield return new WaitForSeconds(_stopcount);

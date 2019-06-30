@@ -9,7 +9,7 @@ public class StructureObject : MonoBehaviour
     public SpriteRenderer ownSpRenderer;
     public Sprite[] spriteArray;
     public bool StateOn = false;
-
+    public GameObject EffectOb;
     protected virtual void Awake()
     {
         ownSpRenderer = GetComponent<SpriteRenderer>();

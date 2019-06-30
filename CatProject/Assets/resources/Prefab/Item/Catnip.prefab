@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1483470394269807500}
   - component: {fileID: 1483470394269807503}
   - component: {fileID: 1483470394269807498}
-  - component: {fileID: 6914485811753480675}
+  - component: {fileID: 8659456974717258367}
   m_Layer: 0
   m_Name: Catnip
   m_TagString: Untagged
@@ -106,7 +106,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 2, y: 2}
+  m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
 --- !u!111 &1483470394269807498
 Animation:
@@ -124,7 +124,7 @@ Animation:
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
   m_CullingType: 0
---- !u!114 &6914485811753480675
+--- !u!114 &8659456974717258367
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -133,6 +133,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 1483470394269807502}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dde2a0bdfa6081c49aa6ceb999d03231, type: 3}
+  m_Script: {fileID: 11500000, guid: 07cecfdf17b15e34682ca6557c041af7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

@@ -231,7 +231,7 @@ public class Monster : MonoBehaviour
         RaycastHit2D wallCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -((transform.localScale.y - 1) + 0.5f), 0), dir, transform.localScale.x + 0.5f, raycastLayerMask);
         if (wallCheckInfo.collider != null)
         {
-            if (wallCheckInfo.collider.CompareTag("Ground") || wallCheckInfo.collider.CompareTag("Floor") || wallCheckInfo.collider.CompareTag("Monster") || wallCheckInfo.collider.CompareTag("Obstacle"))
+            if (wallCheckInfo.collider.CompareTag("Ground") || wallCheckInfo.collider.CompareTag("Floor") || wallCheckInfo.collider.CompareTag("Structure")|| wallCheckInfo.collider.CompareTag("Box"))
                 sR.flipX = sR.flipX.Equals(true) ? false : true;
         }
         //길 끊김 Null Raycast
@@ -254,12 +254,10 @@ public class Monster : MonoBehaviour
 
         if (frontCheckInfo.collider != null)
         {
-            if (frontCheckInfo.collider.CompareTag("Ground") || frontCheckInfo.collider.CompareTag("Floor")||frontCheckInfo.collider.CompareTag("Obstacle"))
+            if (frontCheckInfo.collider.CompareTag("Ground") || frontCheckInfo.collider.CompareTag("Floor")||frontCheckInfo.collider.CompareTag("Structure")|| frontCheckInfo.collider.CompareTag("Box"))
                 Jump();
             else if (frontCheckInfo.collider.CompareTag("Player"))
                 OrderState = ORDER_STATE.Attack;
-            else if (frontCheckInfo.collider.CompareTag("Monster"))
-                dir = Vector2.zero;
         }
 
         sR.flipX = (int)(transform.position.x) > (int)(targetOb.position.x) ? true : false;

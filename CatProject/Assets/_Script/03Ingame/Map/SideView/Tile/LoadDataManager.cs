@@ -12,7 +12,7 @@ public enum Switch_Type {  Normal }
 public enum MONSTER_TYPE { Fox = 0 , Dog = 1 };
 public enum Fox_Type { Normal }
 
-public enum Item_TYPE { Catnip = 0 };
+public enum Item_TYPE { Catnip = 0 , BigCatnip};
 public enum Catnip_Type { Normal }
 public class LoadDataManager : MonoBehaviour
 {
