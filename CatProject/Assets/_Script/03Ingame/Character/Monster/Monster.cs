@@ -320,7 +320,7 @@ public class Monster : MonoBehaviour
     /// NOTE : 데미지를 입었을때 처리
     /// </summary>
     /// <param name="damage"></param>
-    public void TakeDamage(int damage, Transform targetpos)
+    public void TakeDamage(int damage, Transform targetpos ,Vector3 collisionpos)
     {
         if (!isAlive)
             return;
@@ -332,7 +332,7 @@ public class Monster : MonoBehaviour
         hpSliderUI.SetHPValue(CurrentHP);
 
         anim.SetTrigger("TakeDamage");
-        KnockBack(targetpos);
+        KnockBack(collisionpos);
         if (CurrentHP <= 0)
             Die();
     }
@@ -341,10 +341,10 @@ public class Monster : MonoBehaviour
     /// NOTE : 넉백, 플레이어와 부딪혔을 때나 공격 당했을 때
     /// </summary>
     /// <param name="targetpos"></param>
-    private void KnockBack(Transform targetpos)
+    private void KnockBack(Vector3 collisionpos)
     {
         if (!isRunningKnockbackCoroutine)
-            StartCoroutine(KnockbackCoroutine(targetpos));
+            StartCoroutine(KnockbackCoroutine(collisionpos));
     }
 
     protected void Skill()
@@ -356,17 +356,17 @@ public class Monster : MonoBehaviour
     /// NOTE : 넉백 물리 실행 및 설정 시간 이후 상태 변경 
     /// </summary>
     /// <returns></returns>
-    IEnumerator KnockbackCoroutine(Transform targetpos)
+    IEnumerator KnockbackCoroutine(Vector3 collisionpos)
     {
         //상태 변경
         isRunningKnockbackCoroutine = true;
         isKnockbackState = true;
         //KncokBack Action
         rb2D.velocity = Vector2.zero;
-        float xdir = Mathf.Sign(transform.position.x - targetpos.position.x);
-        float ydir = Mathf.Sign(transform.position.y - targetpos.position.y).Equals(1) ? 1f : -1f;
+        float xdir = Mathf.Sign(transform.position.x - collisionpos.x);
+        float ydir = Mathf.Sign(transform.position.y - collisionpos.y).Equals(1) ? 1f : -1f;
         Vector2 dir = new Vector2(xdir, ydir);
-        rb2D.AddForce(dir * mDATA.knockBackPower, ForceMode2D.Impulse);
+        //rb2D.AddForce(dir * mDATA.knockBackPower, ForceMode2D.Impulse);
 
         //점멸이펙트
         float timer = 0f;
@@ -464,7 +464,7 @@ public class Monster : MonoBehaviour
             if (isAlive)
             {
                 TraceON(collision.transform);
-                KnockBack(collision.transform);
+                KnockBack(collision.contacts[0].point);
             }
         }
 
@@ -480,9 +480,4 @@ public class Monster : MonoBehaviour
     }
     #endregion
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("PlayerAttackEffect"))
-            TakeDamage(collision.GetComponent<AttackEffectSc>().damage, collision.transform);
-    }
 }

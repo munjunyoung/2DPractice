@@ -110,13 +110,15 @@ public class Player : MonoBehaviour
     private int _catnipItemNumber = 10;
     public int CatnipItemNumber
     {
-        get{ return _catnipItemNumber; }
+        get { return _catnipItemNumber; }
         set
         {
             _catnipItemNumber = value;
             PlayerUIManager.instance.SetCatnipItemNumberText(_catnipItemNumber);
         }
     }
+
+    public GameObject[] effectArray;
 
     protected virtual void Awake()
     {
