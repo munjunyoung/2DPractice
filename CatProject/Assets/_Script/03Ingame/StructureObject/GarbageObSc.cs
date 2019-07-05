@@ -16,7 +16,7 @@ public class GarbageObSc : StructureObject
         hp = spriteArray.Length-1;
     }
 
-    private void TakeOpen()
+    public override void TakeThis()
     {
         if (!StateOn)
             return;
@@ -34,14 +34,8 @@ public class GarbageObSc : StructureObject
             item.gameObject.SetActive(true);
             item.GetComponent<Rigidbody2D>().AddForce(Vector2.up * 25f, ForceMode2D.Impulse);
         }
-
-
+        
         //..애니매이션 실행
         //..기본 스프라이트 이미지 변경
-    }
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("PlayerAttackEffect"))
-            TakeOpen();
     }
 }

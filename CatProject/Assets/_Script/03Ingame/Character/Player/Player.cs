@@ -407,6 +407,7 @@ public class Player : MonoBehaviour
     {
         isDie = true;
         //..die animation 실행
+        CurrentPlayerAnimState = ANIMATION_STATE.Die;
         yield return new WaitForSeconds(2f);
         InGameManager.instance.DiePlayer();
     }

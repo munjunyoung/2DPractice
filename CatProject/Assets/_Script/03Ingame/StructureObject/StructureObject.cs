@@ -13,5 +13,10 @@ public class StructureObject : MonoBehaviour
     protected virtual void Awake()
     {
         ownSpRenderer = GetComponent<SpriteRenderer>();
-    } 
+    }
+    
+    public virtual void TakeThis()
+    {
+
+    }
 }

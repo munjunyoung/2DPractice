@@ -18,7 +18,7 @@ public class BoxObSc : StructureObject
     /// <summary>
     /// NOTE : 공격받음
     /// </summary>
-    private void TakeDamage()
+    public override void TakeThis()
     {
         if (!StateOn)
             return;
@@ -53,11 +53,5 @@ public class BoxObSc : StructureObject
         ownSpRenderer.sprite = spriteArray[hp - 1];
         StateOn = true;
     }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("PlayerAttackEffect"))
-            TakeDamage();
-    }
-
+    
 }

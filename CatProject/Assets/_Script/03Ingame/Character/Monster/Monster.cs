@@ -69,7 +69,7 @@ public class Monster : MonoBehaviour
     //Raycast    
     private int raycastLayerMask;
     [HideInInspector]
-    public Transform targetOb = null;
+    private Transform targetOb = null;
     //HP
     private int instanceHP;
     public int CurrentHP
@@ -116,9 +116,9 @@ public class Monster : MonoBehaviour
         rb2D = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         sR = GetComponent<SpriteRenderer>();
-
+        
         //Set Layer 8 - tile, 9 - player
-        raycastLayerMask = (1 << LayerMask.NameToLayer("Player")) | (1 << LayerMask.NameToLayer("Tile")) | (1 << LayerMask.NameToLayer("Monster"));
+        //raycastLayerMask = (1 << LayerMask.NameToLayer("Player")) | (1 << LayerMask.NameToLayer("Tile")) | (1 << LayerMask.NameToLayer("Monster"));
         //Size
         if (isBoss)
         {
@@ -201,9 +201,9 @@ public class Monster : MonoBehaviour
     private void TraceON(Transform target)
     {
         if (OrderState.Equals(ORDER_STATE.Trace))
-            return; 
-        OrderState = ORDER_STATE.Trace;
+            return;
         targetOb = target;
+        OrderState = ORDER_STATE.Trace;
     }
     
     /// <summary>
@@ -228,14 +228,15 @@ public class Monster : MonoBehaviour
         Vector2 dir = sR.flipX.Equals(true) ? -Vector2.right : Vector2.right;
 
         //벽 Raycast
-        RaycastHit2D wallCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -((transform.localScale.y - 1) + 0.5f), 0), dir, transform.localScale.x + 0.5f, raycastLayerMask);
+        RaycastHit2D wallCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -((transform.localScale.y - 1) + 0.5f), 0), dir, transform.localScale.x + 0.5f);
         if (wallCheckInfo.collider != null)
         {
-            if (wallCheckInfo.collider.CompareTag("Ground") || wallCheckInfo.collider.CompareTag("Floor") || wallCheckInfo.collider.CompareTag("Structure")|| wallCheckInfo.collider.CompareTag("Box"))
+            
+            if (wallCheckInfo.collider.CompareTag("Ground") || wallCheckInfo.collider.CompareTag("Floor") || wallCheckInfo.collider.CompareTag("Garbage")|| wallCheckInfo.collider.CompareTag("Box"))
                 sR.flipX = sR.flipX.Equals(true) ? false : true;
         }
         //길 끊김 Null Raycast
-        RaycastHit2D nullCheckInfo = Physics2D.Raycast(transform.position, dir + new Vector2(0, -transform.localScale.y), transform.localScale.x + 0.5f, raycastLayerMask);
+        RaycastHit2D nullCheckInfo = Physics2D.Raycast(transform.position, dir + new Vector2(0, -transform.localScale.y), transform.localScale.x + 0.5f);
         if (nullCheckInfo.collider == null)
             sR.flipX = sR.flipX.Equals(true) ? false : true;
 
@@ -250,18 +251,17 @@ public class Monster : MonoBehaviour
         //flip을 통한 dir 설정
         Vector2 dir = sR.flipX.Equals(true) ? -Vector2.right : Vector2.right;
         //벽 Raycast (아래를 훑어야하긴하는데)
-        RaycastHit2D frontCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -((transform.localScale.y - 1) + 0.2f), 0), dir, transform.localScale.x, raycastLayerMask);
+        RaycastHit2D frontCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -((transform.localScale.y - 1) + 0.2f), 0), dir, transform.localScale.x);
 
         if (frontCheckInfo.collider != null)
         {
-            if (frontCheckInfo.collider.CompareTag("Ground") || frontCheckInfo.collider.CompareTag("Floor")||frontCheckInfo.collider.CompareTag("Structure")|| frontCheckInfo.collider.CompareTag("Box"))
+            if (frontCheckInfo.collider.CompareTag("Ground") || frontCheckInfo.collider.CompareTag("Floor")||frontCheckInfo.collider.CompareTag("Garbage")|| frontCheckInfo.collider.CompareTag("Box"))
                 Jump();
             else if (frontCheckInfo.collider.CompareTag("Player"))
                 OrderState = ORDER_STATE.Attack;
         }
-
         sR.flipX = (int)(transform.position.x) > (int)(targetOb.position.x) ? true : false;
-
+        
         rb2D.velocity = new Vector2(dir.x * currentMoveSpeed, rb2D.velocity.y);
 
         TraceOFF();
@@ -289,7 +289,7 @@ public class Monster : MonoBehaviour
         if (!attackCooltimeState)
             attackOn = true;
 
-        RaycastHit2D targetCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -0.5f, 0), transform.right, 1.5f, raycastLayerMask);
+        RaycastHit2D targetCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -0.5f, 0), transform.right, 1.5f);
 
         if (targetCheckInfo.collider != null)
             isFrontTarget = targetCheckInfo.collider.CompareTag("Player") ? true : false;
@@ -324,7 +324,7 @@ public class Monster : MonoBehaviour
     {
         if (!isAlive)
             return;
-        TraceON(targetpos.parent);
+        TraceON(targetpos);
         CurrentHP -= damage;
         //체력 UI 시작 및 설정
         if (!hpSliderUI.isActiveAndEnabled)

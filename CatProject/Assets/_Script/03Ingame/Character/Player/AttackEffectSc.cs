@@ -9,21 +9,28 @@ public class AttackEffectSc : MonoBehaviour
     [HideInInspector]
     public int damage = 0;
 
-    private void Awake()
+    private void Start()
     {
         playerSc = gameObject.transform.parent.GetComponent<Player>();
         damage = playerSc.pDATA.attackDamage;
-
         gameObject.SetActive(false);
     }
     
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.transform.CompareTag("Monster"))
+        switch(collision.transform.tag)
         {
-            collision.transform.GetComponent<Monster>().TakeDamage(damage, collision.transform, collision.contacts[0].point);
-            EffectOn(collision.contacts[0].point);
+            case "Monster":
+                collision.transform.GetComponent<Monster>().TakeDamage(damage, playerSc.transform, collision.contacts[0].point);
+                break;
+            case "Box":
+                collision.transform.GetComponent<BoxObSc>().TakeThis();
+                break;
+            case "Garbage":
+                collision.transform.GetComponent<GarbageObSc>().TakeThis();
+                break;
         }
+        EffectOn(collision.contacts[0].point);
     }
 
     private void EffectOn(Vector3 pos)

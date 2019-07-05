@@ -11,8 +11,9 @@ TagManager:
   - PlayerAttackEffect
   - DrawGrid
   - Box
-  - Structure
   - FxTemporaire
+  - Garbage
+  - Structure
   layers:
   - Default
   - TransparentFX
