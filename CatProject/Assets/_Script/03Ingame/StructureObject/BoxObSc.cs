@@ -2,35 +2,36 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BoxObSc : StructureObject
+public class BoxObSc : Rb2dStructureSc
 {
-    private int hp = 0;
     private Vector2 startpos;
 
     protected override void Awake()
     {
         base.Awake();
-        hp = spriteArray.Length;
-        StateOn = true;
         startpos = transform.localPosition;
     }
 
-    /// <summary>
-    /// NOTE : 공격받음
-    /// </summary>
-    public override void TakeThis()
+    ///// <summary>
+    ///// NOTE : 공격받음
+    ///// </summary>
+    //public override void TakeThis()
+    //{
+    //    if (!StateOn)
+    //        return;
+    //    hp -= 1;
+
+    //    if (hp > 0)
+    //        ownSpRenderer.sprite = spriteArray[hp - 1];
+    //    else
+    //        StartCoroutine(DestroyObjectByCount(2f));
+    //}
+
+    protected override void SetWhenHPzero()
     {
-        if (!StateOn)
-            return;
-        hp -= 1;
-
-        if (hp > 0)
-            ownSpRenderer.sprite = spriteArray[hp - 1];
-        else
-            StartCoroutine(DestroyObjectByCount(2f));
+        //base.SetWhenHPzero();
+        StartCoroutine(DestroyObjectByCount(2f));
     }
-
-
     /// <summary>
     /// NOTE : 2초후 실행
     /// </summary>

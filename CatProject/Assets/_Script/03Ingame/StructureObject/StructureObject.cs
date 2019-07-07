@@ -15,8 +15,5 @@ public class StructureObject : MonoBehaviour
         ownSpRenderer = GetComponent<SpriteRenderer>();
     }
     
-    public virtual void TakeThis()
-    {
-
-    }
+   
 }

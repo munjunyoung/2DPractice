@@ -304,11 +304,8 @@ public class BoardManager : MonoBehaviour
                 foreach (EntranceConnectRoom nextroomneighbor in roomList[currentroomneigbor.connectedRoom.roomNumberOfList].entranceInfoList)
                 {
                     Debug.Log(room.roomNumberOfList);
-                    //if (currentroomneigbor.entrance.currentRoomNumber.Equals(nextroomneighbor.connectedRoom.roomNumberOfList))
                     if (currentroomneigbor.entrance.ownRoom.roomNumberOfList.Equals(nextroomneighbor.connectedRoom.roomNumberOfList))
                         currentroomneigbor.entrance.connectedNextEntrance = nextroomneighbor.entrance;
-                    //if (currentroomneigbor.entrance.currentRoomNumber.Equals(nextroomneighbor.connectedRoom.roomNumberOfList))
-                    //    currentroomneigbor.entrance.connectedNextEntrance = nextroomneighbor.entrance;
 
                 }
 

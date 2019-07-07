@@ -15,7 +15,23 @@ public class AttackEffectSc : MonoBehaviour
         damage = playerSc.pDATA.attackDamage;
         gameObject.SetActive(false);
     }
-    
+
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        switch(collision.transform.tag)
+        {
+            case "Monster":
+               // collision.GetComponent<Monster>().TakeDamage(damage)
+                break;
+            case "Box":
+                break;
+            case "Garbage":
+                break;
+
+        }
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         switch(collision.transform.tag)
@@ -24,10 +40,8 @@ public class AttackEffectSc : MonoBehaviour
                 collision.transform.GetComponent<Monster>().TakeDamage(damage, playerSc.transform, collision.contacts[0].point);
                 break;
             case "Box":
-                collision.transform.GetComponent<BoxObSc>().TakeThis();
-                break;
             case "Garbage":
-                collision.transform.GetComponent<GarbageObSc>().TakeThis();
+                collision.transform.GetComponent<Rb2dStructureSc>().TakeThis(collision.contacts[0].point);
                 break;
         }
         EffectOn(collision.contacts[0].point);

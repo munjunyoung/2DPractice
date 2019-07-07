@@ -2,40 +2,43 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GarbageObSc : StructureObject
+public class GarbageObSc : Rb2dStructureSc
 {
-    int hp = 0;
     public ItemSc item;
 
     protected override void Awake()
     {
-        item = Instantiate(LoadDataManager.instance.itemPrefabDic[Item_TYPE.BigCatnip.ToString()], new Vector3(transform.position.x,transform.position.y+1f, 0), Quaternion.identity);
-        item.gameObject.SetActive(false);
         base.Awake();
-        StateOn = true;
-        hp = spriteArray.Length-1;
+        item = Instantiate(LoadDataManager.instance.itemPrefabDic[Item_TYPE.BigCatnip.ToString()], new Vector3(transform.position.x, transform.position.y + 1f, 0), Quaternion.identity);
+        item.gameObject.SetActive(false);
     }
 
-    public override void TakeThis()
-    {
-        if (!StateOn)
-            return;
-        hp -= 1;
-        ownSpRenderer.sprite = spriteArray[hp];
+    //public override void TakeThis()
+    //{
+    //    base.TakeThis();
+
+
+      
         
-        if(hp<=0)
+    //    //..애니매이션 실행
+    //    //..기본 스프라이트 이미지 변경
+    //}
+
+    protected override void SetWhenHPzero()
+    {
+        //base.SetWhenHPzero();
+        if (hp > 0)
+            ownSpRenderer.sprite = spriteArray[hp];
+        else
         {
             StateOn = false;
-            GetComponent<BoxCollider2D>().isTrigger = true;
-            GetComponent<Rigidbody2D>().simulated = false;
+            //GetComponent<BoxCollider2D>().isTrigger = true;
+            //GetComponent<Rigidbody2D>().simulated = false;
 
             EffectOb.SetActive(true);
 
             item.gameObject.SetActive(true);
             item.GetComponent<Rigidbody2D>().AddForce(Vector2.up * 25f, ForceMode2D.Impulse);
         }
-        
-        //..애니매이션 실행
-        //..기본 스프라이트 이미지 변경
     }
 }
