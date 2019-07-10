@@ -12,7 +12,7 @@ public class Rb2dStructureSc : StructureObject
         base.Awake();
         rb2d = GetComponent<Rigidbody2D>();
         StateOn = true;
-        hp = spriteArray.Length - 1;
+        hp = spriteArray.Length;
     }
 
     public virtual void TakeThis(Vector3 pos)
@@ -22,7 +22,7 @@ public class Rb2dStructureSc : StructureObject
             return;
         hp -= 1;
         if (hp > 0)
-            ownSpRenderer.sprite = spriteArray[hp];
+            ownSpRenderer.sprite = spriteArray[hp-1];
         else
             SetWhenHPzero();
     }
