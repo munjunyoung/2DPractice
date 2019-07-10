@@ -31,7 +31,6 @@ public class Rb2dStructureSc : StructureObject
 
     protected virtual void KnockBack(Vector3 hitpos)
     {
-        Debug.Log("Test");
         var dirvector = transform.position - hitpos;
         dirvector = dirvector.normalized;
         rb2d.AddForce(dirvector*100f, ForceMode2D.Impulse);

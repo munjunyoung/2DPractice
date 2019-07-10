@@ -1,11 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class AttackEffectSc : MonoBehaviour
 {
     private Player playerSc;
     public GameObject[] hitEffectpullingArray;
+    private int effectCount = 0;
     [HideInInspector]
     public int damage = 0;
 
@@ -17,24 +16,31 @@ public class AttackEffectSc : MonoBehaviour
     }
 
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        switch(collision.transform.tag)
-        {
-            case "Monster":
-               // collision.GetComponent<Monster>().TakeDamage(damage)
-                break;
-            case "Box":
-                break;
-            case "Garbage":
-                break;
-
-        }
-    }
+    //private void OnTriggerEnter2D(Collider2D collision)
+    //{
+    //    bool effectOn = true;
+    //    var hitpos = (transform.position + collision.transform.position) * 0.5f;
+    //    switch (collision.transform.tag)
+    //    {
+    //        case "Monster":
+    //            collision.transform.GetComponent<Monster>().TakeDamage(damage, playerSc.transform, hitpos);
+    //            break;
+    //        case "Box":
+    //        case "Garbage":
+    //            collision.transform.GetComponent<Rb2dStructureSc>().TakeThis(hitpos);
+    //            break;
+    //        default:
+    //            effectOn = false;
+    //            break;
+    //    }
+    //    if(effectOn)
+    //        PlayHitEffect(hitpos);
+    //}
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        switch(collision.transform.tag)
+        bool effectOn = true;
+        switch (collision.transform.tag)
         {
             case "Monster":
                 collision.transform.GetComponent<Monster>().TakeDamage(damage, playerSc.transform, collision.contacts[0].point);
@@ -43,30 +49,22 @@ public class AttackEffectSc : MonoBehaviour
             case "Garbage":
                 collision.transform.GetComponent<Rb2dStructureSc>().TakeThis(collision.contacts[0].point);
                 break;
+            default:
+                effectOn = false;
+                break;
         }
-        EffectOn(collision.contacts[0].point);
+        if(effectOn)
+            PlayHitEffect(collision.contacts[0].point);
     }
 
-    private void EffectOn(Vector3 pos)
+    private void PlayHitEffect(Vector3 _hitpos)
     {
-        bool checkOn = false;
-        int count = 0;
-        while (!checkOn)
-        {
-            if(count!=0)
-                count = count % hitEffectpullingArray.Length;
-            //현재 체크하는 이펙트가 온일 경우 
-            if (hitEffectpullingArray[count].activeSelf)
-            {
-                count++;
-            }
-            else
-            {
-                hitEffectpullingArray[count].transform.position = pos;
-                hitEffectpullingArray[count].SetActive(true);
-                checkOn = true;
-            }
-            
-        }
+        //effect포지션과 target포지션 중앙 설정
+        if (effectCount != 0)
+            effectCount = effectCount % hitEffectpullingArray.Length;
+        //현재 체크하는 이펙트가 온일 경우 
+        hitEffectpullingArray[effectCount].transform.position = _hitpos;
+        hitEffectpullingArray[effectCount].SetActive(true);
+        effectCount++;
     }
 }

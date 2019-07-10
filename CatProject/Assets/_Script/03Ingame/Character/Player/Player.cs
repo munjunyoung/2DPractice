@@ -234,20 +234,12 @@ public class Player : MonoBehaviour
                 if (CurrentTP >= pDATA.attackTPAmount)
                     attackOn = true;
                 else
-                {
-                    attackOn = false;
                     Debug.Log("기력이부조카당");
-                }
             }
             else
             {
-                attackOn = false;
                 Debug.Log("쿨이당");
             }
-        }
-        else
-        {
-            attackOn = false;
         }
     }
 
@@ -264,6 +256,7 @@ public class Player : MonoBehaviour
     public void AttackEffectOff()
     {
         attackEffectModel.SetActive(false);
+        attackOn = false;
     }
     /// <summary>
     /// NOTE : ATTACK 상태 실행시 코루틴, ATTACK ANIMATION 클립 내부 add Event에서 출력 (공격 실행 후 카운트 실행 설정한ATTACK COOLTIME값 이후 ATTACK Possible true로 변경)

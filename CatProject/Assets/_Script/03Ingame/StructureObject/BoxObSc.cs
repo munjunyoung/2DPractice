@@ -40,6 +40,7 @@ public class BoxObSc : Rb2dStructureSc
     IEnumerator DestroyObjectByCount(float count)
     {
         StateOn = false;
+        rb2d.velocity = Vector2.zero;
         ownSpRenderer.sprite = null;
         GetComponent<Rigidbody2D>().simulated = false;
         GetComponent<BoxCollider2D>().isTrigger = true;
