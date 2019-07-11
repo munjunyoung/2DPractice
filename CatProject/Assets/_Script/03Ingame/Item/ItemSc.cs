@@ -5,8 +5,23 @@ using UnityEngine;
 public class ItemSc : MonoBehaviour
 {
     protected bool isStop = false;
-    protected int catnipamount;
-    
+    protected SpriteRenderer itemSpriteRenderer; 
+    protected BoxCollider2D itemCol;
+    public GameObject pickupEffect;
+
+    protected virtual void Start()
+    {
+        itemSpriteRenderer = GetComponent<SpriteRenderer>();
+        itemCol = GetComponent<BoxCollider2D>();
+        pickupEffect.SetActive(false);
+    }
+
+    public virtual void PlayWhenPick(Player playersc)
+    {
+        if (isStop)
+            return;
+    }
+
     public void StopAction(float _stopcount)
     {
         StartCoroutine(StopCoroutine(_stopcount));

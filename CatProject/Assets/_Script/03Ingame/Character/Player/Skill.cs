@@ -8,8 +8,9 @@ public enum Skill_Type { Buff, Immediate}
 public class Skill : MonoBehaviour
 {
     protected Player playerSc;
-    protected SpriteRenderer playerSprite;
+    protected SpriteRenderer playerSpriteRenderer;
     protected Color playerColor;
+    protected GameObject SkillEffectModel;
     public float durationTime = 0;
     public float coolTime = 0;
     public int consumeCatnipValue = 0;
@@ -23,8 +24,9 @@ public class Skill : MonoBehaviour
     protected virtual void Start()
     {
         playerSc = GetComponent<Player>();
-        playerSprite = playerSc.GetComponent<SpriteRenderer>();
-        playerColor = playerSprite.color;
+        playerSpriteRenderer = playerSc.GetComponent<SpriteRenderer>();
+        playerColor = playerSpriteRenderer.color;
+        
     }
     /// <summary>
     /// NOTE : 캐릭터 실행
@@ -72,11 +74,15 @@ public class Skill : MonoBehaviour
     /// <summary>
     /// NOTE : 스킬 사용시 캐릭터 이펙트 관련 (스킬마다 다른 캐릭터 이펙트 부여)
     /// </summary>
-    protected virtual void CharacterEffectOn() { }
+    protected virtual void CharacterEffectOn()
+    {
+        SkillEffectModel.SetActive(true);
+    }
     
     protected virtual void CharacterEffectOff()
     {
-        playerSprite.color = Color.white;
+        SkillEffectModel.SetActive(false);
+        playerSpriteRenderer.color = playerColor;
     }
 }
 
@@ -87,22 +93,28 @@ public class SkillAttackUP : Skill
     int plusDamage = 30;
     Color originalColor = Color.white;
     Color changeColor = Color.red;
+
     Vector2 originalScale = Vector2.one;
-    Vector2 changeScale = Vector2.one*2f;
-    GameObject effectModel = null;
+    Vector2 changeScale = Vector2.one*1.5f;
+
+    GameObject attackEffectModel = null;
     SpriteRenderer spriteOfEffectModel;
     AttackEffectSc attackScOfEffectSc;
 
     protected override void Start()
     {
         base.Start();
-        effectModel = playerSc.attackEffectModel;
-        spriteOfEffectModel = effectModel.GetComponent<SpriteRenderer>();
-        attackScOfEffectSc = effectModel.GetComponent<AttackEffectSc>();
+        SkillEffectModel = Instantiate(LoadDataManager.instance.SkillEffectPrefabDic["AttackUpEffect"], playerSc.transform);
+        SkillEffectModel.transform.localPosition = new Vector2(0, -1);
+        SkillEffectModel.SetActive(false);
+        attackEffectModel = playerSc.attackEffectModel;
+        spriteOfEffectModel = attackEffectModel.GetComponent<SpriteRenderer>();
+        attackScOfEffectSc = attackEffectModel.GetComponent<AttackEffectSc>();
+        
 
         originalDamage = attackScOfEffectSc.damage;
         originalColor = spriteOfEffectModel.color;
-        originalScale = effectModel.transform.localScale;
+        originalScale = attackEffectModel.transform.localScale;
 
         durationTime = 5f;
         coolTime = 5f;
@@ -111,19 +123,19 @@ public class SkillAttackUP : Skill
     
     protected override IEnumerator ExecuteSkillCoroutine(float _durationTime)
     {
-        effectModel.transform.localScale = changeScale;
+        attackEffectModel.transform.localScale = changeScale;
         spriteOfEffectModel.color = changeColor;
         attackScOfEffectSc.damage += plusDamage;
+        
         yield return StartCoroutine(base.ExecuteSkillCoroutine(_durationTime));
-        effectModel.transform.localScale = originalScale;
+        attackEffectModel.transform.localScale = originalScale;
         spriteOfEffectModel.color = originalColor;
         attackScOfEffectSc.damage = originalDamage;
     }
-
     protected override void CharacterEffectOn()
     {
         base.CharacterEffectOn();
-        playerSprite.color = Color.red;
+        playerSpriteRenderer.color = Color.red;
     }
 }
 
@@ -135,6 +147,9 @@ public class SkillSpeedUP : Skill
     protected override void Start()
     {
         base.Start();
+        SkillEffectModel = Instantiate(LoadDataManager.instance.SkillEffectPrefabDic["SpeedUpEffect"], playerSc.transform);
+        SkillEffectModel.transform.localPosition = new Vector2(0, 0);
+        SkillEffectModel.SetActive(false);
         originalSpeed = playerSc.pDATA.maxSpeedValue;
         
         durationTime = 5f;
@@ -148,15 +163,14 @@ public class SkillSpeedUP : Skill
         yield return StartCoroutine(base.ExecuteSkillCoroutine(_durationtime));
         playerSc.pDATA.maxSpeedValue = originalSpeed;
     }
-
     protected override void CharacterEffectOn()
     {
         base.CharacterEffectOn();
-        playerSprite.color = Color.blue;
+        playerSpriteRenderer.color = Color.blue;
     }
 }
 
-public class SkillRecoveryHP : Skill
+public class SkillHealing : Skill
 {
     private int hpUpAmount = 50;
     private float originalHp;
@@ -164,9 +178,12 @@ public class SkillRecoveryHP : Skill
     protected override void Start()
     {
         base.Start();
+        SkillEffectModel = Instantiate(LoadDataManager.instance.SkillEffectPrefabDic["HealingEffect"], playerSc.transform);
+        SkillEffectModel.transform.localPosition = new Vector2(0, 0);
+        SkillEffectModel.SetActive(false);
         originalHp = playerSc.pDATA.maxHP;
 
-        durationTime = 0f;
+        durationTime = 1f;
         coolTime = 10f;
         consumeCatnipValue = 5;
     }
@@ -188,10 +205,11 @@ public class SkillRecoveryHP : Skill
         playerSc.CurrentHP += hpUpAmount;
         yield return StartCoroutine(base.ExecuteSkillCoroutine(_durationtime));
     }
-
     protected override void CharacterEffectOn()
     {
         base.CharacterEffectOn();
-        playerSprite.color = Color.green;
+        playerSpriteRenderer.color = Color.green;
     }
+
+    
 }

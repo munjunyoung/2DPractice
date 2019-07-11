@@ -4,19 +4,38 @@ using UnityEngine;
 
 public class CatnipSc : ItemSc
 {
-    private void Start()
+    protected int catnipamount;
+    protected override void Start()
     {
+        base.Start();
         catnipamount = 5;
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    public override void PlayWhenPick(Player playersc)
     {
-        if (isStop)
-            return;
-        if (collision.CompareTag("Player"))
-        {
-            collision.GetComponent<Player>().CatnipItemNumber += catnipamount;
-            gameObject.SetActive(false);
-        }
+        base.PlayWhenPick(playersc);
+        playersc.CatnipItemNumber += catnipamount;
+        StartCoroutine(SetActiveOff(0.5f));
     }
+
+    IEnumerator SetActiveOff(float count)
+    {
+        itemSpriteRenderer.enabled = false;
+        itemCol.enabled = false;
+
+        pickupEffect.SetActive(true);
+        yield return new WaitForSeconds(count);
+        gameObject.SetActive(false);
+    }
+
+    //private void OnTriggerEnter2D(Collider2D collision)
+    //{
+    //    if (isStop)
+    //        return;
+    //    if (collision.CompareTag("Player"))
+    //    {
+    //        collision.GetComponent<Player>().CatnipItemNumber += catnipamount;
+    //        gameObject.SetActive(false);
+    //    }
+    //}
 }

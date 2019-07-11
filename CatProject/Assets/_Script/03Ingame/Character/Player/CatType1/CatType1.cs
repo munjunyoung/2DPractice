@@ -7,6 +7,7 @@ using System.Collections.Generic;
 /// </summary>
 public class CatType1 : Player
 {
+    
     protected override void Awake()
     {
         base.Awake();

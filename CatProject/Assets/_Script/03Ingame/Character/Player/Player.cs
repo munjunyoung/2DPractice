@@ -463,5 +463,17 @@ public class Player : MonoBehaviour
     {
         isGrounded = false;
     }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.gameObject.CompareTag("Item"))
+            collision.transform.GetComponent<ItemSc>().PlayWhenPick(this);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Item"))
+            collision.transform.GetComponent<ItemSc>().PlayWhenPick(this);
+    }
     #endregion
 }

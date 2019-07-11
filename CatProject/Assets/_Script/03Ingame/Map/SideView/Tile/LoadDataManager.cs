@@ -36,6 +36,7 @@ public class LoadDataManager : MonoBehaviour
     private readonly string structurePefabPath = "Prefab/Structure";
     private readonly string monsterPrefabPath = "Prefab/Character/Monster";
     private readonly string itemPrefabPath = "Prefab/Item";
+    private readonly string skillEffectPrefabPath = "Prefab/SkillEffect";
     //Tile 
     public TypeOfTileSetType[] tileDataArray;
     public Dictionary<string, List<GeneratedTerrainData>> terrainDataDic = new Dictionary<string, List<GeneratedTerrainData>>();
@@ -45,7 +46,7 @@ public class LoadDataManager : MonoBehaviour
     public Dictionary<string, Monster> monsterPrefabDic = new Dictionary<string, Monster>();
     public Dictionary<string, StructureObject> structurePrefabDic = new Dictionary<string, StructureObject>();
     public Dictionary<string, ItemSc> itemPrefabDic = new Dictionary<string, ItemSc>();
-
+    public Dictionary<string, GameObject> SkillEffectPrefabDic = new Dictionary<string, GameObject>();
     //private void Start()
     //{
     //    tileDataArray = LoadAllTile();
@@ -71,6 +72,7 @@ public class LoadDataManager : MonoBehaviour
         SetLoadData(itemPrefabDic, itemPrefabPath);
         SetLoadData(monsterPrefabDic, monsterPrefabPath);
         SetLoadData(structurePrefabDic, structurePefabPath);
+        SetLoadData(SkillEffectPrefabDic, skillEffectPrefabPath);
     }
 
     /// <summary>a

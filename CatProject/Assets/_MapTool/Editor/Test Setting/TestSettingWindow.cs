@@ -18,12 +18,12 @@ class TestSettingWindow : EditorWindow
 
     private static GameObject playerOb;
     private enum PLAYER_TYPE { Cat1 };
-    private string playerPath = "Assets/resources/Character/Player/";
+    private string playerPath = "Assets/resources/Prefab/Character/Player/";
     private Vector2 characterpos;
     private int selectedTypePlayer;
 
     private enum MONSTER_TYPE { Fox };
-    private string monsterPath = "Assets/resources/Character/Monster/";
+    private string monsterPath = "Assets/resources/Prefab/Character/Monster/";
     private Vector2 monsterPos;
     private int selectedTypeMonster;
     private int numberOfMonster;

@@ -14,7 +14,7 @@ public class MapToolWindow : EditorWindow
     static string scenePath = "Assets/_Scenes/";
     static string layoutPath = "Assets/_MapTool/Layout/";
     private string loadFolderPath = "Assets/resources/GeneratedMapData";
-    private string csvfilepath = "Assets/resources/Character/CSVData";
+    private string csvfilepath = "Assets/resources/Prefab/Character/CSVData";
 
     [MenuItem("MapTool/Execute MapTool")]
     static void Open()

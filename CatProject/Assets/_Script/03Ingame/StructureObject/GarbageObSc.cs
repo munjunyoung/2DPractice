@@ -9,7 +9,7 @@ public class GarbageObSc : Rb2dStructureSc
     protected override void Awake()
     {
         base.Awake();
-        item = Instantiate(LoadDataManager.instance.itemPrefabDic[Item_TYPE.BigCatnip.ToString()], new Vector3(transform.position.x, transform.position.y + 1f, 0), Quaternion.identity);
+        item = Instantiate(LoadDataManager.instance.itemPrefabDic[Item_TYPE.BigCatnip.ToString()], new Vector3(transform.position.x, transform.position.y + 2f, 0), Quaternion.identity);
         item.gameObject.SetActive(false);
     }
 
