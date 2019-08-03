@@ -1,13 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
-public enum ORDER_STATE { Idle, Patroll, Trace, Attack }
+public enum ORDER_STATE { Idle, Patrol, Chase, Attack, Die}
 public class Monster : MonoBehaviour
 {
     //자신이 존재하는 방
     public DungeonRoom ownRoom = null;
-    delegate void AlarmHandler();
     /// <summary>
     /// CHARACTER STATE 
     /// NOTE : 애니매이션 파라미터 상태 설정 (속성은 animation 속도 설정)
@@ -15,7 +15,7 @@ public class Monster : MonoBehaviour
     /// ATTACK : 공격 속도 설정
     /// TODO : 위 2개 말고는 아직은 필요성을 느끼지 못함
     private ANIMATION_STATE InstanceState;
-    private ANIMATION_STATE CurrentAnimState
+    protected ANIMATION_STATE CurrentAnimState
     {
         get { return InstanceState; }
         set
@@ -35,7 +35,6 @@ public class Monster : MonoBehaviour
             }
         }
     }
-
     /// <summary>
     /// NOTE : PATROLL SPEED, TRACESPEED 속성 설정
     /// </summary>
@@ -48,28 +47,28 @@ public class Monster : MonoBehaviour
             InstanceOrderState = value;
             switch (InstanceOrderState)
             {
-                case ORDER_STATE.Patroll:
+                case ORDER_STATE.Patrol:
                     currentMoveSpeed = mDATA.patrollSpeed;
                     break;
-                case ORDER_STATE.Trace:
+                case ORDER_STATE.Chase:
                     currentMoveSpeed = mDATA.traceSpeed;
                     break;
             }
         }
 
     }
-
+    //Type Data
     public MONSTER_TYPE mType;
     public MonsterData mDATA = new MonsterData();
-
-    private Rigidbody2D rb2D;
+    //Component
+    protected Rigidbody2D rb2D;
     private Animator anim;
-    private SpriteRenderer sR;
+    protected SpriteRenderer sR;
     
     //Raycast    
     private int raycastLayerMask;
     [HideInInspector]
-    private Transform targetOb = null;
+    protected Transform targetOb = null;
     //HP
     private int instanceHP;
     public int CurrentHP
@@ -85,12 +84,13 @@ public class Monster : MonoBehaviour
         }
     }
     //Move
-    private float currentMoveSpeed;
+    protected float currentMoveSpeed;
+    protected Vector2 characterDir = Vector2.zero;
     //Attack
     private bool isRunningAttackCoroutine = false;
-    private bool attackCooltimeState = false;
-    private bool attackOn = false;
-    private bool isFrontTarget = false;
+    protected bool attackCooltimeState = false;
+    protected bool attackOn = false;
+    protected bool isFrontTarget = false;
     //KnockBack
     private bool isRunningKnockbackCoroutine = false;
     private bool isKnockbackState = false;
@@ -98,7 +98,6 @@ public class Monster : MonoBehaviour
 
     [HideInInspector]
     public bool isAlive;
-    private bool isGrounded = false;
     public bool isStopped;
 
     private float traceOffDistance = 10f;
@@ -108,8 +107,8 @@ public class Monster : MonoBehaviour
     private MonsterHPSliderSc hpSliderUI;
     //몬스터가 보스로 등장할 경우 여기서 변경
     public bool isBoss = false;
-
-    private void Awake()
+    
+    protected virtual void Awake()
     {
         isAlive = true;
 
@@ -126,13 +125,13 @@ public class Monster : MonoBehaviour
             transform.localScale = Vector3.one * 3f;
             sR.color = new Color(1, 0.5f, 0.5f, 1);
         }
-
     }
 
-    private void Start()
+    protected virtual void Start()
     {
+        targetOb = GameObject.FindWithTag("Player").transform;
         CSVDataReader.instance.SetData(mDATA, mType.ToString());
-        OrderState = Random.Range(0, 100) > 35 ? ORDER_STATE.Idle : ORDER_STATE.Patroll;
+        OrderState = Random.Range(0, 100) > 100 ? ORDER_STATE.Idle : ORDER_STATE.Patrol;
         //Set HP
         CurrentHP = mDATA.maxHP;
         hpSliderUI = transform.GetComponentInChildren<MonsterHPSliderSc>();
@@ -154,11 +153,11 @@ public class Monster : MonoBehaviour
             case ORDER_STATE.Idle:
                 currentMoveSpeed = 0;
                 break;
-            case ORDER_STATE.Patroll:
-                Patroll();
+            case ORDER_STATE.Patrol:
+                Patrol();
                 break;
-            case ORDER_STATE.Trace:
-                Trace();
+            case ORDER_STATE.Chase:
+                Chase();
                 break;
             case ORDER_STATE.Attack:
                 Attack();
@@ -168,7 +167,7 @@ public class Monster : MonoBehaviour
                 break;
         }
     }
-
+    
     private void LateUpdate()
     {
         SetAnimationState();
@@ -179,7 +178,7 @@ public class Monster : MonoBehaviour
     /// </summary>
     private void AggroCheck()
     {
-        if (OrderState.Equals(ORDER_STATE.Trace))
+        if (OrderState.Equals(ORDER_STATE.Chase))
             return;
 
         Vector2 dir = sR.flipX.Equals(true) ? -Vector2.right : Vector2.right;
@@ -189,7 +188,7 @@ public class Monster : MonoBehaviour
         if(checkRay.collider!=null)
         {
             if (checkRay.collider.CompareTag("Player"))
-                TraceON(checkRay.collider.transform);
+                ChaseON(checkRay.collider.transform);
         }
         //RaycastHit2D playerCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, ))
     }
@@ -198,104 +197,54 @@ public class Monster : MonoBehaviour
     /// NOTE : TARGET 설정 ORDER STATE TRACE 로 변경
     /// </summary>
     /// <param name="target"></param>
-    private void TraceON(Transform target)
+    protected virtual void ChaseON(Transform target)
     {
-        if (OrderState.Equals(ORDER_STATE.Trace))
+        if (OrderState.Equals(ORDER_STATE.Chase))
             return;
-        targetOb = target;
-        OrderState = ORDER_STATE.Trace;
+        if(targetOb==null)
+            targetOb = target;
+        OrderState = ORDER_STATE.Chase;
     }
     
     /// <summary>
     /// NOTE : 일정 거리 이상으로 벌어질 경우 Trace Off
     /// </summary>
-    private void TraceOFF()
+    protected void ChaseOFF()
     {
         float dis = Vector2.Distance(transform.position, targetOb.transform.position);
         if(dis>traceOffDistance)
-            OrderState = Random.Range(0, 100) > 35 ? ORDER_STATE.Idle : ORDER_STATE.Patroll;
+            OrderState = Random.Range(0, 100) > 35 ? ORDER_STATE.Idle : ORDER_STATE.Patrol;
     }
-    
-    /// <summary>
-    /// NOTE : 구조물에서 길이 없거나 벽에 부딪혔을경우 방향 순회 (속도는 maxspeed의 절반)
-    /// TODO : 벽에 부딪혔을 경우에는 점프를 하도록 구현 여지
-    /// </summary>
-    private void Patroll()
-    {
-        if (!isGrounded)
-            return;
-        //flip을 통한 dir 설정
-        Vector2 dir = sR.flipX.Equals(true) ? -Vector2.right : Vector2.right;
 
+    /// <summary>
+    /// NOTE : 경비
+    /// </summary>
+    protected virtual void Patrol()
+    {
+        characterDir = sR.flipX.Equals(true) ? -Vector2.right : Vector2.right;
         //벽 Raycast
-        RaycastHit2D wallCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -((transform.localScale.y - 1) + 0.5f), 0), dir, transform.localScale.x + 0.5f);
+        RaycastHit2D wallCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -((transform.localScale.y - 1) + 0.5f), 0), characterDir, transform.localScale.x + 0.5f);
         if (wallCheckInfo.collider != null)
         {
-            
-            if (wallCheckInfo.collider.CompareTag("Ground") || wallCheckInfo.collider.CompareTag("Floor") || wallCheckInfo.collider.CompareTag("Garbage")|| wallCheckInfo.collider.CompareTag("Box"))
+            if (wallCheckInfo.collider.CompareTag("Ground") || wallCheckInfo.collider.CompareTag("Floor") || wallCheckInfo.collider.CompareTag("Garbage") || wallCheckInfo.collider.CompareTag("Box"))
                 sR.flipX = sR.flipX.Equals(true) ? false : true;
         }
-        //길 끊김 Null Raycast
-        RaycastHit2D nullCheckInfo = Physics2D.Raycast(transform.position, dir + new Vector2(0, -transform.localScale.y), transform.localScale.x + 0.5f);
-        if (nullCheckInfo.collider == null)
-            sR.flipX = sR.flipX.Equals(true) ? false : true;
-
-        rb2D.velocity = new Vector2(dir.x * currentMoveSpeed, rb2D.velocity.y);
     }
 
     /// <summary>
-    /// NOTE : 추적 벽에 부딪힐 경우 점프
+    /// NOTE : 추적 
     /// </summary>
-    private void Trace()
-    {
-        //flip을 통한 dir 설정
-        Vector2 dir = sR.flipX.Equals(true) ? -Vector2.right : Vector2.right;
-        //벽 Raycast (아래를 훑어야하긴하는데)
-        RaycastHit2D frontCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -((transform.localScale.y - 1) + 0.2f), 0), dir, transform.localScale.x);
-
-        if (frontCheckInfo.collider != null)
-        {
-            if (frontCheckInfo.collider.CompareTag("Ground") || frontCheckInfo.collider.CompareTag("Floor")||frontCheckInfo.collider.CompareTag("Garbage")|| frontCheckInfo.collider.CompareTag("Box"))
-                Jump();
-            else if (frontCheckInfo.collider.CompareTag("Player"))
-                OrderState = ORDER_STATE.Attack;
-        }
-        sR.flipX = (int)(transform.position.x) > (int)(targetOb.position.x) ? true : false;
-        
-        rb2D.velocity = new Vector2(dir.x * currentMoveSpeed, rb2D.velocity.y);
-
-        TraceOFF();
-    }
+    protected virtual void Chase(){ }
 
     /// <summary>
     /// NOTE : JUMP 
     /// </summary>
-    private void Jump()
-    {
-        if (isGrounded)
-        {
-            if (((int)rb2D.velocity.y).Equals(0))
-                rb2D.AddForce(Vector2.up * mDATA.jumpPower, ForceMode2D.Impulse);
-        }
-    }
+    protected virtual void Jump() { }
 
     /// <summary>
-    /// NOTE : 공격상태일 경우 RAYCAST를 통해 플레이어가 앞에 존재하는지 체크
+    /// NOTE : Attack
     /// </summary>
-    private void Attack()
-    {
-        if (!((int)rb2D.velocity.x).Equals(0))
-            rb2D.velocity = new Vector2(0, rb2D.velocity.y);
-        if (!attackCooltimeState)
-            attackOn = true;
-
-        RaycastHit2D targetCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -0.5f, 0), transform.right, 1.5f);
-
-        if (targetCheckInfo.collider != null)
-            isFrontTarget = targetCheckInfo.collider.CompareTag("Player") ? true : false;
-        else
-            isFrontTarget = false;
-    }
+    protected virtual void Attack() { }
 
     /// <summary>
     /// NOTE : Animation ADD EVENT FUNCTION
@@ -308,7 +257,7 @@ public class Monster : MonoBehaviour
         attackCooltimeState = true;
         if (!isFrontTarget)
         {
-            OrderState = ORDER_STATE.Trace;
+            OrderState = ORDER_STATE.Chase;
             attackOn = false;
         }
         yield return new WaitForSeconds(mDATA.attackCoolTime);
@@ -316,6 +265,7 @@ public class Monster : MonoBehaviour
         attackCooltimeState = false;
         isRunningAttackCoroutine = false;
     }
+
     /// <summary>
     /// NOTE : 데미지를 입었을때 처리
     /// </summary>
@@ -324,7 +274,7 @@ public class Monster : MonoBehaviour
     {
         if (!isAlive)
             return;
-        TraceON(targetpos);
+        ChaseON(targetpos);
         CurrentHP -= damage;
         //체력 UI 시작 및 설정
         if (!hpSliderUI.isActiveAndEnabled)
@@ -341,17 +291,12 @@ public class Monster : MonoBehaviour
     /// NOTE : 넉백, 플레이어와 부딪혔을 때나 공격 당했을 때
     /// </summary>
     /// <param name="targetpos"></param>
-    private void KnockBack(Vector3 collisionpos)
+    protected void KnockBack(Vector3 collisionpos)
     {
         if (!isRunningKnockbackCoroutine)
             StartCoroutine(KnockbackCoroutine(collisionpos));
     }
-
-    protected void Skill()
-    {
-        
-    }
-
+    
     /// <summary>
     /// NOTE : 넉백 물리 실행 및 설정 시간 이후 상태 변경 
     /// </summary>
@@ -386,7 +331,7 @@ public class Monster : MonoBehaviour
     /// <summary>
     /// NOTE : 애니매이션 Die실행
     /// </summary>
-    private void Die()
+    protected virtual void Die()
     {
         isAlive = false;
         anim.SetTrigger("Die");
@@ -429,55 +374,27 @@ public class Monster : MonoBehaviour
     /// NOTE : STATE 우선 순위
     /// 1. ATTACK 2. JUMP 3. FALL 4. MOVE
     /// </summary>
-    private void SetAnimationState()
+    protected virtual void SetAnimationState()
     {
-        //캐릭터 상태 설정(애니매이션 상태 설정)
-        if ((int)rb2D.velocity.y > 0)
-            CurrentAnimState = ANIMATION_STATE.Jump;
-        else if ((int)rb2D.velocity.y < 0)
-            CurrentAnimState = ANIMATION_STATE.Fall;
-        else
-            CurrentAnimState = (int)(currentMoveSpeed * 10) == 0 ? ANIMATION_STATE.Idle : ANIMATION_STATE.Walk;
-
         if (attackOn)
             CurrentAnimState = ANIMATION_STATE.Attack;
         
         anim.SetFloat("StateFloat", (int)CurrentAnimState);
     }
 
-    #region COLLISION
     /// <summary>
     /// NOTE : FloorCheck
     /// </summary>
     /// <param name="collision"></param>
-    private void OnCollisionStay2D(Collision2D collision)
+    protected virtual void OnCollisionStay2D(Collision2D collision)
     {
-        Vector2 contactnormalSum = Vector2.zero;
-        for (int i = 0; i < collision.contactCount; i++)
-            contactnormalSum += collision.contacts[i].normal;
-
-        if (contactnormalSum.y > 0)
-            isGrounded = true;
-
         if (collision.collider.CompareTag("Player"))
         {
             if (isAlive)
             {
-                TraceON(collision.transform);
+                ChaseON(collision.transform);
                 KnockBack(collision.contacts[0].point);
             }
         }
-
     }
-
-    /// <summary>
-    /// NOTE : GROUND CHECK FALSE
-    /// </summary>
-    /// <param name="collision"></param>
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        isGrounded = false;
-    }
-    #endregion
-
 }

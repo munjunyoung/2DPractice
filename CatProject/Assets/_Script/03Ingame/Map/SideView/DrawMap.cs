@@ -126,7 +126,7 @@ public class DrawMap : MonoBehaviour
                             }
                             break;
                         case TileType.Monster:
-                            Monster tmpmonster = Instantiate(loadData.monsterPrefabDic[room.roomTileArray[x, y].tileName], new Vector3Int(x, y, 0), Quaternion.identity, tmptilemap.transform);
+                            Monster tmpmonster = Instantiate(loadData.monsterPrefabDic[room.roomTileArray[x, y].tileName], new Vector3Int(x, y, 0), loadData.monsterPrefabDic[room.roomTileArray[x, y].tileName].transform.rotation, tmptilemap.transform);
                             tmpmonster.ownRoom = room;
                             room.monsterInfoList.Add(new SpawnMonsterInfo(tmpmonster.mType, new Vector2(x, y), tmpmonster));
                             break;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-enum ANIMATION_STATE { Idle = 0, Walk, Jump, Fall, Attack, TakeDamage, Die }
+public enum ANIMATION_STATE { Idle = 0, Walk, Jump, Fall, Attack, TakeDamage, Die }
 public enum PLAYER_TYPE { Cat1 = 0};
 /// <summary>
 /// NOTE : 플레이어캐릭터 공격 점프 이동
@@ -133,8 +133,8 @@ public class Player : MonoBehaviour
             return;
         if (isStopped)
             return;
-        if (isInvincible)
-            return;
+        //if (isInvincible)
+        //    return;
 
         Move();
         Jump();

@@ -85,7 +85,6 @@ public class CSVDataReader
         //해당 타입의 내용이 들어가지 않을경우 리턴 
         if (!_datadic.ContainsKey(_typename))
         {
-            Debug.Log("Load 오류");
             return;
         }
         else

@@ -9,7 +9,7 @@ public enum STRUCTURE_TYPE { Entrance ,Box, Switch, Garbage }
 public enum Box_Type { Normal }
 public enum Switch_Type {  Normal }
 
-public enum MONSTER_TYPE { Fox = 0 , Dog = 1 };
+public enum MONSTER_TYPE { Fox = 0 , Dog = 1, Eagle };
 public enum Fox_Type { Normal }
 
 public enum Item_TYPE { Catnip = 0 , BigCatnip};

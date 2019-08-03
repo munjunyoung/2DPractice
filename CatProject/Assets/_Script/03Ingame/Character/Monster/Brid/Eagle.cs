@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Fox : WalkingMonster
+public class Eagle : FlyingMonster
 {
+ 
+    // Start is called before the first frame update
     protected override void Awake()
     {
         base.Awake();
-        mType = MONSTER_TYPE.Fox;
+        mType = MONSTER_TYPE.Eagle;
     }
 }
