@@ -6,14 +6,14 @@ using UnityEngine.Tilemaps;
 public class FlyingMonster : Monster
 {
     //PathFinding
-    private PathFinding testPathfinding = new PathFinding();
+    private PathFinding testPathfinding;
     private List<Node> tracePath = new List<Node>();
-    private MapData map = null;
     private LineRenderer testline;
     private Vector3[] points;
     private bool resetPathfinding = false;
     private int pointCount = 1;
     private bool isRunningPathfindingCoroutine = false;
+    private Vector2Int prevTargetPos = Vector2Int.zero;
     
     //Up Down
     private float deltaValue = 1f;
@@ -22,7 +22,7 @@ public class FlyingMonster : Monster
     protected override void Start()
     {
         base.Start();
-        map = new MapData(ownRoom.roomModel.GetComponent<Tilemap>());
+        testPathfinding = new PathFinding(ownRoom.roomModel.GetComponent<Tilemap>());
         testline = GameObject.Find("TestTraceLine").GetComponent<LineRenderer>();
     }
 
@@ -46,7 +46,7 @@ public class FlyingMonster : Monster
             resetPathfinding = false;
             pointCount = points.Length - 2;
         }
-        if (Vector2.Distance(transform.position, points[pointCount]) < 0.1f)
+        if (Vector2.Distance(transform.position, points[pointCount]) < 0.05f)
             pointCount = pointCount <= 0 ? 0 : pointCount - 1;
 
         characterDir = points[pointCount] - transform.position ;
@@ -82,14 +82,14 @@ public class FlyingMonster : Monster
     /// <summary>
     /// NOTE : Set PathFinding 
     /// </summary>
-    private void PathFindingFunc()
+    private void PathFindingFunc(Vector2Int targetpos)
     {
         //Test
         tracePath.Clear();
         Node stnode = new Node(new Vector2Int((int)transform.position.x, (int)transform.position.y));
-        Node endnode = new Node(new Vector2Int((int)targetOb.position.x, (int)targetOb.transform.position.y));
-        testPathfinding.FindPath(stnode, endnode, ref tracePath, map);
-
+        Node endnode = new Node(targetpos);
+        testPathfinding.FindPath(stnode, endnode, ref tracePath);
+            
         points = new Vector3[tracePath.Count];
         testline.positionCount = tracePath.Count;
 
@@ -100,13 +100,22 @@ public class FlyingMonster : Monster
         resetPathfinding = true;
     }
 
+    /// <summary>
+    /// PathFinding 반복
+    /// </summary>
+    /// <returns></returns>
     IEnumerator PathFindCoroutine()
     {
         isRunningPathfindingCoroutine = true;
         while (OrderState.Equals(ORDER_STATE.Chase)||OrderState.Equals(ORDER_STATE.Attack))
         {
-            PathFindingFunc();
-            yield return new WaitForSeconds(3f);
+            Vector2Int  targetpos = new Vector2Int((int)targetOb.position.x, (int)targetOb.position.y);
+            if (!targetpos.Equals(prevTargetPos))
+            {
+                PathFindingFunc(targetpos);
+                prevTargetPos = targetpos;
+            }
+            yield return new WaitForSeconds(1f);
         }
     }
 

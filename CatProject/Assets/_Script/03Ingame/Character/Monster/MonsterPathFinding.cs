@@ -11,21 +11,35 @@ public class MonsterPathFinding : MonoBehaviour
 public class Node
 {
     public Vector2Int pos;
+    public int distG;
     public int distH; //거리
+    public int distF;
     public int depth;
-    public Node parentNode = null;
+    public Node parentNode;
     
     public Node(Vector2Int _pos)
     {
         pos = _pos;
+        distG = 0;
+        distH = 0;
+        distF = 0;
+        depth = 0;
+        parentNode = null;
     }
 
     public void CalcDist(Node dest, int cdepth)
     {
-        int tmpx = dest.pos.x - pos.x;
-        int tmpy = dest.pos.y - pos.y;
-        distH = (tmpx * tmpx) + (tmpy * tmpy);
+        int tmpHx = dest.pos.x - pos.x;
+        int tmpHy = dest.pos.y - pos.y;
+        distH = (tmpHx * tmpHx) + (tmpHy * tmpHy);
+
+        int tmpGx = parentNode.pos.x - pos.x;
+        int tmpGy = parentNode.pos.y - pos.y;
+        int tmpG = (tmpGx * tmpGx) + (tmpGy * tmpGy);
+        distG = tmpG + parentNode.distG;
+
         depth = cdepth;
+        distF = distG + distH;
     }
 }
 
@@ -33,7 +47,12 @@ class PathFinding
 {
     private List<Node> openNodeList = new List<Node>();
     private List<Node> closeNodeList = new List<Node>();
-    
+    public Tilemap map = new Tilemap();
+
+    public PathFinding(Tilemap _map)
+    {
+        map = _map;
+    }
     /// <summary>
     /// NOTE : 길찾기
     /// </summary>
@@ -42,20 +61,19 @@ class PathFinding
     /// <param name="path"></param>
     /// <param name="navi"></param>
     /// <returns></returns>
-    public bool FindPath(Node startNode, Node endNode, ref List<Node> path, MapData navi)
+    public bool FindPath(Node startNode, Node endNode, ref List<Node> path)
     {
         openNodeList.Clear();
         closeNodeList.Clear();
-
+        //시작 노드 생성 및 openNode 리스트 추가 
         Node tmpNode = startNode;
-        //시작노드 추가 
         openNodeList.Add(tmpNode);
-
+        //깊이 설정
         int iDepth = 0;
         tmpNode.depth = iDepth;
-
+        
+        //이웃노드 리스트 생성
         List<Node> neighborNodes = new List<Node>();
-
 
         while (true)
         {
@@ -83,8 +101,7 @@ class PathFinding
             ++iDepth; //탐색깊이 증가
             neighborNodes.Clear();
             
-            
-            navi.GetNeighborNode(tmpNode, ref neighborNodes); //이웃노드를 가져옴
+            GetNeighborNode(tmpNode, ref neighborNodes); //이웃노드를 가져옴
 
             for (int i = 0; i < neighborNodes.Count; i++)
             {
@@ -92,19 +109,20 @@ class PathFinding
                 if (CheckFromCloseNode(neighborNodes[i]))
                     continue;
 
-                neighborNodes[i].CalcDist(endNode, iDepth);
                 neighborNodes[i].parentNode = tmpNode;
+                neighborNodes[i].CalcDist(endNode, iDepth);
                 InsertOpenNode(neighborNodes[i]);
             }
 
             SortOpenNode();
         }
-
+        openNodeList.Clear();
+        closeNodeList.Clear();
         return true;
     }
 
     /// <summary>
-    /// NOTE : 중복 노드 삽입 되지 않도록 처리
+    /// NOTE : 중복 노드 삽입 되지 않도록 처리, 이미 중복된 노드들을 비용을 체크하여 변경)
     /// </summary>
     /// <param name="tmpnode"></param>
     private void InsertOpenNode(Node tmpnode)
@@ -113,12 +131,12 @@ class PathFinding
         {
             if(openNodeList[i].pos.Equals(tmpnode.pos))
             {
-                closeNodeList.Add(openNodeList[i]);
-                openNodeList[i] = tmpnode;
+                //리스트에 있는 노드가 고비용일 경우 tmpnode로 변경
+                
+                openNodeList[i] = CompareNodeG(openNodeList[i], tmpnode) ? openNodeList[i] : tmpnode;
                 return;
             }
         }
-
         openNodeList.Add(tmpnode);
     }
 
@@ -130,8 +148,6 @@ class PathFinding
         //노드가 2개이하면 RETURN
         if (openNodeList.Count < 2)
             return;
-        Node tmpnode;
-
         bool bcontinue = true;
 
         while(bcontinue)
@@ -139,9 +155,9 @@ class PathFinding
             bcontinue = false;
             for (int i = 0; i < openNodeList.Count - 1; i++)
             {
-                if(!CompareNode(openNodeList[i], openNodeList[i+1]))
+                if(!CompareNodeF(openNodeList[i], openNodeList[i+1]))
                 {
-                    tmpnode = openNodeList[i];
+                    Node tmpnode = openNodeList[i];
                     openNodeList[i] = openNodeList[i + 1];
                     openNodeList[i + 1] = tmpnode;
                     bcontinue = true;
@@ -156,15 +172,32 @@ class PathFinding
     /// <param name="n1"></param>
     /// <param name="n2"></param>
     /// <returns></returns>
-    private bool CompareNode(Node n1, Node n2)
+    private bool CompareNodeF(Node n1, Node n2)
     {
-        if (n1.distH < n2.distH)
+        if (n1.distF < n2.distF)
             return true;
-        if (n1.distH > n2.distH)
+        if (n1.distF> n2.distF)
             return false;
         if (n1.depth <= n2.depth)
             return true;
 
+        return false;
+    }
+
+    /// <summary>
+    /// NOTE : 2개의 노드의 현재시작점에서의 비용 체크
+    /// </summary>
+    /// <param name="n1"></param>
+    /// <param name="n2"></param>
+    /// <returns></returns>
+    private bool CompareNodeG(Node n1, Node n2)
+    {
+        if (n1.distG < n2.distG)
+            return true;
+        if (n1.distG > n2.distG)
+            return false;
+        if (n1.depth <= n2.depth)
+            return true;
         return false;
     }
 
@@ -182,27 +215,7 @@ class PathFinding
         }
         return false;
     }
-
-
-    public void PrintNode()
-    {
-        foreach(var ns in openNodeList)
-        {
-            Debug.Log("Pos : " + ns.pos);
-        }
-    }
-}
-
-
-public class MapData
-{
-    public Tilemap map = new Tilemap();
-
-    public MapData(Tilemap _map)
-    {
-        map = _map;
-    }
-
+    
     /// <summary>
     /// NOTE : 이웃 검색
     /// </summary>
@@ -227,7 +240,46 @@ public class MapData
         //    //이동가능한 지점이면 목록에 추가하기
         //    nodelist.Add(new Node((Vector2Int)tmppos));
         //}
+        //우측 벽이 있을 경우 벽을 기준으로 상하 불가  2,1
+        //위쪽 벽이 있을 경우 벽을 기준으로 좌우 불가  1,2
+        //좌측 벽이 있을 경우 벽을 기준으로 상하 불가  0,1
+        //하단 벽이 있을 경우 벽을 기준으로 좌우 불가  1,0
+        
 
+        //벽이 존재할경우 벽을기준으로 해당 포지션을 이웃노드에서 제외하기 위함
+        List<Vector2Int> blockPosList = new List<Vector2Int>();
+        //원점을 기준으로 0,1 좌우 , 2,3 상하 
+        Vector2Int[] wallcheckPos =
+              { new Vector2Int(_tmpnode.pos.x + 1 , _tmpnode.pos.y),
+                new Vector2Int(_tmpnode.pos.x - 1, _tmpnode.pos.y),
+                new Vector2Int(_tmpnode.pos.x , _tmpnode.pos.y +1),
+                new Vector2Int(_tmpnode.pos.x , _tmpnode.pos.y -1)};
+
+        for (int i = 0; i < wallcheckPos.Length; i++)
+        {
+            var tmptile = map.GetTile((Vector3Int)wallcheckPos[i]);
+            if (tmptile == null)
+                continue;
+            else
+            {
+                if (tmptile.name.Equals("RuleTile_Terrain"))
+                {
+                    blockPosList.Add(wallcheckPos[i]);
+                    if (i==0||i==1)
+                    {
+                        blockPosList.Add(wallcheckPos[i] + new Vector2Int(0, 1));
+                        blockPosList.Add(wallcheckPos[i] + new Vector2Int(0, -1));
+                    }
+                    else
+                    {
+                        blockPosList.Add(wallcheckPos[i] + new Vector2Int(1, 0));
+                        blockPosList.Add(wallcheckPos[i] + new Vector2Int(-1, 0));
+                    }
+                }
+            }
+        }
+
+        //이웃노드 순회
         int[] distx = new int[3] { -1, 0, 1 };
         int[] disty = new int[3] { -1, 0, 1 };
 
@@ -235,22 +287,24 @@ public class MapData
         {
             for (int x = 0; x < 3; ++x)
             {
-
-                Vector3Int tmppos = new Vector3Int(distx[x] + _tmpnode.pos.x, disty[y] + _tmpnode.pos.y, 0);
-
+                Vector2Int tmppos = new Vector2Int(distx[x] + _tmpnode.pos.x, disty[y] + _tmpnode.pos.y);
+                
                 //중앙 위치는 필요X
-                if (_tmpnode.pos.x == tmppos.x && _tmpnode.pos.y == tmppos.y)
+                if (CheckFromCloseNode(new Node(tmppos)))
+                    continue;
+
+                if (blockPosList.Contains(tmppos))
                     continue;
 
                 //이동불가 지역 필요 X
-                var tmptile = map.GetTile(tmppos);
+                var tmptile = map.GetTile((Vector3Int)tmppos);
                 if (tmptile != null)
                 {
                     if (tmptile.name.Equals("RuleTile_Terrain"))
                         continue;
                 }
                 //이동가능한 지점이면 목록에 추가하기
-                nodelist.Add(new Node((Vector2Int)tmppos));
+                nodelist.Add(new Node(tmppos));
             }
         }
     }
