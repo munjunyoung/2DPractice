@@ -419,10 +419,11 @@ GameObject:
   m_Component:
   - component: {fileID: 6426304353271880567}
   - component: {fileID: 8131769174215001571}
-  - component: {fileID: 138366618432427370}
+  - component: {fileID: 8289094030734595210}
   - component: {fileID: 8131769174215001572}
   - component: {fileID: 8131769174215001568}
   - component: {fileID: 8131769174215001575}
+  - component: {fileID: 624024674150711166}
   m_Layer: 10
   m_Name: Eagle
   m_TagString: Monster
@@ -470,8 +471,8 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!61 &138366618432427370
-BoxCollider2D:
+--- !u!58 &8289094030734595210
+CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -483,19 +484,9 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.3}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 2.5, y: 2.5625}
-    newSize: {x: 2.0625, y: 2}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
+  m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Size: {x: 1.3, y: 1.4}
-  m_EdgeRadius: 0
+  m_Radius: 0.5
 --- !u!50 &8131769174215001572
 Rigidbody2D:
   serializedVersion: 4
@@ -582,6 +573,32 @@ MonoBehaviour:
   isStopped: 0
   hpSliderUI: {fileID: 8268834807301268258}
   isBoss: 0
+--- !u!61 &624024674150711166
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8131769174215001569}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 2.5, y: 2.5625}
+    newSize: {x: 2.0625, y: 2}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 2, y: 1.2}
+  m_EdgeRadius: 0
 --- !u!1 &8268834807301268259
 GameObject:
   m_ObjectHideFlags: 0

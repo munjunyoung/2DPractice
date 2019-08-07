@@ -39,8 +39,6 @@ public class WalkingMonster : Monster
         {
             if (frontCheckInfo.collider.CompareTag("Ground") || frontCheckInfo.collider.CompareTag("Floor") || frontCheckInfo.collider.CompareTag("Garbage") || frontCheckInfo.collider.CompareTag("Box"))
                 Jump();
-            else if (frontCheckInfo.collider.CompareTag("Player"))
-                OrderState = ORDER_STATE.Attack;
         }
         sR.flipX = (int)(transform.position.x) > (int)(targetOb.position.x) ? true : false;
 
@@ -63,22 +61,12 @@ public class WalkingMonster : Monster
     }
 
     /// <summary>
-    /// NOTE : 공격상태일 경우 RAYCAST를 통해 플레이어가 앞에 존재하는지 체크
+    /// NOTE : OrderState가 공격상태이면 실행
     /// </summary>
     protected override void Attack()
     {
         base.Attack();
-        if (!((int)rb2D.velocity.x).Equals(0))
-            rb2D.velocity = new Vector2(0, rb2D.velocity.y);
-        if (!attackCooltimeState)
-            attackOn = true;
-
-        RaycastHit2D targetCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -0.5f, 0), transform.right, 1.5f);
-
-        if (targetCheckInfo.collider != null)
-            isFrontTarget = targetCheckInfo.collider.CompareTag("Player") ? true : false;
-        else
-            isFrontTarget = false;
+        rb2D.velocity = new Vector2(0, rb2D.velocity.y);
     }
 
     protected override void SetAnimationState()

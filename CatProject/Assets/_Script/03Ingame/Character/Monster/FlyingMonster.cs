@@ -14,6 +14,7 @@ public class FlyingMonster : Monster
     private int pointCount = 1;
     private bool isRunningPathfindingCoroutine = false;
     private Vector2Int prevTargetPos = Vector2Int.zero;
+    private bool TargetOn = false;
     
     //Up Down
     private float deltaValue = 1f;
@@ -36,25 +37,37 @@ public class FlyingMonster : Monster
         rb2D.velocity = new Vector2(base.characterDir.x * currentMoveSpeed,yValue );
     }
 
+    /// <summary>
+    /// NOTE : A* 알고리즘을 통한 path 포인트를 이용하여 이동
+    /// </summary>
     protected override void Chase()
     {
         base.Chase();
         
         //pathfinding이 리셋되었을 경우 다시 카운트0
-        if(resetPathfinding)
+        if (resetPathfinding)
         {
             resetPathfinding = false;
-            pointCount = points.Length - 2;
+            pointCount = points.Length>1 ? points.Length - 2 : 0;
         }
-        if (Vector2.Distance(transform.position, points[pointCount]) < 0.05f)
-            pointCount = pointCount <= 0 ? 0 : pointCount - 1;
 
+        if (Vector2.Distance(transform.position, points[pointCount]) < 0.05f)
+        {
+            if (pointCount <= 1)
+            {
+                pointCount = 1;
+                rb2D.velocity = Vector2.zero;
+                return;
+            }
+            else
+                pointCount--;
+        }
+        
         characterDir = points[pointCount] - transform.position ;
         characterDir = characterDir.normalized;
         sR.flipX = characterDir.x >= 0 ? false : true;
         rb2D.velocity = characterDir * currentMoveSpeed;
         
-        Debug.Log("c1 : " + transform.position + " w1 : " + points[pointCount] + " dir : " + characterDir);
     }
 
     /// <summary>
@@ -69,6 +82,11 @@ public class FlyingMonster : Monster
             StartCoroutine(PathFindCoroutine());
     }
 
+    protected override void Attack()
+    {
+        base.Attack();
+        rb2D.velocity = Vector2Int.zero;
+    }
     /// <summary>
     /// NOTE : 중력 SCALE값 변경
     /// </summary>
@@ -107,7 +125,7 @@ public class FlyingMonster : Monster
     IEnumerator PathFindCoroutine()
     {
         isRunningPathfindingCoroutine = true;
-        while (OrderState.Equals(ORDER_STATE.Chase)||OrderState.Equals(ORDER_STATE.Attack))
+        while (isAlive)
         {
             Vector2Int  targetpos = new Vector2Int((int)targetOb.position.x, (int)targetOb.position.y);
             if (!targetpos.Equals(prevTargetPos))
@@ -118,5 +136,12 @@ public class FlyingMonster : Monster
             yield return new WaitForSeconds(1f);
         }
     }
+
+    protected override void SetAnimationState()
+    {
+        CurrentAnimState = rb2D.velocity == Vector2.zero ? ANIMATION_STATE.Idle : ANIMATION_STATE.Walk;
+        base.SetAnimationState();
+    }
+
 
 }

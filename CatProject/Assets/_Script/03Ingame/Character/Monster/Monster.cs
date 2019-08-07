@@ -90,7 +90,6 @@ public class Monster : MonoBehaviour
     private bool isRunningAttackCoroutine = false;
     protected bool attackCooltimeState = false;
     protected bool attackOn = false;
-    protected bool isFrontTarget = false;
     //KnockBack
     private bool isRunningKnockbackCoroutine = false;
     private bool isKnockbackState = false;
@@ -244,24 +243,22 @@ public class Monster : MonoBehaviour
     /// <summary>
     /// NOTE : Attack
     /// </summary>
-    protected virtual void Attack() { }
+    protected virtual void Attack()
+    {
+        attackOn = true;
+    }
 
     /// <summary>
     /// NOTE : Animation ADD EVENT FUNCTION
     /// NOTE : ATTACK함수에서 RAYCAST를 통하여 앞에 플레이어가 멀어졌을 경우 다시 TRACE 상태로 변경 
     /// </summary>
     /// <returns></returns>
-    public IEnumerator AttackCoroutine()
+    public IEnumerator AttackCoolTimeCoroutine()
     {
         isRunningAttackCoroutine = true;
         attackCooltimeState = true;
-        if (!isFrontTarget)
-        {
-            OrderState = ORDER_STATE.Chase;
-            attackOn = false;
-        }
+        attackOn = false;
         yield return new WaitForSeconds(mDATA.attackCoolTime);
-
         attackCooltimeState = false;
         isRunningAttackCoroutine = false;
     }
@@ -335,7 +332,8 @@ public class Monster : MonoBehaviour
     {
         isAlive = false;
         anim.SetTrigger("Die");
-        anim.GetComponent<BoxCollider2D>().isTrigger = true;
+        OrderState = ORDER_STATE.Die;
+        anim.GetComponent<CircleCollider2D>().isTrigger = true;
         StartCoroutine(ActiveOff());
     }
     /// <summary>
@@ -376,12 +374,13 @@ public class Monster : MonoBehaviour
     /// </summary>
     protected virtual void SetAnimationState()
     {
-        if (attackOn)
+        if (attackOn&&!attackCooltimeState)
             CurrentAnimState = ANIMATION_STATE.Attack;
         
         anim.SetFloat("StateFloat", (int)CurrentAnimState);
     }
 
+    #region colision
     /// <summary>
     /// NOTE : FloorCheck
     /// </summary>
@@ -397,4 +396,26 @@ public class Monster : MonoBehaviour
             }
         }
     }
+
+    /// <summary>
+    /// Note : Attack 체크
+    /// </summary>
+    /// <param name="collision"></param>
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Player"))
+        {
+            OrderState = ORDER_STATE.Attack;
+            sR.flipX = transform.position.x - collision.transform.position.x > 0 ? true : false;
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (!isAlive)
+            return;
+        if (collision.CompareTag("Player"))
+            ChaseON(targetOb);
+    }
+    #endregion
 }
