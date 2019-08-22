@@ -4,53 +4,9 @@ using UnityEngine;
 
 public class RemoteRangeMonster : WalkingMonster
 {
-    RaycastHit2D playerCheckRay;
-    private Vector3 rayDirToPlayer = Vector2.zero;
-
     public MonsterAttackEffect[] attackEffectObject;
     private int effectpoolingCount = 0;
     
-
-    /// <summary>
-    /// NOTE : RayCast를 통하여 직선상에 캐릭터만 존재하는부분 
-    /// </summary>
-    protected override void Chase()
-    {
-        rayDirToPlayer = targetOb.transform.position - transform.position;
-        rayDirToPlayer = rayDirToPlayer.normalized;
-
-        playerCheckRay = Physics2D.Raycast(transform.position, rayDirToPlayer, mDATA.attackRange);
-        Debug.DrawRay(transform.position, rayDirToPlayer * mDATA.attackRange, Color.red, 0.1f, false);
-        if (playerCheckRay.collider != null)
-        {
-            if (playerCheckRay.collider.CompareTag("Player"))
-            {
-                Attack();
-                return;
-            }
-        }
-
-        base.Chase();
-    }
-
-    /// <summary>
-    /// NOTE : ray로 체크하여 몬스터가 존재할경우 쿨타임 실행
-    /// </summary>
-    /// <returns></returns>
-    public override IEnumerator AttackCoolTimeCoroutine()
-    {
-        if(playerCheckRay.collider!=null)
-        {
-            if (!playerCheckRay.collider.CompareTag("Player"))
-                ChaseON(targetOb);
-        }
-        else
-        {
-            ChaseON(targetOb);
-        }
-        return base.AttackCoolTimeCoroutine();
-    }
-
     /// <summary>
     /// NOTE : 배열에 저장한 이펙트들을 순서대로 사용
     /// </summary>
@@ -93,16 +49,4 @@ public class RemoteRangeMonster : WalkingMonster
 
         return finalVelocity;
     }
-    
-    protected override void OnTriggerEnter2D(Collider2D collision)
-    {   
-        base.OnTriggerEnter2D(collision);
-    }
-
-    protected override void OnTriggerExit2D(Collider2D collision)
-    {
-        base.OnTriggerExit2D(collision);
-    }
-
-
 }

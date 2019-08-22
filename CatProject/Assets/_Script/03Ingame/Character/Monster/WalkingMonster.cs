@@ -10,9 +10,9 @@ public class WalkingMonster : Monster
     /// NOTE : 구조물에서 길이 없거나 벽에 부딪혔을경우 방향 순회 (속도는 maxspeed의 절반)
     /// TODO : 벽에 부딪혔을 경우에는 점프를 하도록 구현 여지
     /// </summary>
-    protected override void Patrol()
+    public override void PatrolAction()
     {
-        base.Patrol();
+        base.PatrolAction();
         //flip을 통한 dir 설정
         
         //길 끊김 Null Raycast
@@ -22,14 +22,13 @@ public class WalkingMonster : Monster
 
         rb2D.velocity = new Vector2(base.characterDir.x * currentMoveSpeed, rb2D.velocity.y);
     }
-
-
+    
     /// <summary>
     /// NOTE : 추적 벽에 부딪힐 경우 점프
     /// </summary>
-    protected override void Chase()
+    public override void ChaseAction()
     {
-        base.Chase();
+        base.ChaseAction();
         //flip을 통한 dir 설정
         Vector2 dir = sR.flipX.Equals(true) ? -Vector2.right : Vector2.right;
         //벽 Raycast (아래를 훑어야하긴하는데)
@@ -44,15 +43,14 @@ public class WalkingMonster : Monster
 
         rb2D.velocity = new Vector2(dir.x * currentMoveSpeed, rb2D.velocity.y);
 
-        ChaseOFF();
+        CheckAggroOFF();
     }
 
     /// <summary>
     /// NOTE : 땅에 정착해 있는지 체크후 점프 (Addforce 사용)
     /// </summary>
-    protected override void Jump()
+    protected virtual void Jump()
     {
-        base.Jump();
         if (isGrounded)
         {
             if (((int)rb2D.velocity.y).Equals(0))
@@ -63,10 +61,10 @@ public class WalkingMonster : Monster
     /// <summary>
     /// NOTE : OrderState가 공격상태이면 실행
     /// </summary>
-    protected override void Attack()
+    public override void AttackAction()
     {
-        base.Attack();
-        rb2D.velocity = new Vector2(0, rb2D.velocity.y);
+        base.AttackAction();
+        rb2D.velocity = new Vector2(0, 0);
     }
 
     protected override void SetAnimationState()

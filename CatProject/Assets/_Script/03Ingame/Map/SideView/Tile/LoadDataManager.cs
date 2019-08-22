@@ -47,6 +47,7 @@ public class LoadDataManager : MonoBehaviour
     public Dictionary<string, StructureObject> structurePrefabDic = new Dictionary<string, StructureObject>();
     public Dictionary<string, ItemSc> itemPrefabDic = new Dictionary<string, ItemSc>();
     public Dictionary<string, GameObject> SkillEffectPrefabDic = new Dictionary<string, GameObject>();
+    
     //private void Start()
     //{
     //    tileDataArray = LoadAllTile();

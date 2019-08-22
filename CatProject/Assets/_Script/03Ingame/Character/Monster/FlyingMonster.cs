@@ -30,9 +30,9 @@ public class FlyingMonster : Monster
     /// <summary>
     /// NOTE : 상승 하강 Mathf.SIn 사용
     /// </summary>
-    protected override void Patrol()
+    public override void PatrolAction()
     {
-        base.Patrol();
+        base.PatrolAction();
         yValue = deltaValue * Mathf.Sin(Time.time * ySpeed);
         rb2D.velocity = new Vector2(base.characterDir.x * currentMoveSpeed,yValue );
     }
@@ -40,9 +40,9 @@ public class FlyingMonster : Monster
     /// <summary>
     /// NOTE : A* 알고리즘을 통한 path 포인트를 이용하여 이동
     /// </summary>
-    public override void Chase()
+    public override void ChaseAction()
     {
-        base.Chase();
+        base.ChaseAction();
         
         //pathfinding이 리셋되었을 경우 다시 카운트0
         if (resetPathfinding)
@@ -73,17 +73,17 @@ public class FlyingMonster : Monster
     /// NOTE : PATHFINDING 실행
     /// </summary>
     /// <param name="target"></param>
-    protected override void ChaseON(Transform target)
+    protected override void AggroON(Transform target)
     {
-        base.ChaseON(target);
+        base.AggroON(target);
         rb2D.velocity = Vector2.zero;
         if (!isRunningPathfindingCoroutine)
             StartCoroutine(PathFindCoroutine());
     }
 
-    protected override void Attack()
+    public override void AttackAction()
     {
-        base.Attack();
+        base.AttackAction();
         rb2D.velocity = Vector2Int.zero;
     }
     /// <summary>

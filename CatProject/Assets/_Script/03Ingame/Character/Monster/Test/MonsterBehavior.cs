@@ -61,6 +61,34 @@ public class Sequence : CompositeActionNode
     }
 }
 
+public class Idle : ActionNode
+{
+    public Monster monsterController
+    {
+        set { _monsterController = value; }
+    }
+    private Monster _monsterController;
+    public override bool Invoke()
+    {
+        _monsterController.IdleAction();
+        return true;
+    }
+}
+
+public class Patrol : ActionNode
+{
+    public Monster monsterController
+    {
+        set { _monsterController = value; }
+    }
+    private Monster _monsterController;
+    public override bool Invoke()
+    {
+        _monsterController.IdleAction();
+        return true;
+    }
+}
+
 public class ChaseTarget : ActionNode
 {
     public Monster monsterController
@@ -71,8 +99,8 @@ public class ChaseTarget : ActionNode
 
     public override bool Invoke()
     {
-        _monsterController.Chase();
+        _monsterController.ChaseAction();
         return true;
     }
-
 }
+

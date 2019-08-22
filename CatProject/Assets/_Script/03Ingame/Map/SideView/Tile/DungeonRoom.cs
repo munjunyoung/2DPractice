@@ -363,7 +363,7 @@ public class DungeonRoom
         foreach (var monsterinfo in monsterInfoList)
         {
             if (monsterinfo.monsterModel.isActiveAndEnabled)
-                monsterinfo.monsterModel.StopAction(_stopcount);
+                monsterinfo.monsterModel.PauseCharacter(_stopcount);
         }
     }
 

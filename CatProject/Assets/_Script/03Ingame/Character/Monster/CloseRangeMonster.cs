@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CloseRangeMonster : Monster
+public class CloseRangeMonster : WalkingMonster
 {
 
 }

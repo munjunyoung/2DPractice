@@ -710,7 +710,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mType: 3
   isAlive: 0
-  isStopped: 0
+  isPause: 0
   hpSliderUI: {fileID: 0}
   isBoss: 0
   attackEffectObject:
@@ -1296,11 +1296,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: AcornBombEffect
       objectReference: {fileID: 0}
-    - target: {fileID: 2231882394827550079, guid: 9096cb5b446203640ba56b168daafb21,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2228765903292481561, guid: 9096cb5b446203640ba56b168daafb21,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1356,8 +1351,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 3170150291852492136, guid: 9096cb5b446203640ba56b168daafb21, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9096cb5b446203640ba56b168daafb21, type: 3}
 --- !u!1 &1347165702588614586 stripped
 GameObject:
@@ -1383,11 +1377,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: AcornBombEffect
       objectReference: {fileID: 0}
-    - target: {fileID: 2231882394827550079, guid: 9096cb5b446203640ba56b168daafb21,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2228765903292481561, guid: 9096cb5b446203640ba56b168daafb21,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1443,8 +1432,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 3170150291852492136, guid: 9096cb5b446203640ba56b168daafb21, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9096cb5b446203640ba56b168daafb21, type: 3}
 --- !u!1 &3206402517919361835 stripped
 GameObject:
@@ -1470,11 +1458,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: AcornBombEffect
       objectReference: {fileID: 0}
-    - target: {fileID: 2231882394827550079, guid: 9096cb5b446203640ba56b168daafb21,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2228765903292481561, guid: 9096cb5b446203640ba56b168daafb21,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1530,8 +1513,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 3170150291852492136, guid: 9096cb5b446203640ba56b168daafb21, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9096cb5b446203640ba56b168daafb21, type: 3}
 --- !u!1 &2372812924986992528 stripped
 GameObject:
@@ -1557,11 +1539,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: AcornBombEffect
       objectReference: {fileID: 0}
-    - target: {fileID: 2231882394827550079, guid: 9096cb5b446203640ba56b168daafb21,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2228765903292481561, guid: 9096cb5b446203640ba56b168daafb21,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1617,8 +1594,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 3170150291852492136, guid: 9096cb5b446203640ba56b168daafb21, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9096cb5b446203640ba56b168daafb21, type: 3}
 --- !u!4 &6635315819469529716 stripped
 Transform:
@@ -1644,11 +1620,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: AcornBombEffect
       objectReference: {fileID: 0}
-    - target: {fileID: 2231882394827550079, guid: 9096cb5b446203640ba56b168daafb21,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2228765903292481561, guid: 9096cb5b446203640ba56b168daafb21,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1704,8 +1675,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 3170150291852492136, guid: 9096cb5b446203640ba56b168daafb21, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9096cb5b446203640ba56b168daafb21, type: 3}
 --- !u!1 &6492340431917935187 stripped
 GameObject:

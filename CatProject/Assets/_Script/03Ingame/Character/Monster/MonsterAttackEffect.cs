@@ -12,13 +12,16 @@ public class MonsterAttackEffect : MonoBehaviour
     private SpriteRenderer spr;
 
     public GameObject BombEffect;
-    
 
-    private void Start()
+    private void Awake()
     {
         parentOb = GetComponentInParent<Monster>();
         col = GetComponent<CircleCollider2D>();
         spr = GetComponent<SpriteRenderer>();
+    }
+
+    private void Start()
+    {    
         damage = parentOb.mDATA.attackDamage;
         gameObject.SetActive(false);
     }
