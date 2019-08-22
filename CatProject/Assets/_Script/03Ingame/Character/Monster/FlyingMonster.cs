@@ -40,7 +40,7 @@ public class FlyingMonster : Monster
     /// <summary>
     /// NOTE : A* 알고리즘을 통한 path 포인트를 이용하여 이동
     /// </summary>
-    protected override void Chase()
+    public override void Chase()
     {
         base.Chase();
         
@@ -48,9 +48,8 @@ public class FlyingMonster : Monster
         if (resetPathfinding)
         {
             resetPathfinding = false;
-            pointCount = points.Length>1 ? points.Length - 2 : 0;
+            pointCount = points.Length > 1 ? points.Length - 2 : 0;
         }
-
         if (Vector2.Distance(transform.position, points[pointCount]) < 0.05f)
         {
             if (pointCount <= 1)

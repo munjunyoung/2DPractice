@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class SetEffectSc : MonoBehaviour
 {
+    private void Awake()
+    {
+        gameObject.SetActive(false);
+    }
+
     private void OnEnable()
     {
         StartCoroutine(SetActiveOffByCount(0.5f));

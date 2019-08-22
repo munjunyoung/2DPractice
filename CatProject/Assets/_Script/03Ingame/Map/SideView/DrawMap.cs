@@ -45,7 +45,10 @@ public class DrawMap : MonoBehaviour
     {
         var tmpgrid = GameObject.FindWithTag("DrawGrid");
         List<DungeonRoom> roomlist = new List<DungeonRoom>();
+        
         Tilemap[] tilemaps = tmpgrid.transform.GetComponentsInChildren<Tilemap>();
+        if (tilemaps.Length.Equals(0))
+            return;
 
         foreach (var tm in tilemaps)
         {

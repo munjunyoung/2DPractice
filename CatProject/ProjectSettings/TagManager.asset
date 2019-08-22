@@ -15,6 +15,7 @@ TagManager:
   - Garbage
   - Structure
   - Item
+  - MonsterAttackEffect
   layers:
   - Default
   - TransparentFX
@@ -30,7 +31,7 @@ TagManager:
   - Item
   - Structure
   - PlayerAttackEffect
-  - 
+  - MonsterAttackEffect
   - 
   - 
   - 

@@ -99,7 +99,7 @@ public class Monster : MonoBehaviour
     public bool isAlive;
     public bool isStopped;
 
-    private float traceOffDistance = 10f;
+    private float traceOffDistance = 25f;
     private float traceOnDistance = 7f;
     //HP UI
     [SerializeField]
@@ -124,12 +124,13 @@ public class Monster : MonoBehaviour
             transform.localScale = Vector3.one * 3f;
             sR.color = new Color(1, 0.5f, 0.5f, 1);
         }
+        CSVDataReader.instance.SetData(mDATA, mType.ToString());
     }
 
     protected virtual void Start()
     {
         targetOb = GameObject.FindWithTag("Player").transform;
-        CSVDataReader.instance.SetData(mDATA, mType.ToString());
+        
         OrderState = Random.Range(0, 100) > 100 ? ORDER_STATE.Idle : ORDER_STATE.Patrol;
         //Set HP
         CurrentHP = mDATA.maxHP;
@@ -159,7 +160,6 @@ public class Monster : MonoBehaviour
                 Chase();
                 break;
             case ORDER_STATE.Attack:
-                Attack();
                 break;
             default:
                 Debug.Log("Monster Default State !");
@@ -189,7 +189,6 @@ public class Monster : MonoBehaviour
             if (checkRay.collider.CompareTag("Player"))
                 ChaseON(checkRay.collider.transform);
         }
-        //RaycastHit2D playerCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, ))
     }
 
     /// <summary>
@@ -233,7 +232,7 @@ public class Monster : MonoBehaviour
     /// <summary>
     /// NOTE : 추적 
     /// </summary>
-    protected virtual void Chase(){ }
+    public virtual void Chase(){ }
 
     /// <summary>
     /// NOTE : JUMP 
@@ -246,14 +245,19 @@ public class Monster : MonoBehaviour
     protected virtual void Attack()
     {
         attackOn = true;
+        currentMoveSpeed = 0;
     }
 
+    public virtual void AttackEffect()
+    {
+
+    }
     /// <summary>
     /// NOTE : Animation ADD EVENT FUNCTION
     /// NOTE : ATTACK함수에서 RAYCAST를 통하여 앞에 플레이어가 멀어졌을 경우 다시 TRACE 상태로 변경 
     /// </summary>
     /// <returns></returns>
-    public IEnumerator AttackCoolTimeCoroutine()
+    public virtual IEnumerator AttackCoolTimeCoroutine()
     {
         isRunningAttackCoroutine = true;
         attackCooltimeState = true;
@@ -391,6 +395,7 @@ public class Monster : MonoBehaviour
         {
             if (isAlive)
             {
+                collision.transform.GetComponent<Player>().TakeDamage(mDATA.bodyAttacktDamage, transform);
                 ChaseON(collision.transform);
                 KnockBack(collision.contacts[0].point);
             }
@@ -401,16 +406,15 @@ public class Monster : MonoBehaviour
     /// Note : Attack 체크
     /// </summary>
     /// <param name="collision"></param>
-    private void OnTriggerEnter2D(Collider2D collision)
+    protected virtual void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
         {
-            OrderState = ORDER_STATE.Attack;
+            Attack();
             sR.flipX = transform.position.x - collision.transform.position.x > 0 ? true : false;
         }
     }
-
-    private void OnTriggerExit2D(Collider2D collision)
+    protected virtual void OnTriggerExit2D(Collider2D collision)
     {
         if (!isAlive)
             return;

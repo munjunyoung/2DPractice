@@ -30,12 +30,9 @@ public class BigCatnipSc : ItemSc
         gameObject.SetActive(false);
     }
 
-    //private void OnCollisionStay2D(Collision2D collision)
-    //{
-    //    if (collision.gameObject.CompareTag("Player"))
-    //    {
-    //        collision.transform.GetComponent<Player>().CatnipItemNumber += catnipamount;
-    //        gameObject.SetActive(false);
-    //    }
-    //}
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+            PlayWhenPick(collision.transform.GetComponent<Player>());
+    }
 }

@@ -352,7 +352,7 @@ public class Player : MonoBehaviour
     /// NOTE : 데미지
     /// </summary>
     /// <param name="damage"></param>
-    private void TakeDamage(int damage, Transform targetpos)
+    public void TakeDamage(int damage, Transform targetpos)
     {
         if (isDie)
             return;
@@ -425,9 +425,9 @@ public class Player : MonoBehaviour
 
         anim.SetFloat("StateFloat", (int)CurrentPlayerAnimState);
     }
-    
+
     #region COLLISION
-    
+
     /// <summary>
     /// NOTE : FloorCheck
     /// </summary>
@@ -441,14 +441,6 @@ public class Player : MonoBehaviour
 
         if (contactnormalSum.y > 0)
             isGrounded = true;
-
-        //적과 인접했을때
-        if (collision.collider.CompareTag("Monster"))
-        {
-            if (collision.collider.GetComponent<Monster>().isAlive)
-                TakeDamage(collision.collider.GetComponent<Monster>().mDATA.bodyAttacktDamage, collision.transform);
-             
-        }
     }
 
     /// <summary>
@@ -462,18 +454,6 @@ public class Player : MonoBehaviour
     private void OnCollisionExit2D(Collision2D collision)
     {
         isGrounded = false;
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if(collision.gameObject.CompareTag("Item"))
-            collision.transform.GetComponent<ItemSc>().PlayWhenPick(this);
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Item"))
-            collision.transform.GetComponent<ItemSc>().PlayWhenPick(this);
     }
     #endregion
 }

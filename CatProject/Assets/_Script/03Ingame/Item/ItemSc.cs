@@ -34,4 +34,7 @@ public class ItemSc : MonoBehaviour
         isStop = false;
     }
 
+    
+
+    
 }

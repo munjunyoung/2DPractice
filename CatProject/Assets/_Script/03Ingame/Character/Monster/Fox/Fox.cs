@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Fox : WalkingMonster
+public class Fox : CloseRangeMonster
 {
     protected override void Awake()
     {
