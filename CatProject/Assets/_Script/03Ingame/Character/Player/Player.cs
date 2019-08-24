@@ -101,7 +101,7 @@ public class Player : MonoBehaviour
     private bool isStopped;
     private bool isRunningStopCoroutine = false;
     //Skill
-    public Skill mySkill = null;
+    public StartSkill mySkill = null;
     public bool isRunningSkillCooltime = false;
     //Die
     private bool isDie = false;

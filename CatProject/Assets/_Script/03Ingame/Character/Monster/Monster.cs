@@ -71,8 +71,6 @@ public class Monster : MonoBehaviour
     private Animator anim;
     protected SpriteRenderer sR;
     
-    //Raycast    
-    private int raycastLayerMask;
     [HideInInspector]
     protected Transform targetOb = null;
     //HP

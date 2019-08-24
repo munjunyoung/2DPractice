@@ -5,7 +5,7 @@ using UnityEngine;
 public enum BOSS_TYPE { Person }
 public enum BOSS_SEQUENCE { Normal , Phase1, Phase2, Dead }
 public enum BOSS_ANIMATION_STATE { Idle, Walk, Jump, Fall, Attack, Skill ,TakeDamage, Die}
-public class BossMonster : MonoBehaviour
+public abstract class BossMonsterController : MonoBehaviour
 {
     public DungeonRoom ownRoom = null;
 
@@ -20,15 +20,20 @@ public class BossMonster : MonoBehaviour
     }
 
     protected BOSS_TYPE bType;
+    protected float currentMoveSpeed;
     //BossData
 
-    public void IdleAction() { }
-    public void PatrolAction() { }
-    public void ChaseAction() { }
-    public void AttackAction() { }
-    public void SkillAction() { }
-    
-    protected bool CheckDetectTarget() { return false; }
-    protected bool CheckCloseTarget() { return false; }
+    public abstract void IdleAction();
+    public abstract void PatrolAction();
 
+    public abstract void ChaseAction();
+    public abstract void StartAttack();
+    public abstract void StopAttack();
+    public abstract bool CheckCloseTarget();
+    public abstract void SkillAction();
+
+    public abstract void DeadProcess();
+    public abstract void isDie();
+
+    public abstract bool CheckDetectTarget();
 }

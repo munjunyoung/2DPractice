@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 public enum Skill_Type { Buff, Immediate}
 
-public class Skill : MonoBehaviour
+public class StartSkill : MonoBehaviour
 {
     protected Player playerSc;
     protected SpriteRenderer playerSpriteRenderer;
@@ -87,7 +87,7 @@ public class Skill : MonoBehaviour
 }
 
 
-public class SkillAttackUP : Skill
+public class SkillAttackUP : StartSkill
 {
     int originalDamage = 30;
     int plusDamage = 30;
@@ -139,7 +139,7 @@ public class SkillAttackUP : Skill
     }
 }
 
-public class SkillSpeedUP : Skill
+public class SkillSpeedUP : StartSkill
 {
     private int speedUpAmount = 5;
     private float originalSpeed;
@@ -170,7 +170,7 @@ public class SkillSpeedUP : Skill
     }
 }
 
-public class SkillHealing : Skill
+public class SkillHealing : StartSkill
 {
     private int hpUpAmount = 50;
     private float originalHp;
