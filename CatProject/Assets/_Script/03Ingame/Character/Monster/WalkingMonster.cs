@@ -64,7 +64,7 @@ public class WalkingMonster : Monster
     public override void AttackAction()
     {
         base.AttackAction();
-        rb2D.velocity = new Vector2(0, 0);
+        rb2D.velocity = Vector2.zero;
     }
 
     protected override void SetAnimationState()

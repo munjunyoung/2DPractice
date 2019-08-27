@@ -25,11 +25,12 @@ public class CSVDataReader
 
     private Dictionary<string, Dictionary<string, string>> characterDataDic = new Dictionary<string, Dictionary<string, string>>();
     private Dictionary<string, Dictionary<string, string>> monsterDataDic = new Dictionary<string, Dictionary<string, string>>();
-    
+    private Dictionary<string, Dictionary<string, string>> bossDataDic = new Dictionary<string, Dictionary<string, string>>();
     private CSVDataReader()
     {
         characterDataDic = Read(DataPath + "CharacterData");
         monsterDataDic = Read(DataPath + "MonsterData");
+        bossDataDic = Read(DataPath + "BossData");
         //.. MONSTER 엑셀도 완성되면 추가
     }
 
@@ -80,8 +81,24 @@ public class CSVDataReader
     {
         //해당 타입의 value값(value값또한 dic이므로) 처리
         Type tp = typeof(T);
+        Dictionary<string, Dictionary<string, string>> _datadic = null;
         //타입에 따른 dictionary 변환
-        Dictionary<string, Dictionary<string, string>> _datadic = tp.ToString().Equals("PlayerData") ? characterDataDic : monsterDataDic;
+        switch (tp.ToString())
+        {
+            case "PlayerData":
+                _datadic = characterDataDic;
+                break;
+            case "MonsterData":
+                _datadic = monsterDataDic;
+                break;
+            case "BossData":
+                _datadic = bossDataDic;
+                break;
+            default:
+                Debug.Log("[ " + tp.ToString() + " ] : Not Exist Dictionary");
+                break;
+        }
+
         //해당 타입의 내용이 들어가지 않을경우 리턴 
         if (!_datadic.ContainsKey(_typename))
         {

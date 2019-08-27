@@ -88,7 +88,7 @@ public class Idle : ActionNode
     }
 }
 
-public class Patrol : ActionNode
+public class DetectTarget : ActionNode
 {
     public BossMonsterController Controller
     {
@@ -98,14 +98,16 @@ public class Patrol : ActionNode
 
     public override bool Invoke()
     {
-        _controller.PatrolAction();
-        return true;
+        return _controller.DetectTarget();
     }
 }
 
 #endregion
 
-#region Phase1
+#region chaseAttack
+/// <summary>
+/// NOTE : 타겟에게 이동
+/// </summary>
 public class ChaseTarget : ActionNode
 {
     public BossMonsterController Controller
@@ -121,35 +123,9 @@ public class ChaseTarget : ActionNode
     }
 }
 
-public class StartAttack : ActionNode
-{
-    public BossMonsterController Controller
-    {
-        set { _controller = value; }
-    }
-    private BossMonsterController _controller;
-
-    public override bool Invoke()
-    {
-        _controller.StartAttack();
-        return true;
-    }
-}
-
-public class StopAttack :ActionNode
-{
-    public BossMonsterController Controller
-    {
-        set { _controller = value; }
-    }
-    private BossMonsterController _controller;
-
-    public override bool Invoke()
-    {
-        _controller.StopAttack();
-        return true;
-    }
-}
+/// <summary>
+/// NOTE : 지정한 거리에 타겟 존재 확인
+/// </summary>
 public class CheckCloseTarget : ActionNode
 {
     public BossMonsterController Controller
@@ -165,9 +141,89 @@ public class CheckCloseTarget : ActionNode
         return false;
     }
 }
+
+/// <summary>
+/// NOTE : 타겟방향으로 바라봄
+/// </summary>
+public class LookAtTarget : ActionNode
+{
+    public BossMonsterController Controller
+    {
+        set { _controller = value; }
+    }
+    private BossMonsterController _controller;
+
+    public override bool Invoke()
+    {
+        if (_controller.LookAtTarget())
+            return true;
+        return false;
+    }
+}
+
+/// <summary>
+/// NOTE : 공격 가능한 상태인지 체크
+/// </summary>
+public class CheckPossibleAttack : ActionNode
+{
+    public BossMonsterController Controller
+    {
+        set { _controller = value; }
+    }
+    private BossMonsterController _controller;
+
+    public override bool Invoke()
+    {
+        if (_controller.CheckPossibleAttack())
+            return true;
+        return false;
+    }
+}
+
+/// <summary>
+/// NOTE : 공격 시작
+/// </summary>
+public class StartAttack : ActionNode
+{
+    public BossMonsterController Controller
+    {
+        set { _controller = value; }
+    }
+    private BossMonsterController _controller;
+
+    public override bool Invoke()
+    {
+        _controller.StartAttack();
+        return true;
+    }
+}
+
 #endregion
 
-#region phase2
+#region skill
+
+/// <summary>
+/// NOTE : 스킬 사용이 가능한지 체크
+/// </summary>
+public class CheckPossibleSkill : ActionNode
+{
+    public BossMonsterController Controller
+    {
+        set { _controller = value; }
+    }
+    private BossMonsterController _controller;
+
+    public override bool Invoke()
+    {
+        if (_controller.CheckPossibleSkill()) 
+            return true;
+        return false;
+    }
+}
+
+/// <summary>
+/// NOTE : 스킬 ACTION 
+/// </summary>
 public class SkillAction : ActionNode
 {
     public BossMonsterController Controller
@@ -187,6 +243,9 @@ public class SkillAction : ActionNode
 #endregion
 
 #region Dead
+/// <summary>
+/// NOTE : 죽음
+/// </summary>
 public class DeadProcess :ActionNode
 {
     public BossMonsterController Controller
@@ -202,6 +261,21 @@ public class DeadProcess :ActionNode
     }
 }
 
+public class StopAttack : ActionNode
+{
+    public BossMonsterController Controller
+    {
+        set { _controller = value; }
+    }
+    private BossMonsterController _controller;
+
+    public override bool Invoke()
+    {
+        _controller.StopAttack();
+        return true;
+    }
+}
+
 public class IsDie : ActionNode
 {
     public BossMonsterController Controller
@@ -212,8 +286,8 @@ public class IsDie : ActionNode
 
     public override bool Invoke()
     {
-        _controller.isDie();
-        return true;
+         
+        return _controller.isDie();
     }
 }
 #endregion
