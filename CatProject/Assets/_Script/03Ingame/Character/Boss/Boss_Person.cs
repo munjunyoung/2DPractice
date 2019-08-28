@@ -13,11 +13,17 @@ public class Boss_Person : BossMonsterController
     #region Normal
     public override void IdleAction()
     {
-        rb2D.velocity = Vector2.zero;
+        if (aleadyFindTarget)
+            return;
+
+        rb2D.velocity = new Vector2(0, rb2D.velocity.y);
     }
 
     public override bool DetectTarget()
     {
+        if (aleadyFindTarget)
+            return true;
+
         var overlapCollider = Physics2D.OverlapCircle(transform.position, 5f);
         if (overlapCollider.CompareTag("Player"))
             aleadyFindTarget = true;
@@ -30,26 +36,29 @@ public class Boss_Person : BossMonsterController
     {
         currentMoveSpeed = bData.normalSpeed;
         var dirX = Mathf.Sign(TargetOB.position.x - transform.position.x);
-        sR.flipX = dirX >= 0 ? false : true;
+        sR.flipX = dirX >= 0 ? true : false;
 
         rb2D.velocity = new Vector2(dirX * currentMoveSpeed, rb2D.velocity.y);
+        
     }
 
     public override bool CheckCloseTarget()
     {
         if (checkCloseTarget)
-            return true;
+            return true;    
         return false;
     }
 
     public override bool CheckPossibleAttack()
     {
+
         return true;
     }
 
     public override void StartAttack()
     {
         rb2D.velocity = Vector2.zero;
+        attackON = true;
         //..AttackStart
     }
     #endregion
@@ -89,11 +98,17 @@ public class Boss_Person : BossMonsterController
     
     #endregion
 
-    private void OnTriggerStay2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.CompareTag("Player"))
-        {
             checkCloseTarget = true;
-        }
     }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Player"))
+            checkCloseTarget = false;
+    }
+
+
 }

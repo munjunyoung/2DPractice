@@ -1,0 +1,487 @@
+fileFormatVersion: 2
+guid: a0bc9c0dedeec8f45bc8ab0199322c0a
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: "\uAC77\uAE30_0"
+    21300002: "\uAC77\uAE30_1"
+    21300004: "\uAC77\uAE30_2"
+    21300006: "\uAC77\uAE30_3"
+    21300008: "\uAC77\uAE30_4"
+    21300010: "\uAC77\uAE30_5"
+    21300012: "\uAC77\uAE30_6"
+    21300014: "\uAC77\uAE30_7"
+    21300016: "\uAC77\uAE30_8"
+    21300018: "\uAC77\uAE30_9"
+    21300020: "\uAC77\uAE30_10"
+    21300022: "\uAC77\uAE30_11"
+    21300024: "\uAC77\uAE30_12"
+    21300026: "\uAC77\uAE30_13"
+    21300028: "\uAC77\uAE30_14"
+    21300030: "\uAC77\uAE30_15"
+    21300032: "\uAC77\uAE30_16"
+    21300034: "\uAC77\uAE30_17"
+    21300036: "\uAC77\uAE30_18"
+    21300038: "\uAC77\uAE30_19"
+    21300040: "\uAC77\uAE30_20"
+    21300042: "\uAC77\uAE30_21"
+    21300044: "\uAC77\uAE30_22"
+    21300046: "\uAC77\uAE30_23"
+    21300048: "\uAC77\uAE30_24"
+    21300050: "\uAC77\uAE30_25"
+    21300052: "\uAC77\uAE30_26"
+    21300054: "\uAC77\uAE30_27"
+    21300056: "\uAC77\uAE30_28"
+    21300058: "\uAC77\uAE30_29"
+    21300060: "\uAC77\uAE30_30"
+    21300062: "\uAC77\uAE30_31"
+    21300064: "\uAC77\uAE30_32"
+    21300066: "\uAC77\uAE30_33"
+    21300068: "\uAC77\uAE30_34"
+    21300070: "\uAC77\uAE30_35"
+    21300072: "\uAC77\uAE30_36"
+    21300074: "\uAC77\uAE30_37"
+    21300076: "\uAC77\uAE30_38"
+    21300078: "\uAC77\uAE30_39"
+    21300080: "\uAC77\uAE30_40"
+    21300082: "\uAC77\uAE30_41"
+    21300084: "\uAC77\uAE30_42"
+    21300086: "\uAC77\uAE30_43"
+    21300088: "\uAC77\uAE30_44"
+    21300090: "\uAC77\uAE30_45"
+    21300092: "\uAC77\uAE30_46"
+    21300094: "\uAC77\uAE30_47"
+    21300096: "\uAC77\uAE30_48"
+    21300098: "\uAC77\uAE30_49"
+    21300100: "\uAC77\uAE30_50"
+    21300102: "\uAC77\uAE30_51"
+    21300104: "\uAC77\uAE30_52"
+    21300106: "\uAC77\uAE30_53"
+    21300108: "\uAC77\uAE30_54"
+    21300110: "\uAC77\uAE30_55"
+    21300112: "\uAC77\uAE30_56"
+    21300114: "\uAC77\uAE30_57"
+    21300116: "\uAC77\uAE30_58"
+    21300118: "\uAC77\uAE30_59"
+    21300120: "\uAC77\uAE30_60"
+    21300122: "\uAC77\uAE30_61"
+    21300124: "\uAC77\uAE30_62"
+    21300126: "\uAC77\uAE30_63"
+    21300128: "\uAC77\uAE30_64"
+    21300130: "\uAC77\uAE30_65"
+    21300132: "\uAC77\uAE30_66"
+    21300134: "\uAC77\uAE30_67"
+    21300136: "\uAC77\uAE30_68"
+    21300138: "\uAC77\uAE30_69"
+    21300140: "\uAC77\uAE30_70"
+    21300142: "\uAC77\uAE30_71"
+    21300144: "\uAC77\uAE30_72"
+    21300146: "\uAC77\uAE30_73"
+    21300148: "\uAC77\uAE30_74"
+    21300150: "\uAC77\uAE30_75"
+    21300152: "\uAC77\uAE30_76"
+    21300154: "\uAC77\uAE30_77"
+    21300156: "\uAC77\uAE30_78"
+    21300158: "\uAC77\uAE30_79"
+    21300160: "\uAC77\uAE30_80"
+    21300162: "\uAC77\uAE30_81"
+    21300164: "\uAC77\uAE30_82"
+    21300166: "\uAC77\uAE30_83"
+    21300168: "\uAC77\uAE30_84"
+    21300170: "\uAC77\uAE30_85"
+    21300172: "\uAC77\uAE30_86"
+    21300174: "\uAC77\uAE30_87"
+    21300176: "\uAC77\uAE30_88"
+    21300178: "\uAC77\uAE30_89"
+    21300180: "\uAC77\uAE30_90"
+    21300182: "\uAC77\uAE30_91"
+    21300184: "\uAC77\uAE30_92"
+    21300186: "\uAC77\uAE30_93"
+    21300188: "\uAC77\uAE30_94"
+    21300190: "\uAC77\uAE30_95"
+    21300192: "\uAC77\uAE30_96"
+    21300194: "\uAC77\uAE30_97"
+    21300196: "\uAC77\uAE30_98"
+    21300198: "\uAC77\uAE30_99"
+    21300200: "\uAC77\uAE30_100"
+    21300202: "\uAC77\uAE30_101"
+    21300204: "\uAC77\uAE30_102"
+    21300206: "\uAC77\uAE30_103"
+    21300208: "\uAC77\uAE30_104"
+    21300210: "\uAC77\uAE30_105"
+    21300212: "\uAC77\uAE30_106"
+    21300214: "\uAC77\uAE30_107"
+    21300216: "\uAC77\uAE30_108"
+    21300218: "\uAC77\uAE30_109"
+    21300220: "\uAC77\uAE30_110"
+    21300222: "\uAC77\uAE30_111"
+    21300224: "\uAC77\uAE30_112"
+    21300226: "\uAC77\uAE30_113"
+    21300228: "\uAC77\uAE30_114"
+    21300230: "\uAC77\uAE30_115"
+    21300232: "\uAC77\uAE30_116"
+    21300234: "\uAC77\uAE30_117"
+    21300236: "\uAC77\uAE30_118"
+    21300238: "\uAC77\uAE30_119"
+    21300240: "\uAC77\uAE30_120"
+    21300242: "\uAC77\uAE30_121"
+    21300244: "\uAC77\uAE30_122"
+    21300246: "\uAC77\uAE30_123"
+    21300248: "\uAC77\uAE30_124"
+    21300250: "\uAC77\uAE30_125"
+    21300252: "\uAC77\uAE30_126"
+    21300254: "\uAC77\uAE30_127"
+    21300256: "\uAC77\uAE30_128"
+    21300258: "\uAC77\uAE30_129"
+    21300260: "\uAC77\uAE30_130"
+    21300262: "\uAC77\uAE30_131"
+    21300264: "\uAC77\uAE30_132"
+    21300266: "\uAC77\uAE30_133"
+    21300268: "\uAC77\uAE30_134"
+    21300270: "\uAC77\uAE30_135"
+    21300272: "\uAC77\uAE30_136"
+    21300274: "\uAC77\uAE30_137"
+    21300276: "\uAC77\uAE30_138"
+    21300278: "\uAC77\uAE30_139"
+    21300280: "\uAC77\uAE30_140"
+    21300282: "\uAC77\uAE30_141"
+    21300284: "\uAC77\uAE30_142"
+    21300286: "\uAC77\uAE30_143"
+    21300288: "\uAC77\uAE30_144"
+    21300290: "\uAC77\uAE30_145"
+    21300292: "\uAC77\uAE30_146"
+    21300294: "\uAC77\uAE30_147"
+    21300296: "\uAC77\uAE30_148"
+    21300298: "\uAC77\uAE30_149"
+    21300300: "\uAC77\uAE30_150"
+    21300302: "\uAC77\uAE30_151"
+    21300304: "\uAC77\uAE30_152"
+    21300306: "\uAC77\uAE30_153"
+    21300308: "\uAC77\uAE30_154"
+    21300310: "\uAC77\uAE30_155"
+    21300312: "\uAC77\uAE30_156"
+    21300314: "\uAC77\uAE30_157"
+    21300316: "\uAC77\uAE30_158"
+    21300318: "\uAC77\uAE30_159"
+    21300320: "\uAC77\uAE30_160"
+    21300322: "\uAC77\uAE30_161"
+    21300324: "\uAC77\uAE30_162"
+    21300326: "\uAC77\uAE30_163"
+    21300328: "\uAC77\uAE30_164"
+    21300330: "\uAC77\uAE30_165"
+    21300332: "\uAC77\uAE30_166"
+    21300334: "\uAC77\uAE30_167"
+    21300336: "\uAC77\uAE30_168"
+    21300338: "\uAC77\uAE30_169"
+    21300340: "\uAC77\uAE30_170"
+    21300342: "\uAC77\uAE30_171"
+    21300344: "\uAC77\uAE30_172"
+    21300346: "\uAC77\uAE30_173"
+    21300348: "\uAC77\uAE30_174"
+    21300350: "\uAC77\uAE30_175"
+    21300352: "\uAC77\uAE30_176"
+    21300354: "\uAC77\uAE30_177"
+    21300356: "\uAC77\uAE30_178"
+    21300358: "\uAC77\uAE30_179"
+    21300360: "\uAC77\uAE30_180"
+    21300362: "\uAC77\uAE30_181"
+    21300364: "\uAC77\uAE30_182"
+    21300366: "\uAC77\uAE30_183"
+    21300368: "\uAC77\uAE30_184"
+    21300370: "\uAC77\uAE30_185"
+    21300372: "\uAC77\uAE30_186"
+    21300374: "\uAC77\uAE30_187"
+    21300376: "\uAC77\uAE30_188"
+    21300378: "\uAC77\uAE30_189"
+    21300380: "\uAC77\uAE30_190"
+    21300382: "\uAC77\uAE30_191"
+    21300384: "\uAC77\uAE30_192"
+    21300386: "\uAC77\uAE30_193"
+    21300388: "\uAC77\uAE30_194"
+    21300390: "\uAC77\uAE30_195"
+    21300392: "\uAC77\uAE30_196"
+    21300394: "\uAC77\uAE30_197"
+    21300396: "\uAC77\uAE30_198"
+    21300398: "\uAC77\uAE30_199"
+    21300400: "\uAC77\uAE30_200"
+    21300402: "\uAC77\uAE30_201"
+    21300404: "\uAC77\uAE30_202"
+    21300406: "\uAC77\uAE30_203"
+    21300408: "\uAC77\uAE30_204"
+    21300410: "\uAC77\uAE30_205"
+    21300412: "\uAC77\uAE30_206"
+    21300414: "\uAC77\uAE30_207"
+    21300416: "\uAC77\uAE30_208"
+    21300418: walk_0
+    21300420: walk_1
+    21300422: walk_2
+    21300424: walk_3
+    21300426: walk_4
+    21300428: walk_5
+    21300430: walk_6
+    21300432: walk_7
+  externalObjects: {}
+  serializedVersion: 7
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: -1
+    mipBias: -100
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 96
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  platformSettings:
+  - serializedVersion: 2
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+  - serializedVersion: 2
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+  - serializedVersion: 2
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: walk_0
+      rect:
+        serializedVersion: 2
+        x: 12
+        y: 1302
+        width: 114
+        height: 180
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9b2d65be8b4d6b94fb1f4c5aba7c1cc9
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: walk_1
+      rect:
+        serializedVersion: 2
+        x: 12
+        y: 1116
+        width: 114
+        height: 180
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: edcc76d075419e24483922053d20dec9
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: walk_2
+      rect:
+        serializedVersion: 2
+        x: 12
+        y: 930
+        width: 114
+        height: 180
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d59e5a97c0cb86446bb430f5e1fcd144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: walk_3
+      rect:
+        serializedVersion: 2
+        x: 12
+        y: 744
+        width: 114
+        height: 180
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4f0f14a39e248e24a8ee977cec0e79df
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: walk_4
+      rect:
+        serializedVersion: 2
+        x: 12
+        y: 558
+        width: 114
+        height: 180
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8e61f4d60881c46458e13bcdff87281e
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: walk_5
+      rect:
+        serializedVersion: 2
+        x: 12
+        y: 372
+        width: 114
+        height: 180
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c27c8dfb82775954685c44c28683713b
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: walk_6
+      rect:
+        serializedVersion: 2
+        x: 12
+        y: 186
+        width: 114
+        height: 180
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b7cb13df3613fe74c8e552a989414d0f
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: walk_7
+      rect:
+        serializedVersion: 2
+        x: 12
+        y: 0
+        width: 114
+        height: 180
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7ee306b0abdcbcc4b907dac09f444e10
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: ebb05a46bd6878d499f0e30cadb52da9
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+  spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

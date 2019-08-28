@@ -22,7 +22,7 @@ public abstract class ActionNode
 /// </summary>
 public class CompositeActionNode :ActionNode
 {
-    private Stack<ActionNode> childrens = new Stack<ActionNode>();
+    private List<ActionNode> childrens = new List<ActionNode>();
 
     public override bool Invoke()
     {
@@ -31,10 +31,10 @@ public class CompositeActionNode :ActionNode
 
     public void AddChild(ActionNode _Node)
     {
-        childrens.Push(_Node);
+        childrens.Add(_Node);
     }
 
-    public Stack<ActionNode> GetChildrens()
+    public List<ActionNode> GetChildrens()
     {
         return childrens;
     }

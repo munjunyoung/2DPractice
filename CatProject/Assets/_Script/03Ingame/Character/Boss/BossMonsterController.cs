@@ -20,14 +20,18 @@ public class BossMonsterController : MonoBehaviour
         get { return _CurrentAnimState; }
         set { _CurrentAnimState = value; }
     }
+
     
     protected SpriteRenderer    sR;
     protected Rigidbody2D       rb2D;
     protected BoxCollider2D     col;
+    protected Animator          anim;
 
     protected float             currentMoveSpeed;
-    protected bool              checkCloseTarget;
-    protected bool              aleadyFindTarget = false;
+
+    protected bool              checkCloseTarget    = false;
+    protected bool              aleadyFindTarget    = false;
+    protected bool              attackON            = false;
 
     //BossData
     public virtual void Init()
@@ -37,9 +41,24 @@ public class BossMonsterController : MonoBehaviour
         sR = GetComponent<SpriteRenderer>();
         rb2D = GetComponent<Rigidbody2D>();
         col = GetComponent<BoxCollider2D>();
+        anim = GetComponent<Animator>();
         CSVDataReader.instance.SetData(bData, bType.ToString());
     }
+
+    protected virtual void LateUpdate()
+    {
+        if ((int)rb2D.velocity.y != 0)
+            CurrentAnimState = BOSS_ANIMATION_STATE.Jump;
+        else
+            CurrentAnimState = (int)(currentMoveSpeed * 10) == 0 ? BOSS_ANIMATION_STATE.Idle : BOSS_ANIMATION_STATE.Walk;
+
+        if (attackON)
+            CurrentAnimState = BOSS_ANIMATION_STATE.Attack;
+        anim.SetFloat("StateFloat", (int)CurrentAnimState);
+    }
     
+    
+
     public virtual void IdleAction() { }
     /// <summary>
     /// NOTE : 플레이어 발견시 True 리턴

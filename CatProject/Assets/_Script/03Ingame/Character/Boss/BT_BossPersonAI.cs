@@ -36,17 +36,7 @@ public class BT_BossPersonAI : BT_Base
     {
         bossController = GetComponent<BossMonsterController>();
         bossController.Init();
-
-        aiRoot.AddChild(selector);
-        aiRoot.AddChild(seqNormal);
-
-        selector.AddChild(seqchaseAttack);
-        selector.AddChild(seqSkill);
-        selector.AddChild(seqDead);
-
-        seqNormal.AddChild(idle);
-        seqNormal.AddChild(detectTarget);
-
+    
         idle.Controller = bossController;
         detectTarget.Controller = bossController;
 
@@ -62,6 +52,17 @@ public class BT_BossPersonAI : BT_Base
         stopAttack.Controller = bossController;
         isDie.Controller = bossController;
 
+        //Node 추가 
+        aiRoot.AddChild(seqNormal);
+
+        seqNormal.AddChild(idle);
+        seqNormal.AddChild(detectTarget);
+        
+        aiRoot.AddChild(selector);
+            
+        selector.AddChild(seqchaseAttack);
+        selector.AddChild(seqSkill);
+        selector.AddChild(seqDead);
 
         seqchaseAttack.AddChild(chaseTarget);
         seqchaseAttack.AddChild(checkCloseTarget);
@@ -84,7 +85,7 @@ public class BT_BossPersonAI : BT_Base
         StartBT();
     }
     public override void StartBT()
-    {
+    {   
         StartCoroutine(behaviorProcess);
     }
 
