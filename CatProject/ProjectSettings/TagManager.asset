@@ -16,6 +16,7 @@ TagManager:
   - Structure
   - Item
   - MonsterAttackEffect
+  - Boss
   layers:
   - Default
   - TransparentFX

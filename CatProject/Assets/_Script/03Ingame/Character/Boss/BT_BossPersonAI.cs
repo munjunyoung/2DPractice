@@ -10,8 +10,8 @@ public class BT_BossPersonAI : BT_Base
     private Sequence            seqNormal           = new Sequence();
     private Selector            selector            = new Selector();
 
-    private Sequence            seqchaseAttack           = new Sequence();
-    private Sequence            seqSkill           = new Sequence();
+    private Sequence            seqchaseAttack      = new Sequence();
+    private Sequence            seqSkill            = new Sequence();
     private Sequence            seqDead             = new Sequence();
     //Normal
     private Idle                idle                = new Idle();
@@ -19,7 +19,7 @@ public class BT_BossPersonAI : BT_Base
     //Phase1
     private ChaseTarget         chaseTarget         = new ChaseTarget();
     private CheckCloseTarget    checkCloseTarget    = new CheckCloseTarget();
-    private LookAtTarget        lookatTarget        = new LookAtTarget();
+    private CheckPossibleAttack checkPossibleAttack = new CheckPossibleAttack();
     private StartAttack         startAttack         = new StartAttack();
     //Phase2
     private CheckPossibleSkill  checkPossibleSkill  = new CheckPossibleSkill();
@@ -42,7 +42,7 @@ public class BT_BossPersonAI : BT_Base
 
         chaseTarget.Controller = bossController;
         checkCloseTarget.Controller = bossController;
-        lookatTarget.Controller = bossController;
+        checkPossibleAttack.Controller = bossController;
         startAttack.Controller = bossController;
 
         checkPossibleSkill.Controller = bossController;
@@ -66,7 +66,7 @@ public class BT_BossPersonAI : BT_Base
 
         seqchaseAttack.AddChild(chaseTarget);
         seqchaseAttack.AddChild(checkCloseTarget);
-        seqchaseAttack.AddChild(lookatTarget);
+        seqchaseAttack.AddChild(checkPossibleAttack);
         seqchaseAttack.AddChild(startAttack);
         
         seqSkill.AddChild(checkPossibleSkill);

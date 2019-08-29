@@ -49,6 +49,9 @@ public class AttackEffectSc : MonoBehaviour
             case "Garbage":
                 collision.transform.GetComponent<Rb2dStructureSc>().TakeThis(collision.contacts[0].point);
                 break;
+            case "Boss":
+                collision.transform.GetComponent<BossMonsterController>().TakeDamage(damage);
+                break;
             default:
                 effectOn = false;
                 break;
@@ -56,12 +59,16 @@ public class AttackEffectSc : MonoBehaviour
         if(effectOn)
             PlayHitEffect(collision.contacts[0].point);
     }
-
+    /// <summary>
+    /// NOTE : effect포지션과 target포지션 중앙 설정
+    /// </summary>
+    /// <param name="_hitpos"></param>
     private void PlayHitEffect(Vector3 _hitpos)
     {
-        //effect포지션과 target포지션 중앙 설정
         if (effectCount != 0)
             effectCount = effectCount % hitEffectpullingArray.Length;
+
+        Debug.Log(effectCount);
         //현재 체크하는 이펙트가 온일 경우 
         hitEffectpullingArray[effectCount].transform.position = _hitpos;
         hitEffectpullingArray[effectCount].SetActive(true);

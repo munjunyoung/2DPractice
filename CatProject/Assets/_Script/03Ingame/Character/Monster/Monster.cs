@@ -383,7 +383,6 @@ public class Monster : MonoBehaviour
     IEnumerator ActiveOff()
     {
         yield return new WaitForSeconds(2f);
-
         ownRoom.CheckLockRoom();
         gameObject.SetActive(false);
     }

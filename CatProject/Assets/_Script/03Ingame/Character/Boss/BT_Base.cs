@@ -143,25 +143,6 @@ public class CheckCloseTarget : ActionNode
 }
 
 /// <summary>
-/// NOTE : 타겟방향으로 바라봄
-/// </summary>
-public class LookAtTarget : ActionNode
-{
-    public BossMonsterController Controller
-    {
-        set { _controller = value; }
-    }
-    private BossMonsterController _controller;
-
-    public override bool Invoke()
-    {
-        if (_controller.LookAtTarget())
-            return true;
-        return false;
-    }
-}
-
-/// <summary>
 /// NOTE : 공격 가능한 상태인지 체크
 /// </summary>
 public class CheckPossibleAttack : ActionNode
@@ -194,7 +175,7 @@ public class StartAttack : ActionNode
     public override bool Invoke()
     {
         _controller.StartAttack();
-        return true;
+        return false;
     }
 }
 
@@ -235,7 +216,7 @@ public class SkillAction : ActionNode
     public override bool Invoke()
     {
         _controller.SkillAction();
-        return true;
+        return false;
     }
 }
 
@@ -286,7 +267,6 @@ public class IsDie : ActionNode
 
     public override bool Invoke()
     {
-         
         return _controller.isDie();
     }
 }

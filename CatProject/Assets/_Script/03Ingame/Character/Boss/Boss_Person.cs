@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Boss_Person : BossMonsterController
 {
+
     public override void Init()
     {
         base.Init();
@@ -13,7 +14,7 @@ public class Boss_Person : BossMonsterController
     #region Normal
     public override void IdleAction()
     {
-        if (aleadyFindTarget)
+        if (isAleadyFindingTarget)
             return;
 
         rb2D.velocity = new Vector2(0, rb2D.velocity.y);
@@ -21,13 +22,13 @@ public class Boss_Person : BossMonsterController
 
     public override bool DetectTarget()
     {
-        if (aleadyFindTarget)
+        if (isAleadyFindingTarget)
             return true;
 
         var overlapCollider = Physics2D.OverlapCircle(transform.position, 5f);
         if (overlapCollider.CompareTag("Player"))
-            aleadyFindTarget = true;
-        return aleadyFindTarget;
+            isAleadyFindingTarget = true;
+        return isAleadyFindingTarget;
     }
     #endregion
 
@@ -38,27 +39,24 @@ public class Boss_Person : BossMonsterController
         var dirX = Mathf.Sign(TargetOB.position.x - transform.position.x);
         sR.flipX = dirX >= 0 ? true : false;
 
-        rb2D.velocity = new Vector2(dirX * currentMoveSpeed, rb2D.velocity.y);
-        
+        if(!isCloseTarget)
+            rb2D.velocity = new Vector2(dirX * currentMoveSpeed, rb2D.velocity.y);
     }
-
+    
     public override bool CheckCloseTarget()
-    {
-        if (checkCloseTarget)
-            return true;    
-        return false;
+    { 
+        return isCloseTarget;
     }
-
+    
     public override bool CheckPossibleAttack()
     {
-
-        return true;
+        return isReadyAttack;
     }
 
     public override void StartAttack()
     {
         rb2D.velocity = Vector2.zero;
-        attackON = true;
+        isStartingAttack = true;
         //..AttackStart
     }
     #endregion
@@ -66,8 +64,6 @@ public class Boss_Person : BossMonsterController
     #region Skill
     public override bool CheckPossibleSkill()
     {
-        //..
-
         return false;
     }
 
@@ -95,20 +91,8 @@ public class Boss_Person : BossMonsterController
     }
 
 
-    
+
     #endregion
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if(collision.CompareTag("Player"))
-            checkCloseTarget = true;
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Player"))
-            checkCloseTarget = false;
-    }
-
-
+   
 }
