@@ -6,11 +6,12 @@ using UnityEngine.UI;
 public class MonsterHPSliderSc : MonoBehaviour
 {
     private Slider monsterHPSlider;
-    
+    private Text hpText;
     
     private void Awake()
     {
         monsterHPSlider = GetComponent<Slider>();
+        hpText = transform.Find("HPText").GetComponent<Text>();
     }
 
     public void SetSliderStartValue(int maxhp, int currenthp)
@@ -18,6 +19,7 @@ public class MonsterHPSliderSc : MonoBehaviour
         //체력 설정 
         monsterHPSlider.maxValue = maxhp;
         monsterHPSlider.value = currenthp;
+        SetHPValue(currenthp);
     }
     
     /// <summary>
@@ -25,6 +27,7 @@ public class MonsterHPSliderSc : MonoBehaviour
     /// </summary>
     public void SetHPValue(int currenthp)
     {
-            monsterHPSlider.value = currenthp;
+        monsterHPSlider.value = currenthp;
+        hpText.text = currenthp.ToString();
     }   
 }

@@ -136,6 +136,11 @@ public class DrawMap : MonoBehaviour
                         case TileType.Item:
                             ItemSc tmpitem = Instantiate(loadData.itemPrefabDic[Item_TYPE.Catnip.ToString()], new Vector3Int(x, y, 0), Quaternion.identity, tmptilemap.transform);
                             break;
+                        case TileType.Boss:
+                            BossMonsterController tmpboss = Instantiate(loadData.bossPrefabDic[room.roomTileArray[x, y].tileName], new Vector3Int(x, y, 0), loadData.bossPrefabDic[room.roomTileArray[x, y].tileName].transform.rotation, tmptilemap.transform);
+                            tmpboss.ownRoom = room;
+                            room.bossInfoList.Add(new SpawnBossInfo(tmpboss.bType, new Vector2(x, y), tmpboss));
+                            break;
                         default:
                             Debug.Log(room.roomTileArray[x, y].tileType.ToString());
                             break;

@@ -250,12 +250,11 @@ public class DungeonRoom
             if (roomTileArray[xpos, j] == null)
                 startpos = new Vector2(xpos, j);
         }
-        bossInfoList.Add(new SpawnBossInfo(MONSTER_TYPE.Dog, startpos));
+        bossInfoList.Add(new SpawnBossInfo(BOSS_TYPE.Person, startpos));
     }
     #endregion
 
     #region Room Complete Check
-
     /// <summary>
     /// NOTE : 방 체크
     /// </summary>
@@ -317,7 +316,7 @@ public class DungeonRoom
         {
             foreach (var bossinfo in bossInfoList)
             {
-                if (bossinfo.monsterModel.isAlive)
+                if (bossinfo.bossModel.isAlive)
                     checkcomplete = false;
             }
         }
@@ -377,6 +376,15 @@ public class DungeonRoom
         {
             if (iteminfo.itemModel.isActiveAndEnabled)
                 iteminfo.itemModel.StopAction(_stopcount);
+        }
+    }
+    
+    public void BossStop(float _stopcount)
+    {
+        foreach(var bossinfo  in bossInfoList)
+        {
+            if (bossinfo.bossModel.isActiveAndEnabled)
+                bossinfo.bossModel.PauseCharacter(_stopcount);
         }
     }
 }
@@ -466,16 +474,24 @@ public class SpawnItemInfo
 /// </summary>
 public class SpawnBossInfo
 {
-    public MONSTER_TYPE mType;
+    public BOSS_TYPE bType;
     public Vector2 startPos;
-    public Monster monsterModel;
+    public BossMonsterController bossModel;
 
-    public SpawnBossInfo(MONSTER_TYPE _mtype, Vector2 _startpos)
+    public SpawnBossInfo(BOSS_TYPE _btype, Vector2 _startpos)
     {
-        mType = _mtype;
+        bType = _btype;
         startPos = _startpos;
-        monsterModel = null;
+        bossModel = null;
     }
+
+    public SpawnBossInfo(BOSS_TYPE _btype, Vector2 _startpos, BossMonsterController _bossmodel)
+    {
+        bType = _btype;
+        startPos = _startpos;
+        bossModel = _bossmodel;
+    }
+
 }
 
 /// <summary>

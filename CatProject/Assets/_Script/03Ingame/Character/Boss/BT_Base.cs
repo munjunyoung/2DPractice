@@ -178,11 +178,9 @@ public class StartAttack : ActionNode
         return false;
     }
 }
-
 #endregion
 
 #region skill
-
 /// <summary>
 /// NOTE : 스킬 사용이 가능한지 체크
 /// </summary>
@@ -219,44 +217,9 @@ public class SkillAction : ActionNode
         return false;
     }
 }
-
-
 #endregion
 
 #region Dead
-/// <summary>
-/// NOTE : 죽음
-/// </summary>
-public class DeadProcess :ActionNode
-{
-    public BossMonsterController Controller
-    {
-        set { _controller = value; }
-    }
-    private BossMonsterController _controller;
-
-    public override bool Invoke()
-    {
-        _controller.DeadProcess();
-        return true;
-    }
-}
-
-public class StopAttack : ActionNode
-{
-    public BossMonsterController Controller
-    {
-        set { _controller = value; }
-    }
-    private BossMonsterController _controller;
-
-    public override bool Invoke()
-    {
-        _controller.StopAttack();
-        return true;
-    }
-}
-
 public class IsDie : ActionNode
 {
     public BossMonsterController Controller
@@ -268,6 +231,24 @@ public class IsDie : ActionNode
     public override bool Invoke()
     {
         return _controller.isDie();
+    }
+}
+
+/// <summary>
+/// NOTE : 죽음
+/// </summary>
+public class DeadAction :ActionNode
+{
+    public BossMonsterController Controller
+    {
+        set { _controller = value; }
+    }
+    private BossMonsterController _controller;
+
+    public override bool Invoke()
+    {
+        _controller.DeadAction();
+        return true;
     }
 }
 #endregion

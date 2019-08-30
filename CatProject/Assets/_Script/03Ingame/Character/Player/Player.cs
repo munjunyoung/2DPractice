@@ -388,11 +388,10 @@ public class Player : MonoBehaviour
             timer += pDATA.flashRate;
             tmpcolor.a = tmpcolor.a.Equals(1f) ? 0.2f : 1f;
             characterSprite.color = tmpcolor;
-
             yield return new WaitForSeconds(pDATA.flashRate);
         }
         tmpcolor.a = 1f;
-        characterSprite.color = tmpcolor;
+        characterSprite.color = mySkill.isRunningSkill ? mySkill.playerChangeColor : Color.white;  
         isInvincible = false;
     }
     

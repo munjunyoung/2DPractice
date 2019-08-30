@@ -67,8 +67,7 @@ public class AttackEffectSc : MonoBehaviour
     {
         if (effectCount != 0)
             effectCount = effectCount % hitEffectpullingArray.Length;
-
-        Debug.Log(effectCount);
+        
         //현재 체크하는 이펙트가 온일 경우 
         hitEffectpullingArray[effectCount].transform.position = _hitpos;
         hitEffectpullingArray[effectCount].SetActive(true);

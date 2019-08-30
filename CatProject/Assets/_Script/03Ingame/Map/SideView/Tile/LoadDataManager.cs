@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 enum Room_TileType { Type1 = 0, Type2 }
-public enum TileType {Terrain, Structure , Monster, Item}
+public enum TileType {Terrain, Structure , Monster, Item, Boss}
 public enum STRUCTURE_TYPE { Entrance ,Box, Switch, Garbage }
 public enum Box_Type { Normal }
 public enum Switch_Type {  Normal }
@@ -35,6 +35,7 @@ public class LoadDataManager : MonoBehaviour
 
     private readonly string structurePefabPath = "Prefab/Structure";
     private readonly string monsterPrefabPath = "Prefab/Character/Monster";
+    private readonly string bossPrefabPath = "Prefab/Character/Boss";
     private readonly string itemPrefabPath = "Prefab/Item";
     private readonly string skillEffectPrefabPath = "Prefab/SkillEffect";
     //Tile 
@@ -47,7 +48,7 @@ public class LoadDataManager : MonoBehaviour
     public Dictionary<string, StructureObject> structurePrefabDic = new Dictionary<string, StructureObject>();
     public Dictionary<string, ItemSc> itemPrefabDic = new Dictionary<string, ItemSc>();
     public Dictionary<string, GameObject> SkillEffectPrefabDic = new Dictionary<string, GameObject>();
-    
+    public Dictionary<string, BossMonsterController> bossPrefabDic = new Dictionary<string, BossMonsterController>();
     //private void Start()
     //{
     //    tileDataArray = LoadAllTile();
@@ -72,6 +73,7 @@ public class LoadDataManager : MonoBehaviour
         SetLoadData(skillSpriteDic, skillSpritePath);
         SetLoadData(itemPrefabDic, itemPrefabPath);
         SetLoadData(monsterPrefabDic, monsterPrefabPath);
+        SetLoadData(bossPrefabDic, bossPrefabPath);
         SetLoadData(structurePrefabDic, structurePefabPath);
         SetLoadData(SkillEffectPrefabDic, skillEffectPrefabPath);
     }
@@ -186,17 +188,22 @@ public class LoadDataManager : MonoBehaviour
             //Debug.Log("load data - type : " + tiletype + " name : " + tilename + " typename : " + tilenamestype);
             switch (tiletype)
             {
-                case "Structure":   
-                    tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Structure, tilename, tilenamestype);
+                
+               
+                case "Item":
+                    tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Item, tilename, tilenamestype);
                     break;
                 case "Monster":
                     tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Monster, tilename, tilenamestype);
                     break;
-                case "Item":
-                    tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Item, tilename, tilenamestype);
+                case "Structure":
+                    tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Structure, tilename, tilenamestype);
                     break;
                 case "Switch":
                     tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Structure, tilename, tilenamestype);
+                    break;
+                case "Boss":
+                    tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Boss, tilename, tilenamestype);
                     break;
             }
         }

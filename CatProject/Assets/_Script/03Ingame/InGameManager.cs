@@ -99,6 +99,7 @@ public class InGameManager : MonoBehaviour
         currentRoom.MonsterStop(_stopcount);
         currentRoom.ItemStop(_stopcount);
         
+        
     }
 
     /// <summary>

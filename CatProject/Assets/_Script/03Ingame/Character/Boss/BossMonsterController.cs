@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum BOSS_TYPE { Person }
-public enum BOSS_SEQUENCE { Normal ,Phase1, Phase2, Dead }
 public enum BOSS_ANIMATION_STATE { Idle, Walk, Jump, Fall, Attack, Skill ,TakeDamage, Die}
 public class BossMonsterController : MonoBehaviour
 {
-    protected BOSS_TYPE         bType;
+    public BOSS_TYPE         bType;
     protected BossData          bData   = new BossData();
 
     public    DungeonRoom       ownRoom = null;
@@ -25,11 +24,37 @@ public class BossMonsterController : MonoBehaviour
     protected Rigidbody2D       rb2D;
     protected BoxCollider2D     col;
     protected Animator          anim;
-
+    [SerializeField]
+    protected MonsterHPSliderSc hpSlider;
+    protected BT_BossPersonAI   aiSc;
+    
     protected float             currentMoveSpeed;
     protected float             flashCount;
 
-    protected bool              isAlive                     = true;
+    private   int               instanceHP;
+    private   int               CurrentHP
+    {
+        get { return instanceHP; }
+        set
+        {
+            instanceHP = value;
+            if (instanceHP >= bData.HP)
+            {
+                instanceHP = bData.HP;
+            }
+            else if (instanceHP < 0)
+            {
+                instanceHP = 0;
+                isAlive = false;
+            }
+
+            if (hpSlider != null)
+                hpSlider.SetHPValue(instanceHP);
+        }
+    }
+
+    public    bool              isAlive                     = true;
+    protected bool              isPause                     = false;
     protected bool              isAleadyFindingTarget       = false;
     protected bool              isCloseTarget               = false;
     protected bool              isStartingAttack            = false;
@@ -47,20 +72,21 @@ public class BossMonsterController : MonoBehaviour
         rb2D = GetComponent<Rigidbody2D>();
         col = GetComponent<BoxCollider2D>();
         anim = GetComponent<Animator>();
-
+        aiSc = GetComponent<BT_BossPersonAI>();
+        //능력 데이터 초기화
         CSVDataReader.instance.SetData(bData, bType.ToString());
+        //체력, 체력바 초기화
+        CurrentHP = bData.HP;
+        hpSlider.SetSliderStartValue(bData.HP, CurrentHP);
     }
 
     protected virtual void LateUpdate()
     {
         SetAnimationState(); 
     }
+
     #region BT FUNC
     public virtual void IdleAction() { }
-    /// <summary>
-    /// NOTE : 플레이어 발견시 True 리턴
-    /// </summary>
-    /// <returns></returns>
     public virtual bool DetectTarget() { return true; }
     
     public virtual void ChaseAction() { }
@@ -72,9 +98,8 @@ public class BossMonsterController : MonoBehaviour
     public virtual bool CheckPossibleSkill() { return true; }
     public virtual void SkillAction() { }
 
-    public virtual bool isDie() { return false; }
-    public virtual void StopAttack() { }
-    public virtual void DeadProcess() { }
+    public virtual bool isDie() { return !isAlive; }
+    public virtual void DeadAction() { }
     #endregion
     
     /// <summary>
@@ -82,10 +107,15 @@ public class BossMonsterController : MonoBehaviour
     /// </summary>
     protected virtual void SetAnimationState()
     {
+        if (isPause)
+            return;
+        if (isAlive)
+            return;
+
         if ((int)rb2D.velocity.y != 0)
             CurrentAnimState = BOSS_ANIMATION_STATE.Jump;
         else
-            CurrentAnimState = (int)(currentMoveSpeed * 10) == 0 ? BOSS_ANIMATION_STATE.Idle : BOSS_ANIMATION_STATE.Walk;
+            CurrentAnimState = (int)(rb2D.velocity.x) == 0 ? BOSS_ANIMATION_STATE.Idle : BOSS_ANIMATION_STATE.Walk;
 
         if (isStartingAttack)
             CurrentAnimState = BOSS_ANIMATION_STATE.Attack;
@@ -104,6 +134,8 @@ public class BossMonsterController : MonoBehaviour
         //공격을 당했을 경우 (멀리서 스킬로 공격 하여 어그로를 무시하는 경우 방지)
         isAleadyFindingTarget = true;
 
+        CurrentHP -= damage;
+        //hpSlider.SetHPValue(CurrentHP);
 
         if (!isRunningTakeDamageFlash)
             StartCoroutine(TakeDamageFlashProcess());
@@ -146,6 +178,40 @@ public class BossMonsterController : MonoBehaviour
     }
     
     /// <summary>
+    /// NOTE : 파라미터 시간만큼 일시정지 코루틴 실행
+    /// </summary>
+    /// <param name="_stopcount"></param>
+    public void PauseCharacter(float _stopcount)
+    {
+        StartCoroutine(PauseProcess(_stopcount));
+    }
+
+    /// <summary>
+    /// NOTE : 파라미터 시간 만큼 일시 정지
+    /// </summary>
+    /// <param name="_stopcount"></param>
+    /// <returns></returns>
+    IEnumerator PauseProcess(float _stopcount)
+    {
+        isPause = true;
+        aiSc.StopBT();
+        yield return new WaitForSeconds(_stopcount);
+        isPause = false;
+        aiSc.StartBT();
+    }
+
+    /// <summary>
+    /// NOTE : 애니매이션 상태 변경 및 RoomCheck 
+    /// </summary>
+    /// <returns></returns>
+    protected IEnumerator DeadProcess()
+    {
+        anim.SetTrigger("Die");
+        yield return new WaitForSeconds(2f);
+        ownRoom.CheckLockRoom();
+        gameObject.SetActive(false);
+    }
+    /// <summary>
     /// NOTE : 설정한 Collider 플레이어 근접 체크 확인
     /// </summary>
     /// <param name="collision"></param>
@@ -159,5 +225,18 @@ public class BossMonsterController : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
             isCloseTarget = false;
+    }
+
+    /// <summary>
+    /// NOTE : 플레이어와 부딪혔을 경우 Damage 처리
+    /// </summary>
+    /// <param name="collision"></param>
+    protected void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.collider.CompareTag("Player"))
+        {
+            if (isAlive)
+                collision.transform.GetComponent<Player>().TakeDamage(bData.bodyAttackDamage, transform);
+        }
     }
 }

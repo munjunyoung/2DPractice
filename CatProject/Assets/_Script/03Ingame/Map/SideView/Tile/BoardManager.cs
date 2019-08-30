@@ -406,9 +406,9 @@ public class BoardManager : MonoBehaviour
                     room.SetBossPos();
                     foreach (SpawnBossInfo bossinfo in room.bossInfoList)
                     {
-                        Monster tmpboss = Instantiate(loadData.monsterPrefabDic[bossinfo.mType.ToString()], bossinfo.startPos, Quaternion.identity, room.roomModel.transform);
+                        BossMonsterController tmpboss = Instantiate(loadData.bossPrefabDic[bossinfo.bType.ToString()], bossinfo.startPos, Quaternion.identity, room.roomModel.transform);
                         tmpboss.ownRoom = room;
-                        bossinfo.monsterModel = tmpboss;
+                        bossinfo.bossModel = tmpboss;
                     }
                     break;
                 case Room_ClearType.None:

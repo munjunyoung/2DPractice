@@ -35,6 +35,10 @@ public class Boss_Person : BossMonsterController
     #region ChaseAttack
     public override void ChaseAction()
     {
+        //공격중일때 이동하지 않게 하기 위함
+        if (anim.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
+            return;
+
         currentMoveSpeed = bData.normalSpeed;
         var dirX = Mathf.Sign(TargetOB.position.x - transform.position.x);
         sR.flipX = dirX >= 0 ? true : false;
@@ -77,17 +81,12 @@ public class Boss_Person : BossMonsterController
 
     public override bool isDie()
     {
-        return false;
+       return base.isDie();
     }
-
-    public override void StopAttack()
+    
+    public override void DeadAction()
     {
-
-    }
-
-    public override void DeadProcess()
-    {
-
+        StartCoroutine(DeadProcess());
     }
 
 

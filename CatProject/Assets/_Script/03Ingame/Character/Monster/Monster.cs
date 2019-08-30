@@ -70,8 +70,7 @@ public class Monster : MonoBehaviour
     protected Rigidbody2D rb2D;
     private Animator anim;
     protected SpriteRenderer sR;
-    
-    [HideInInspector]
+
     protected Transform targetOb = null;
     //HP
     private int instanceHP;

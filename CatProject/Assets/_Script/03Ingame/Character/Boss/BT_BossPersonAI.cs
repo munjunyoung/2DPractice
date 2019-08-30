@@ -25,9 +25,8 @@ public class BT_BossPersonAI : BT_Base
     private CheckPossibleSkill  checkPossibleSkill  = new CheckPossibleSkill();
     private SkillAction         skillAction         = new SkillAction();
     //Dead
-    private DeadProcess         deadProcess         = new DeadProcess();
-    private StopAttack          stopAttack          = new StopAttack();
     private IsDie               isDie               = new IsDie();
+    private DeadAction          deadAction         = new DeadAction();
 
     private IEnumerator behaviorProcess;
     private BossMonsterController bossController;
@@ -48,8 +47,7 @@ public class BT_BossPersonAI : BT_Base
         checkPossibleSkill.Controller = bossController;
         skillAction.Controller = bossController;
 
-        deadProcess.Controller = bossController;
-        stopAttack.Controller = bossController;
+        deadAction.Controller = bossController;
         isDie.Controller = bossController;
 
         //Node 추가 
@@ -73,8 +71,7 @@ public class BT_BossPersonAI : BT_Base
         seqSkill.AddChild(skillAction);
 
         seqDead.AddChild(isDie);
-        seqDead.AddChild(deadProcess);
-        seqDead.AddChild(stopAttack);
+        seqDead.AddChild(deadAction);
 
         behaviorProcess = BehaviorProcess();
     }
