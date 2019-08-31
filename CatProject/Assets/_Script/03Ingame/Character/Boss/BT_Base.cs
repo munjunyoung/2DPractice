@@ -194,9 +194,7 @@ public class CheckPossibleSkill : ActionNode
 
     public override bool Invoke()
     {
-        if (_controller.CheckPossibleSkill()) 
-            return true;
-        return false;
+        return _controller.CheckPossibleSkill();
     }
 }
 

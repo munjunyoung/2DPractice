@@ -24,8 +24,8 @@ public class Boss_Person : BossMonsterController
     {
         if (isAleadyFindingTarget)
             return true;
-
-        var overlapCollider = Physics2D.OverlapCircle(transform.position, 5f);
+        
+        var overlapCollider = Physics2D.OverlapCircle(transform.position, 7f);
         if (overlapCollider.CompareTag("Player"))
             isAleadyFindingTarget = true;
         return isAleadyFindingTarget;
@@ -68,12 +68,20 @@ public class Boss_Person : BossMonsterController
     #region Skill
     public override bool CheckPossibleSkill()
     {
+        if (isFrenzyState)
+            return false;
+
+        if (CurrentHP <= (bData.HP * 0.3f))
+        {
+            isFrenzyState = true;
+            return true;
+        }
         return false;
     }
 
     public override void SkillAction()
     {
-
+        FrenzyAction();
     }
     #endregion
 
@@ -88,10 +96,23 @@ public class Boss_Person : BossMonsterController
     {
         StartCoroutine(DeadProcess());
     }
-
-
-
     #endregion
 
+    protected bool isFrenzyState = false;
+    protected void FrenzyAction()
+    {
+        sR.color = Color.red;
+        //속도
+        anim.SetFloat("MoveSpeed", bData.normalSpeed);
+        //공속
+        anim.SetFloat("AttackSpeed", bData.attackSpeed);
+        //공격 쿨타임
+        bData.attackCooltime = bData.attackCooltime * 0.5f;
+        //공격력
+        bData.attackDamage = bData.attackDamage + 20;
+        //공격 범위
+        attackEffect.transform.localScale = Vector2.one * 1.5f;
+        
+    }
    
 }

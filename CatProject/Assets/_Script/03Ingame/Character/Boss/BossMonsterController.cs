@@ -6,7 +6,7 @@ public enum BOSS_TYPE { Person }
 public enum BOSS_ANIMATION_STATE { Idle, Walk, Jump, Fall, Attack, Skill ,TakeDamage, Die}
 public class BossMonsterController : MonoBehaviour
 {
-    public BOSS_TYPE         bType;
+    public    BOSS_TYPE         bType;
     protected BossData          bData   = new BossData();
 
     public    DungeonRoom       ownRoom = null;
@@ -16,7 +16,7 @@ public class BossMonsterController : MonoBehaviour
     protected BOSS_ANIMATION_STATE CurrentAnimState
     {
         get { return _CurrentAnimState; }
-        set { _CurrentAnimState = value; }
+        set { _CurrentAnimState = value;}
     }
 
     
@@ -26,13 +26,15 @@ public class BossMonsterController : MonoBehaviour
     protected Animator          anim;
     [SerializeField]
     protected MonsterHPSliderSc hpSlider;
+    protected AttackEffectSc    attackEffect;
     protected BT_BossPersonAI   aiSc;
-    
+
     protected float             currentMoveSpeed;
+    protected float             currentAttackSpeed;
     protected float             flashCount;
 
     private   int               instanceHP;
-    private   int               CurrentHP
+    protected int               CurrentHP
     {
         get { return instanceHP; }
         set
@@ -77,6 +79,7 @@ public class BossMonsterController : MonoBehaviour
         CSVDataReader.instance.SetData(bData, bType.ToString());
         //체력, 체력바 초기화
         CurrentHP = bData.HP;
+        
         hpSlider.SetSliderStartValue(bData.HP, CurrentHP);
     }
 
@@ -239,4 +242,6 @@ public class BossMonsterController : MonoBehaviour
                 collision.transform.GetComponent<Player>().TakeDamage(bData.bodyAttackDamage, transform);
         }
     }
+
+    
 }
