@@ -327,7 +327,7 @@ MonoBehaviour:
   attackButtonPress: 0
   isAlive: 1
   moveInputValue: 0
-  attackEffectModel: {fileID: 2105089177}
+  attackEffectModel: {fileID: 679968720}
   mySkill: {fileID: 0}
   isRunningSkillCooltime: 0
   effectArray:
@@ -347,6 +347,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: HitEffect4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1328219122349595882, guid: cd636dfe579f77849910db20f0e853a2,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1328219122349162698, guid: cd636dfe579f77849910db20f0e853a2,
         type: 3}
@@ -448,6 +453,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: HitEffect5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1328219122349595882, guid: cd636dfe579f77849910db20f0e853a2,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1328219122349162698, guid: cd636dfe579f77849910db20f0e853a2,
         type: 3}
@@ -651,6 +661,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: HitEffect3
       objectReference: {fileID: 0}
+    - target: {fileID: 1328219122349595882, guid: cd636dfe579f77849910db20f0e853a2,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1328219122349162698, guid: cd636dfe579f77849910db20f0e853a2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -751,6 +766,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: HitEffect2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1328219122349595882, guid: cd636dfe579f77849910db20f0e853a2,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1328219122349162698, guid: cd636dfe579f77849910db20f0e853a2,
         type: 3}

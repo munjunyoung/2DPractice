@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MonsterAttackEffect : MonoBehaviour
+public class MonsterRemoteAttackEffect : MonoBehaviour
 {
     private Monster parentOb;
     private int damage;

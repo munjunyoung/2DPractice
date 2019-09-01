@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class RemoteRangeMonster : WalkingMonster
 {
-    public MonsterAttackEffect[] attackEffectObject;
+    public MonsterRemoteAttackEffect[] attackEffectObject;
     private int effectpoolingCount = 0;
     
     /// <summary>

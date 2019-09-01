@@ -27,13 +27,10 @@ public class Player : MonoBehaviour
             switch (InstanceState)
             {
                 case ANIMATION_STATE.Walk:
-                    anim.speed = Mathf.Abs(currentMoveSpeed * 0.1f);
+                    anim.SetFloat("animSpeedValue", Mathf.Abs(currentMoveSpeed * 0.1f));
                     break;
                 case ANIMATION_STATE.Attack:
-                    anim.speed = pDATA.attackAnimSpeed;
-                    break;
-                default:
-                    anim.speed = 1;
+                    anim.SetFloat("animSpeedValue", pDATA.attackAnimSpeed);
                     break;
             }
         }
@@ -50,9 +47,10 @@ public class Player : MonoBehaviour
     public bool jumpButtonPress, attackButtonPress = false;
     
     [HideInInspector]
-    public bool isAlive = true;
     private bool isInvincible = false;
     //HP
+    [HideInInspector]
+    public bool isAlive = true;
     private int instanceHP;
     public int CurrentHP
     {
@@ -93,7 +91,7 @@ public class Player : MonoBehaviour
     private bool isRunningJumpCoroutine = false;
     //Attack
     [SerializeField]
-    public GameObject attackEffectModel;
+    public AttackEffectSc attackEffectModel;
     private bool attackCooltimeState = false;
     private bool attackOn;
     private bool isRunningAttackCoroutine = false;
@@ -101,11 +99,10 @@ public class Player : MonoBehaviour
     private bool isStopped;
     private bool isRunningStopCoroutine = false;
     //Skill
-    public StartSkill mySkill = null;
+    [HideInInspector]
+    public PlayerSkill mySkill = null;
+    [HideInInspector]
     public bool isRunningSkillCooltime = false;
-    //Die
-    private bool isDie = false;
-
     //Item
     private int _catnipItemNumber = 10;
     public int CatnipItemNumber
@@ -126,15 +123,13 @@ public class Player : MonoBehaviour
         anim = GetComponent<Animator>();
         characterSprite = GetComponent<SpriteRenderer>();
     }
-    
+   
     private void FixedUpdate()
     {
-        if (isDie)
+        if (!isAlive)
             return;
         if (isStopped)
             return;
-        //if (isInvincible)
-        //    return;
 
         Move();
         Jump();
@@ -251,11 +246,11 @@ public class Player : MonoBehaviour
     public void AttackEffectOn()
     {
         UseTP(pDATA.attackTPAmount);
-        attackEffectModel.SetActive(true);
+        attackEffectModel.gameObject.SetActive(true);
     }
     public void AttackEffectOff()
     {
-        attackEffectModel.SetActive(false);
+        attackEffectModel.gameObject.SetActive(false);
         attackOn = false;
     }
     /// <summary>
@@ -354,7 +349,7 @@ public class Player : MonoBehaviour
     /// <param name="damage"></param>
     public void TakeDamage(int damage, Transform targetpos)
     {
-        if (isDie)
+        if (!isAlive)
             return;
         if (isInvincible)
             return;
@@ -397,9 +392,12 @@ public class Player : MonoBehaviour
     
     IEnumerator Die()
     {
-        isDie = true;
+        isAlive = false;
         //..die animation 실행
         CurrentPlayerAnimState = ANIMATION_STATE.Die;
+        rb2D.velocity = Vector2.zero;
+        rb2D.bodyType = RigidbodyType2D.Kinematic;
+        anim.SetTrigger("IsDie");
         yield return new WaitForSeconds(2f);
         InGameManager.instance.DiePlayer();
     }
@@ -411,6 +409,8 @@ public class Player : MonoBehaviour
     /// </summary>
     private void SetAnimationState()
     {
+        if (!isAlive)
+            return;
         //캐릭터 상태 설정(애니매이션 상태 설정)
         if ((int)rb2D.velocity.y > 0)
             CurrentPlayerAnimState = ANIMATION_STATE.Jump;
@@ -421,7 +421,7 @@ public class Player : MonoBehaviour
 
         if (attackOn)
             CurrentPlayerAnimState = ANIMATION_STATE.Attack;
-
+        
         anim.SetFloat("StateFloat", (int)CurrentPlayerAnimState);
     }
 

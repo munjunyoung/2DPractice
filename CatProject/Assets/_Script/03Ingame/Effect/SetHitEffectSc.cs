@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SetEffectSc : MonoBehaviour
+public class SetHitEffectSc : MonoBehaviour
 {
     private void OnEnable()
     {

@@ -20,14 +20,16 @@ public class BossMonsterController : MonoBehaviour
     }
 
     
-    protected SpriteRenderer    sR;
-    protected Rigidbody2D       rb2D;
-    protected BoxCollider2D     col;
-    protected Animator          anim;
+    protected SpriteRenderer        sR;
+    protected Rigidbody2D           rb2D;
+    protected BoxCollider2D         col;
+    protected Color                 normalColor;
+    protected Color                 frenzyColor;
+    protected Animator              anim;
+    protected BT_BossPersonAI       aiSc;
+    protected MonsterAttackEffectSc attackEffect;
     [SerializeField]
     protected MonsterHPSliderSc hpSlider;
-    protected AttackEffectSc    attackEffect;
-    protected BT_BossPersonAI   aiSc;
 
     protected float             currentMoveSpeed;
     protected float             currentAttackSpeed;
@@ -63,7 +65,8 @@ public class BossMonsterController : MonoBehaviour
     protected bool              isLookatTarget              = false;
     protected bool              isReadyAttack               = true;
     protected bool              isRunningTakeDamageFlash    = false;
-    
+    protected bool              isFrenzyState               = false;
+
 
     //BossData
     public virtual void Init()
@@ -79,8 +82,14 @@ public class BossMonsterController : MonoBehaviour
         CSVDataReader.instance.SetData(bData, bType.ToString());
         //체력, 체력바 초기화
         CurrentHP = bData.HP;
-        
         hpSlider.SetSliderStartValue(bData.HP, CurrentHP);
+
+        attackEffect = transform.Find("AttackEffect").GetComponent<MonsterAttackEffectSc>();
+        attackEffect.SetActiveOff();
+        attackEffect.damage = 200;// bData.attackDamage;
+
+        normalColor = sR.color;
+        frenzyColor = Color.red;
     }
 
     protected virtual void LateUpdate()
@@ -104,7 +113,11 @@ public class BossMonsterController : MonoBehaviour
     public virtual bool isDie() { return !isAlive; }
     public virtual void DeadAction() { }
     #endregion
-    
+
+    /// <summary>
+    /// NOTE : 광폭화
+    /// </summary>
+    protected virtual void FrenzyAction() { }
     /// <summary>
     /// NOTE : 애니매이션 StateFloat 값 설정
     /// </summary>
@@ -112,7 +125,7 @@ public class BossMonsterController : MonoBehaviour
     {
         if (isPause)
             return;
-        if (isAlive)
+        if (!isAlive)
             return;
 
         if ((int)rb2D.velocity.y != 0)
@@ -151,11 +164,11 @@ public class BossMonsterController : MonoBehaviour
     /// </summary>
     /// <param name="flashCount"></param>
     /// <returns></returns>
-    protected IEnumerator TakeDamageFlashProcess()
+    protected virtual IEnumerator TakeDamageFlashProcess()
     {
         isRunningTakeDamageFlash = true;
         flashCount = 0;
-        Color tmpcolor = sR.color;
+        Color tmpcolor = normalColor;
         while (flashCount < 1f)
         {
             flashCount += 0.1f;
@@ -163,10 +176,17 @@ public class BossMonsterController : MonoBehaviour
             sR.color = tmpcolor;
             yield return new WaitForSeconds(0.1f);
         }
-        sR.color = Color.white;
+        sR.color = normalColor;
         isRunningTakeDamageFlash = false;
     }
 
+    /// <summary>
+    /// NOTE : 공격 애니매이션 클립 이벤트 정의 함수 : attackEffect SetOn
+    /// </summary>
+    public void SetActiveAttackEffect()
+    {
+        attackEffect.gameObject.SetActive(true);
+    }
     /// <summary>
     /// NOTE : Animation ADD EVENT FUNCTION
     /// NOTE : ATTACK함수에서 RAYCAST를 통하여 앞에 플레이어가 멀어졌을 경우 다시 TRACE 상태로 변경 

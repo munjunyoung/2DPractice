@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class SkillButton : PlayerActionButton
 {
     //Player SkillData
-    private StartSkill skillData;
+    private PlayerSkill skillData;
     [SerializeField]
     private Image skillCooltimeImage;
     [SerializeField]
@@ -59,7 +59,7 @@ public class SkillButton : PlayerActionButton
     /// </summary>
     /// <param name="_skilldata"></param>
     /// <returns></returns>
-    IEnumerator isRunningSkillImage(StartSkill _skilldata)
+    IEnumerator isRunningSkillImage(PlayerSkill _skilldata)
     {
         playerSc.isRunningSkillCooltime = true;
         skillCooltimeText.gameObject.SetActive(true);

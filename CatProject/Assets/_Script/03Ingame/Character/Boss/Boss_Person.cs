@@ -41,9 +41,9 @@ public class Boss_Person : BossMonsterController
 
         currentMoveSpeed = bData.normalSpeed;
         var dirX = Mathf.Sign(TargetOB.position.x - transform.position.x);
-        sR.flipX = dirX >= 0 ? true : false;
+        transform.localEulerAngles = dirX >= 0 ? new Vector3(0f, 180f, 0f) : new Vector3(0f, 0f, 0f);
 
-        if(!isCloseTarget)
+        if (!isCloseTarget)
             rb2D.velocity = new Vector2(dirX * currentMoveSpeed, rb2D.velocity.y);
     }
     
@@ -98,10 +98,10 @@ public class Boss_Person : BossMonsterController
     }
     #endregion
 
-    protected bool isFrenzyState = false;
-    protected void FrenzyAction()
+    protected override void FrenzyAction()
     {
-        sR.color = Color.red;
+        isFrenzyState = true;
+        normalColor = frenzyColor;
         //속도
         anim.SetFloat("MoveSpeed", bData.normalSpeed);
         //공속
@@ -109,10 +109,10 @@ public class Boss_Person : BossMonsterController
         //공격 쿨타임
         bData.attackCooltime = bData.attackCooltime * 0.5f;
         //공격력
-        bData.attackDamage = bData.attackDamage + 20;
+        attackEffect.damage = bData.attackDamage + 20;
         //공격 범위
-        attackEffect.transform.localScale = Vector2.one * 1.5f;
-        
+        attackEffect.transform.localScale *=  1.5f;
+
+        attackEffect.GetComponent<SpriteRenderer>().color = frenzyColor;
     }
-   
 }

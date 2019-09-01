@@ -2,19 +2,19 @@
 
 public class AttackEffectSc : MonoBehaviour
 {
-    private Player playerSc;
-    public GameObject[] hitEffectpullingArray;
+    private Player playersc;
+    [SerializeField]
+    private GameObject[] hitEffectpullingArray;
     private int effectCount = 0;
     [HideInInspector]
     public int damage = 0;
 
     private void Start()
     {
-        playerSc = gameObject.transform.parent.GetComponent<Player>();
-        damage = playerSc.pDATA.attackDamage;
+        playersc = transform.parent.GetComponent<Player>();
+        damage = playersc.pDATA.attackDamage;
         gameObject.SetActive(false);
     }
-
 
     //private void OnTriggerEnter2D(Collider2D collision)
     //{
@@ -43,7 +43,7 @@ public class AttackEffectSc : MonoBehaviour
         switch (collision.transform.tag)
         {
             case "Monster":
-                collision.transform.GetComponent<Monster>().TakeDamage(damage, playerSc.transform, collision.contacts[0].point);
+                collision.transform.GetComponent<Monster>().TakeDamage(damage, collision.transform.parent, collision.contacts[0].point);
                 break;
             case "Box":
             case "Garbage":

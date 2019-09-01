@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 public enum Skill_Type { Buff, Immediate}
 
-public class StartSkill : MonoBehaviour
+public class PlayerSkill : MonoBehaviour
 {
     protected Player playerSc;
     protected SpriteRenderer playerSpriteRenderer;
@@ -91,7 +91,7 @@ public class StartSkill : MonoBehaviour
 }
 
 
-public class SkillAttackUP : StartSkill
+public class SkillAttackUP : PlayerSkill
 {
     int originalDamage = 30;
     int plusDamage = 30;
@@ -111,7 +111,7 @@ public class SkillAttackUP : StartSkill
         SkillEffectModel = Instantiate(LoadDataManager.instance.SkillEffectPrefabDic["AttackUpEffect"], playerSc.transform);
         SkillEffectModel.transform.localPosition = new Vector2(0, -1);
         SkillEffectModel.SetActive(false);
-        attackEffectModel = playerSc.attackEffectModel;
+        attackEffectModel = playerSc.attackEffectModel.gameObject;
         spriteOfEffectModel = attackEffectModel.GetComponent<SpriteRenderer>();
         attackScOfEffectSc = attackEffectModel.GetComponent<AttackEffectSc>();
 
@@ -143,7 +143,7 @@ public class SkillAttackUP : StartSkill
     }
 }
 
-public class SkillSpeedUP : StartSkill
+public class SkillSpeedUP : PlayerSkill
 {
     private int speedUpAmount = 5;
     private float originalSpeed;
@@ -175,7 +175,7 @@ public class SkillSpeedUP : StartSkill
     }
 }
 
-public class SkillHealing : StartSkill
+public class SkillHealing : PlayerSkill
 {
     private int hpUpAmount = 50;
     private float originalHp;
