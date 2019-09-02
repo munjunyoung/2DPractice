@@ -12,7 +12,7 @@ public enum Switch_Type {  Normal }
 public enum MONSTER_TYPE { Fox = 0 , Dog = 1, Eagle , Squirrel };
 public enum Fox_Type { Normal }
 
-public enum Item_TYPE { Catnip = 0 , BigCatnip};
+public enum Item_TYPE { Catnip = 0 , BigCatnip, Key, HpPotion};
 public enum Catnip_Type { Normal }
 public class LoadDataManager : MonoBehaviour
 {
@@ -188,8 +188,6 @@ public class LoadDataManager : MonoBehaviour
             //Debug.Log("load data - type : " + tiletype + " name : " + tilename + " typename : " + tilenamestype);
             switch (tiletype)
             {
-                
-               
                 case "Item":
                     tmptilearray[tmpos.x, tmpos.y] = new TileInfo(TileType.Item, tilename, tilenamestype);
                     break;

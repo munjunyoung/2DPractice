@@ -6,6 +6,7 @@ public class EntranceSc : StructureObject
 {
     [HideInInspector]
     public EntranceSc connectedNextEntrance = null;
+    public bool isBossRoomEntrance = false;
 
     protected override void Awake()
     {
@@ -15,13 +16,33 @@ public class EntranceSc : StructureObject
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if(StateOn)
+        if (isBossRoomEntrance)
         {
             if (collision.CompareTag("Player"))
             {
                 if (collision.GetComponent<Player>().attackButtonPress)
                 {
-                    if(connectedNextEntrance==null)
+                    if (collision.GetComponent<Player>().IsGetKey)
+                    {
+                        if (!StateOn)
+                        {
+                            if (spriteArray[1] != null)
+                                sR.sprite = spriteArray[1];
+                            StateOn = true;
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (StateOn)
+        {
+            if (collision.CompareTag("Player"))
+            {
+                if (collision.GetComponent<Player>().attackButtonPress)
+                {
+                    if (connectedNextEntrance == null)
                     {
                         Debug.Log("연결된 방이 없습니다.");
                         return;
@@ -32,6 +53,7 @@ public class EntranceSc : StructureObject
                 }
             }
         }
+
     }
 
     /// <summary>
@@ -40,8 +62,10 @@ public class EntranceSc : StructureObject
     /// </summary>
     public void UnLockEntrance()
     {
+        if (isBossRoomEntrance)
+            return;
         if (spriteArray[1] != null)
-            ownSpRenderer.sprite = spriteArray[1];
+            sR.sprite = spriteArray[1];
         else
             Debug.Log("Entrance Open Sprite가 존재하지 않습니다.");
         //sprite 변경 및 
@@ -53,7 +77,24 @@ public class EntranceSc : StructureObject
     /// </summary>
     public void LockEntracne()
     {
-        ownSpRenderer.sprite = spriteArray[0];
+        sR.sprite = spriteArray[0];
         StateOn = false;
+    }
+
+    /// <summary>
+    /// NOTE : 열쇠조건을 걸기위한 설정
+    /// </summary>
+    public void SetKeyEntanceToBossRoom()
+    {
+        isBossRoomEntrance = true;
+        sR.color = Color.red;
+    }
+
+    /// <summary>
+    /// NOTE : 이미 들어가있으므로 열기위한 조건은 보스클리어뿐
+    /// </summary>
+    public void SetBossRoomEntrance()
+    {
+        sR.color = Color.red;
     }
 }

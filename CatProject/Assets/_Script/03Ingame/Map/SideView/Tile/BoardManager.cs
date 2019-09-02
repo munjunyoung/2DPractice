@@ -58,7 +58,7 @@ public class BoardManager : MonoBehaviour
         {
             room.SetEntrancePos();
         }
-        PrintLogRoomNeighbors();
+        //PrintLogRoomNeighbors();
         //Rooms Draw
         DrawRooms();
         //출입문 진입시 출현할 포지션 설정
@@ -167,7 +167,11 @@ public class BoardManager : MonoBehaviour
                     _tmproom.roomTileArray[x, y] = puzzleTerrain.tileArray[x, y];
             }
         }
-            
+    }
+
+    private void SetKeyInRoom()
+    {
+
     }
 
     #endregion
@@ -303,14 +307,15 @@ public class BoardManager : MonoBehaviour
                 //이웃룸의 연결된 다음 방의 이웃들 순회 하여 entranceSc에 다음방 포지션 변수 초기화
                 foreach (EntranceConnectRoom nextroomneighbor in roomList[currentroomneigbor.connectedRoom.roomNumberOfList].entranceInfoList)
                 {
-                    Debug.Log(room.roomNumberOfList);
                     if (currentroomneigbor.entrance.ownRoom.roomNumberOfList.Equals(nextroomneighbor.connectedRoom.roomNumberOfList))
                         currentroomneigbor.entrance.connectedNextEntrance = nextroomneighbor.entrance;
-
                 }
 
             }
         }
+
+        roomList[roomList.Count - 1].entranceInfoList[0].entrance.SetBossRoomEntrance();
+        roomList[roomList.Count - 1].entranceInfoList[0].entrance.connectedNextEntrance.SetKeyEntanceToBossRoom();
     }
     #endregion
 

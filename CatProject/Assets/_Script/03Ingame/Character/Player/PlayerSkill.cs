@@ -93,8 +93,9 @@ public class PlayerSkill : MonoBehaviour
 
 public class SkillAttackUP : PlayerSkill
 {
-    int originalDamage = 30;
-    int plusDamage = 30;
+    int originalDamage = 0;
+    int plusDamage = 0;
+    float plusDamagePer = 1.5f;
     Color originalColor = Color.white;
     Color changeColor = Color.red;
 
@@ -103,7 +104,6 @@ public class SkillAttackUP : PlayerSkill
 
     GameObject attackEffectModel = null;
     SpriteRenderer spriteOfEffectModel;
-    AttackEffectSc attackScOfEffectSc;
 
     protected override void Start()
     {
@@ -113,13 +113,13 @@ public class SkillAttackUP : PlayerSkill
         SkillEffectModel.SetActive(false);
         attackEffectModel = playerSc.attackEffectModel.gameObject;
         spriteOfEffectModel = attackEffectModel.GetComponent<SpriteRenderer>();
-        attackScOfEffectSc = attackEffectModel.GetComponent<AttackEffectSc>();
+       
 
         playerChangeColor = Color.red;
-        originalDamage = attackScOfEffectSc.damage;
+        originalDamage = playerSc.pDATA.attackDamage;
         originalColor = spriteOfEffectModel.color;
         originalScale = attackEffectModel.transform.localScale;
-
+        plusDamage = (int)(playerSc.pDATA.attackDamage * plusDamagePer);
         durationTime = 5f;
         coolTime = 5f;
         consumeCatnipValue = 5;
@@ -129,12 +129,12 @@ public class SkillAttackUP : PlayerSkill
     {
         attackEffectModel.transform.localScale = changeScale;
         spriteOfEffectModel.color = changeColor;
-        attackScOfEffectSc.damage += plusDamage;
+        playerSc.SetAttackDamage(plusDamage);
         
         yield return StartCoroutine(base.ExecuteSkillCoroutine(_durationTime));
         attackEffectModel.transform.localScale = originalScale;
         spriteOfEffectModel.color = originalColor;
-        attackScOfEffectSc.damage = originalDamage;
+        playerSc.SetAttackDamage(originalDamage);
     }
     protected override void CharacterEffectOn()
     {

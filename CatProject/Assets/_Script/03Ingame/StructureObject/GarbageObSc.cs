@@ -28,7 +28,7 @@ public class GarbageObSc : Rb2dStructureSc
     {
         //base.SetWhenHPzero();
         if (hp > 0)
-            ownSpRenderer.sprite = spriteArray[hp];
+            sR.sprite = spriteArray[hp];
         else
         {
             StateOn = false;

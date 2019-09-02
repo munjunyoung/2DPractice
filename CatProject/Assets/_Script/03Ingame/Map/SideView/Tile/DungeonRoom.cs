@@ -71,8 +71,7 @@ public class DungeonRoom
     public void SetEntrancePos()
     {
         int entranceCount = entranceInfoList.Count;
-
-        Debug.Log("1 : " + entranceCount);
+            
         List<int> posXisalready = new List<int>();
         //이미 그려져있는 출입문 체크
         for (int x = 0; x < roomRect.xMax; x++)
@@ -92,7 +91,6 @@ public class DungeonRoom
                 }
             }
         }
-        Debug.Log("2 : " + entranceCount);
         //만약 랜덤설정할 필요가 없을경우 패스
         if (entranceCount < 0)
         {
@@ -195,8 +193,7 @@ public class DungeonRoom
             }
             posX.Add(tmpvalue);
         }
-
-        Debug.Log(_obnumber + " / " + posX.Count);
+        
         //저장한 x포지션을 기준으로 y값을 순회하여 roomarray의 0 값을 검색하여 설정 
         foreach (int tmpx in posX)
         {
@@ -261,7 +258,7 @@ public class DungeonRoom
     public void CheckLockRoom()
     {
         // 몬스터 , 보스 , 아이템 체크 후 출입구 개방
-        if (CheckMonsterAlive() && GetItemCheck() && CheckSwitchClear())
+        if (CheckMonsterAlive() && GetItemCheck() && CheckSwitchClear()&& BossClearCheck())
             UnLockEntrances();
         else
             LockEntrance();
@@ -308,7 +305,7 @@ public class DungeonRoom
     /// <summary>
     /// 보스 관련 체크 
     /// </summary>
-    public void BossClearCheck()
+    public bool BossClearCheck()
     {
         bool checkcomplete = true;
 
@@ -320,10 +317,7 @@ public class DungeonRoom
                     checkcomplete = false;
             }
         }
-
-        if (checkcomplete)
-            InGameManager.instance.CheckStageClear();
-
+        return checkcomplete;
     }
 
     /// <summary>

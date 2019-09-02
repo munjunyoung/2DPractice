@@ -2,7 +2,6 @@
 
 public class AttackEffectSc : MonoBehaviour
 {
-    private Player playersc;
     [SerializeField]
     private GameObject[] hitEffectpullingArray;
     private int effectCount = 0;
@@ -11,10 +10,9 @@ public class AttackEffectSc : MonoBehaviour
 
     private void Start()
     {
-        playersc = transform.parent.GetComponent<Player>();
-        damage = playersc.pDATA.attackDamage;
         gameObject.SetActive(false);
     }
+    
 
     //private void OnTriggerEnter2D(Collider2D collision)
     //{

@@ -102,6 +102,8 @@ public class Boss_Person : BossMonsterController
     {
         isFrenzyState = true;
         normalColor = frenzyColor;
+        //점멸중일때 바로 변경해주기 위함
+        flashColor = frenzyColor; 
         //속도
         anim.SetFloat("MoveSpeed", bData.normalSpeed);
         //공속

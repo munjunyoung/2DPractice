@@ -24,12 +24,13 @@ public class BossMonsterController : MonoBehaviour
     protected Rigidbody2D           rb2D;
     protected BoxCollider2D         col;
     protected Color                 normalColor;
+    protected Color                 flashColor;
     protected Color                 frenzyColor;
     protected Animator              anim;
     protected BT_BossPersonAI       aiSc;
     protected MonsterAttackEffectSc attackEffect;
     [SerializeField]
-    protected MonsterHPSliderSc hpSlider;
+    protected MonsterHPSliderSc     hpSlider;
 
     protected float             currentMoveSpeed;
     protected float             currentAttackSpeed;
@@ -86,7 +87,7 @@ public class BossMonsterController : MonoBehaviour
 
         attackEffect = transform.Find("AttackEffect").GetComponent<MonsterAttackEffectSc>();
         attackEffect.SetActiveOff();
-        attackEffect.damage = 200;// bData.attackDamage;
+        attackEffect.damage = bData.attackDamage;
 
         normalColor = sR.color;
         frenzyColor = Color.red;
@@ -168,12 +169,12 @@ public class BossMonsterController : MonoBehaviour
     {
         isRunningTakeDamageFlash = true;
         flashCount = 0;
-        Color tmpcolor = normalColor;
+        flashColor = normalColor;
         while (flashCount < 1f)
         {
             flashCount += 0.1f;
-            tmpcolor.a = tmpcolor.a.Equals(1f) ? 0.2f : 1f;
-            sR.color = tmpcolor;
+            flashColor.a = flashColor.a.Equals(1f) ? 0.2f : 1f;
+            sR.color = flashColor;
             yield return new WaitForSeconds(0.1f);
         }
         sR.color = normalColor;

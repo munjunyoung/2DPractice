@@ -22,7 +22,7 @@ public class Rb2dStructureSc : StructureObject
             return;
         hp -= 1;
         if (hp > 0)
-            ownSpRenderer.sprite = spriteArray[hp-1];
+            sR.sprite = spriteArray[hp-1];
         else
             SetWhenHPzero();
     }

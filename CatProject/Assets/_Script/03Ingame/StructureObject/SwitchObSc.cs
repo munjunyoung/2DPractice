@@ -8,7 +8,7 @@ public class SwitchObSc : StructureObject
     {
         if (collision.CompareTag("Box"))
         {
-            ownSpRenderer.sprite = spriteArray[1];
+            sR.sprite = spriteArray[1];
             StateOn = true;
             ownRoom.CheckLockRoom();
         }
@@ -17,7 +17,7 @@ public class SwitchObSc : StructureObject
     {
         if (collision.CompareTag("Box"))
         {
-            ownSpRenderer.sprite = spriteArray[0];
+            sR.sprite = spriteArray[0];
             StateOn = false;
             ownRoom.CheckLockRoom();
         }

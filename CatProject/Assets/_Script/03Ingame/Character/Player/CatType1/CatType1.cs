@@ -15,7 +15,7 @@ public class CatType1 : Player
         mySkill = gameObject.AddComponent<SkillAttackUP>();
     }
 
-    private void Start()
+    protected override void Start()
     {
         CurrentHP = pDATA.maxHP;
         CurrentTP = pDATA.maxTP;

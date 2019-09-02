@@ -27,6 +27,8 @@ public class PlayerUIManager : MonoBehaviour
 
     [SerializeField]
     private Text ItemNumberText;
+    [SerializeField]
+    private Image KeyImage;
 
     private void Awake()
     {
@@ -118,6 +120,11 @@ public class PlayerUIManager : MonoBehaviour
     public void SetCatnipItemNumberText(int number)
     {
         ItemNumberText.text = number.ToString();
+    }
+
+    public void SetKeyImage()
+    {
+        KeyImage.color = Color.white;
     }
 }
 

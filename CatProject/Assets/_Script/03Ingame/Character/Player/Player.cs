@@ -115,6 +115,18 @@ public class Player : MonoBehaviour
         }
     }
 
+    private bool _isgetkey;
+    public bool IsGetKey
+    {
+        get { return _isgetkey; }
+        set
+        {
+            _isgetkey = value;
+            if (_isgetkey)
+                PlayerUIManager.instance.SetKeyImage();
+        }
+    }
+
     public GameObject[] effectArray;
 
     protected virtual void Awake()
@@ -123,7 +135,12 @@ public class Player : MonoBehaviour
         anim = GetComponent<Animator>();
         characterSprite = GetComponent<SpriteRenderer>();
     }
-   
+
+    protected virtual void Start()
+    {
+        SetAttackDamage(pDATA.attackDamage);
+    }
+
     private void FixedUpdate()
     {
         if (!isAlive)
@@ -238,6 +255,10 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void SetAttackDamage(int damage)
+    {
+        attackEffectModel.damage = damage;
+    }
     //(ANIMATION ADD EVENT FUNCTION)
     /// <summary>
     /// NOTE : 자식으로 저장된 attackEffectModel을 on, off하는 형식(ATTACK ANIMATION 클립 내부 add Event에서 출력)
@@ -356,8 +377,10 @@ public class Player : MonoBehaviour
 
         CurrentHP -= damage;
         if (CurrentHP <= 0)
+        {
             StartCoroutine(Die());
-
+            return;
+        }
         //Knockback Action
         currentMoveSpeed = 0;
         rb2D.velocity = Vector2.zero;
@@ -396,7 +419,6 @@ public class Player : MonoBehaviour
         //..die animation 실행
         CurrentPlayerAnimState = ANIMATION_STATE.Die;
         rb2D.velocity = Vector2.zero;
-        rb2D.bodyType = RigidbodyType2D.Kinematic;
         anim.SetTrigger("IsDie");
         yield return new WaitForSeconds(2f);
         InGameManager.instance.DiePlayer();

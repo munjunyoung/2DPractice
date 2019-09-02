@@ -103,12 +103,18 @@ public class DrawMap : MonoBehaviour
                                 //Maptool에서 사용할경우 대비
                                 if (room.entranceInfoList.Count == 0)
                                     room.entranceInfoList.Add(new EntranceConnectRoom(null, tmpen.GetComponent<EntranceSc>()));
+                                if(room.roomClearType==Room_ClearType.Boss)
+                                {
+                                    tmpen.sR.sprite = loadData.tileDataArray[room.roomSpriteType].entranceSprite[0];
+                                    
+                                }
 
-                                tmpen.ownSpRenderer.sprite = loadData.tileDataArray[room.roomSpriteType].entranceSprite[0];
-                                tmpen.ownSpRenderer.sortingLayerName = "Entrance";
+                                tmpen.sR.sprite = loadData.tileDataArray[room.roomSpriteType].entranceSprite[0];
+                                tmpen.sR.sortingLayerName = "Entrance";
                                 tmpen.GetComponent<EntranceSc>().spriteArray[0] = loadData.tileDataArray[room.roomSpriteType].entranceSprite[0];
                                 tmpen.GetComponent<EntranceSc>().spriteArray[1] = loadData.tileDataArray[room.roomSpriteType].entranceSprite[1];
                                 tmpen.transform.SetParent(tmpob.transform);
+                                //이미 출입문이 생성되어있는방 예외 처리
                                 foreach (EntranceConnectRoom nroom in room.entranceInfoList)
                                 {
                                     if (nroom.entrance == null)
@@ -134,7 +140,7 @@ public class DrawMap : MonoBehaviour
                             room.monsterInfoList.Add(new SpawnMonsterInfo(tmpmonster.mType, new Vector2(x, y), tmpmonster));
                             break;
                         case TileType.Item:
-                            ItemSc tmpitem = Instantiate(loadData.itemPrefabDic[Item_TYPE.Catnip.ToString()], new Vector3Int(x, y, 0), Quaternion.identity, tmptilemap.transform);
+                            ItemSc tmpitem = Instantiate(loadData.itemPrefabDic[room.roomTileArray[x, y].tileName], new Vector3Int(x, y, 0), Quaternion.identity, tmptilemap.transform);
                             break;
                         case TileType.Boss:
                             BossMonsterController tmpboss = Instantiate(loadData.bossPrefabDic[room.roomTileArray[x, y].tileName], new Vector3Int(x, y, 0), loadData.bossPrefabDic[room.roomTileArray[x, y].tileName].transform.rotation, tmptilemap.transform);

@@ -41,10 +41,10 @@ public class BoxObSc : Rb2dStructureSc
     {
         StateOn = false;
         rb2d.velocity = Vector2.zero;
-        ownSpRenderer.sprite = null;
+        sR.sprite = null;
         GetComponent<Rigidbody2D>().simulated = false;
         GetComponent<BoxCollider2D>().isTrigger = true;
-        ownSpRenderer.sprite = null;
+        sR.sprite = null;
         yield return new WaitForSeconds(count);
         transform.localPosition = startpos;
         transform.localRotation = Quaternion.identity;
@@ -52,7 +52,7 @@ public class BoxObSc : Rb2dStructureSc
         GetComponent<Rigidbody2D>().simulated = true;
         GetComponent<BoxCollider2D>().isTrigger = false;
 
-        ownSpRenderer.sprite = spriteArray[hp - 1];
+        sR.sprite = spriteArray[hp - 1];
         StateOn = true;
     }
     
