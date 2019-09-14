@@ -33,5 +33,4 @@ public class ItemSc : MonoBehaviour
         yield return new WaitForSeconds(_stopcount);
         isStop = false;
     }
-    
 }

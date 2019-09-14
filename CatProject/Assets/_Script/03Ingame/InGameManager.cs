@@ -33,7 +33,6 @@ public class InGameManager : MonoBehaviour
     public static InGameManager GetInstance()
     {
         return instance;
-
     }
     /// <summary>
     /// NOTE : BoardManager에서 RoomList들을 가져옴 시작 방인 0번방을 active On

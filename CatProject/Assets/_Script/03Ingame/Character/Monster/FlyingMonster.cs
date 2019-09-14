@@ -7,7 +7,7 @@ public class FlyingMonster : Monster
 {
     //PathFinding
     private PathFinding testPathfinding;
-    private List<Node> tracePath = new List<Node>();
+    private List<PathNode> tracePath = new List<PathNode>();
     private LineRenderer testline;
     private Vector3[] points;
     private bool resetPathfinding = false;
@@ -24,7 +24,7 @@ public class FlyingMonster : Monster
     {
         base.Start();
         testPathfinding = new PathFinding(ownRoom.roomModel.GetComponent<Tilemap>());
-        testline = GameObject.Find("TestTraceLine").GetComponent<LineRenderer>();
+        //testline = GameObject.Find("TestTraceLine").GetComponent<LineRenderer>();
     }
 
     /// <summary>
@@ -103,17 +103,17 @@ public class FlyingMonster : Monster
     {
         //Test
         tracePath.Clear();
-        Node stnode = new Node(new Vector2Int((int)transform.position.x, (int)transform.position.y));
-        Node endnode = new Node(targetpos);
+        PathNode stnode = new PathNode(new Vector2Int((int)transform.position.x, (int)transform.position.y));
+        PathNode endnode = new PathNode(targetpos);
         testPathfinding.FindPath(stnode, endnode, ref tracePath);
             
         points = new Vector3[tracePath.Count];
-        testline.positionCount = tracePath.Count;
+       
 
         for (int i = 0; i < tracePath.Count; i++)
             points[i] = new Vector3(tracePath[i].pos.x + 0.5f, tracePath[i].pos.y + 0.5f, 0);
 
-        testline.SetPositions(points);
+       
         resetPathfinding = true;
     }
 

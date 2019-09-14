@@ -96,8 +96,8 @@ public class SkillAttackUP : PlayerSkill
     int originalDamage = 0;
     int plusDamage = 0;
     float plusDamagePer = 1.5f;
-    Color originalColor = Color.white;
-    Color changeColor = Color.red;
+    Color effectOriginalColor = Color.white;
+    Color effectChangeColor = Color.red;
 
     Vector2 originalScale = Vector2.one;
     Vector2 changeScale = Vector2.one*1.5f;
@@ -109,7 +109,7 @@ public class SkillAttackUP : PlayerSkill
     {
         base.Start();
         SkillEffectModel = Instantiate(LoadDataManager.instance.SkillEffectPrefabDic["AttackUpEffect"], playerSc.transform);
-        SkillEffectModel.transform.localPosition = new Vector2(0, -1);
+        SkillEffectModel.transform.localPosition = new Vector2(0, 0);
         SkillEffectModel.SetActive(false);
         attackEffectModel = playerSc.attackEffectModel.gameObject;
         spriteOfEffectModel = attackEffectModel.GetComponent<SpriteRenderer>();
@@ -117,8 +117,9 @@ public class SkillAttackUP : PlayerSkill
 
         playerChangeColor = Color.red;
         originalDamage = playerSc.pDATA.attackDamage;
-        originalColor = spriteOfEffectModel.color;
+        effectOriginalColor = spriteOfEffectModel.color;
         originalScale = attackEffectModel.transform.localScale;
+        changeScale = originalScale * 1.5f;
         plusDamage = (int)(playerSc.pDATA.attackDamage * plusDamagePer);
         durationTime = 5f;
         coolTime = 5f;
@@ -128,12 +129,12 @@ public class SkillAttackUP : PlayerSkill
     protected override IEnumerator ExecuteSkillCoroutine(float _durationTime)
     {
         attackEffectModel.transform.localScale = changeScale;
-        spriteOfEffectModel.color = changeColor;
+        spriteOfEffectModel.color = effectChangeColor;
         playerSc.SetAttackDamage(plusDamage);
         
         yield return StartCoroutine(base.ExecuteSkillCoroutine(_durationTime));
         attackEffectModel.transform.localScale = originalScale;
-        spriteOfEffectModel.color = originalColor;
+        spriteOfEffectModel.color = effectOriginalColor;
         playerSc.SetAttackDamage(originalDamage);
     }
     protected override void CharacterEffectOn()

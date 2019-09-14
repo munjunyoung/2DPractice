@@ -16,8 +16,7 @@ public class EscapeUIManager : MonoBehaviour
     {
         Application.targetFrameRate = 60;
         Screen.SetResolution(1280, 720, true);
-        
-        DontDestroyOnLoad(this);
+
     }
     // Start is called before the first frame update
     void Start()
@@ -39,9 +38,14 @@ public class EscapeUIManager : MonoBehaviour
     public void ShowEscapePanel()
     {
         //ispause를 기준으로 변경
-            isPause = isPause ? false : true;
-            Time.timeScale = isPause ? 0 : 1;
-            EscapePanel.SetActive(isPause);
+        isPause = isPause ? false : true;
+        Time.timeScale = isPause ? 0 : 1;
+        if (!isPause)
+        {
+            if (OptionPanel.activeSelf)
+                OptionPanel.SetActive(false);
+        }
+        EscapePanel.SetActive(isPause);
     }
 
     /// <summary>

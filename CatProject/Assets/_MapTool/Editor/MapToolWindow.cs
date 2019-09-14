@@ -21,8 +21,9 @@ public class MapToolWindow : EditorWindow
     {
         //Layout Save - 현재 씬이 맵 에디터씬이 아닌경우 layout저장 (맵 에디터를 종료 했을때 layout을 되돌려주기 위함
         if ((beforesSceneName = EditorSceneManager.GetActiveScene().name) != "MapEditScene")
+        {
             LayoutUtility.SaveLayout(layoutPath + "SaveLayout.wlt");
-
+        }
         Debug.Log(beforesSceneName);
         EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo();
       

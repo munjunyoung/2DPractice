@@ -226,7 +226,7 @@ public class DungeonRoom
         if (type.Equals(monsterInfoList.GetType()))
         {
             foreach (var p in pos)
-                monsterInfoList.Add(new SpawnMonsterInfo(MONSTER_TYPE.Fox, p));
+                monsterInfoList.Add(new SpawnMonsterInfo((MONSTER_TYPE)(Random.Range(0,2)), p));
         }
         else if (type.Equals(itemInfoList.GetType()))
         {

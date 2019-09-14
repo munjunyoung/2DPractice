@@ -13,7 +13,7 @@ public class PlayerActionButton : InputButton
     protected override void Start()
     {
         base.Start();
-        playerSc = GameObject.FindWithTag("Player").GetComponent<CatType1>();
+        playerSc = GameObject.FindWithTag("Player").GetComponent<Player>();
     }
 
     protected override void Update()

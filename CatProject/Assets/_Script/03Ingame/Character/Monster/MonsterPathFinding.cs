@@ -8,16 +8,16 @@ public class MonsterPathFinding : MonoBehaviour
     
     
 }
-public class Node
+public class PathNode
 {
     public Vector2Int pos;
     public int distG;
     public int distH; //거리
     public int distF;
     public int depth;
-    public Node parentNode;
+    public PathNode parentNode;
     
-    public Node(Vector2Int _pos)
+    public PathNode(Vector2Int _pos)
     {
         pos = _pos;
         distG = 0;
@@ -27,7 +27,7 @@ public class Node
         parentNode = null;
     }
 
-    public void CalcDist(Node dest, int cdepth)
+    public void CalcDist(PathNode dest, int cdepth)
     {
         int tmpHx = dest.pos.x - pos.x;
         int tmpHy = dest.pos.y - pos.y;
@@ -45,8 +45,8 @@ public class Node
 
 class PathFinding
 {
-    private List<Node> openNodeList = new List<Node>();
-    private List<Node> closeNodeList = new List<Node>();
+    private List<PathNode> openNodeList = new List<PathNode>();
+    private List<PathNode> closeNodeList = new List<PathNode>();
     public Tilemap map = new Tilemap();
 
     public PathFinding(Tilemap _map)
@@ -61,22 +61,23 @@ class PathFinding
     /// <param name="path"></param>
     /// <param name="navi"></param>
     /// <returns></returns>
-    public bool FindPath(Node startNode, Node endNode, ref List<Node> path)
+    public bool FindPath(PathNode startNode, PathNode endNode, ref List<PathNode> path)
     {
         openNodeList.Clear();
         closeNodeList.Clear();
         //시작 노드 생성 및 openNode 리스트 추가 
-        Node tmpNode = startNode;
+        PathNode tmpNode = startNode;
         openNodeList.Add(tmpNode);
         //깊이 설정
         int iDepth = 0;
         tmpNode.depth = iDepth;
         
         //이웃노드 리스트 생성
-        List<Node> neighborNodes = new List<Node>();
-
-        while (true)
+        List<PathNode> neighborNodes = new List<PathNode>();
+        int count = 0;
+        while (count<300)
         {
+            count++;
             //열린노드에 데이터가 없을 경우 break
             if (openNodeList.Count == 0)
                 break;
@@ -125,7 +126,7 @@ class PathFinding
     /// NOTE : 중복 노드 삽입 되지 않도록 처리, 이미 중복된 노드들을 비용을 체크하여 변경)
     /// </summary>
     /// <param name="tmpnode"></param>
-    private void InsertOpenNode(Node tmpnode)
+    private void InsertOpenNode(PathNode tmpnode)
     {
         for( int i =0;i<openNodeList.Count; i++)
         {
@@ -157,7 +158,7 @@ class PathFinding
             {
                 if(!CompareNodeF(openNodeList[i], openNodeList[i+1]))
                 {
-                    Node tmpnode = openNodeList[i];
+                    PathNode tmpnode = openNodeList[i];
                     openNodeList[i] = openNodeList[i + 1];
                     openNodeList[i + 1] = tmpnode;
                     bcontinue = true;
@@ -172,7 +173,7 @@ class PathFinding
     /// <param name="n1"></param>
     /// <param name="n2"></param>
     /// <returns></returns>
-    private bool CompareNodeF(Node n1, Node n2)
+    private bool CompareNodeF(PathNode n1, PathNode n2)
     {
         if (n1.distF < n2.distF)
             return true;
@@ -190,7 +191,7 @@ class PathFinding
     /// <param name="n1"></param>
     /// <param name="n2"></param>
     /// <returns></returns>
-    private bool CompareNodeG(Node n1, Node n2)
+    private bool CompareNodeG(PathNode n1, PathNode n2)
     {
         if (n1.distG < n2.distG)
             return true;
@@ -206,7 +207,7 @@ class PathFinding
     /// </summary>
     /// <param name="_tmpnode"></param>
     /// <returns></returns>
-    private bool CheckFromCloseNode(Node _tmpnode)
+    private bool CheckFromCloseNode(PathNode _tmpnode)
     {
         foreach(var cn in closeNodeList)
         {
@@ -221,7 +222,7 @@ class PathFinding
     /// </summary>
     /// <param name="_tmpnode"></param>
     /// <param name="nodelist"></param>
-    public void GetNeighborNode(Node _tmpnode, ref List<Node> nodelist)
+    public void GetNeighborNode(PathNode _tmpnode, ref List<PathNode> nodelist)
     {
         ////-1,0 1,0 0,-1, 0,1 -> 0,0 2,0 0,2 2,2
         //Vector2Int[] dist = new Vector2Int[4] { new Vector2Int(-1, 0), new Vector2Int(1, 0), new Vector2Int(0, -1), new Vector2Int(0, 1) };
@@ -290,7 +291,7 @@ class PathFinding
                 Vector2Int tmppos = new Vector2Int(distx[x] + _tmpnode.pos.x, disty[y] + _tmpnode.pos.y);
                 
                 //중앙 위치는 필요X
-                if (CheckFromCloseNode(new Node(tmppos)))
+                if (CheckFromCloseNode(new PathNode(tmppos)))
                     continue;
 
                 if (blockPosList.Contains(tmppos))
@@ -304,7 +305,7 @@ class PathFinding
                         continue;
                 }
                 //이동가능한 지점이면 목록에 추가하기
-                nodelist.Add(new Node(tmppos));
+                nodelist.Add(new PathNode(tmppos));
             }
         }
     }

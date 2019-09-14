@@ -109,6 +109,8 @@ public class Monster : MonoBehaviour
     //HP UI
     [SerializeField]
     private MonsterHPSliderSc hpSliderUI;
+
+    private ItemSc dropItemob;
     
     protected virtual void Awake()
     {
@@ -118,10 +120,8 @@ public class Monster : MonoBehaviour
         anim = GetComponent<Animator>();
         sR = GetComponent<SpriteRenderer>();
         
-        //Set Layer 8 - tile, 9 - player
-        //raycastLayerMask = (1 << LayerMask.NameToLayer("Player")) | (1 << LayerMask.NameToLayer("Tile")) | (1 << LayerMask.NameToLayer("Monster"));
-        
         CSVDataReader.instance.SetData(mDATA, mType.ToString());
+        
     }
 
     protected virtual void Start()
@@ -373,6 +373,7 @@ public class Monster : MonoBehaviour
         anim.SetTrigger("Die");
         OrderState = ORDER_STATE.Die;
         anim.GetComponent<CircleCollider2D>().isTrigger = true;
+        DropITEM();
         StartCoroutine(ActiveOff());
     }
     /// <summary>
@@ -432,6 +433,25 @@ public class Monster : MonoBehaviour
             }
         }
     }
+    
+    public virtual void SetItem(Item_TYPE _type) 
+    {
+        dropItemob = Instantiate(LoadDataManager.instance.itemPrefabDic[_type.ToString()]);
+        dropItemob.transform.localPosition = Vector2.zero;
+        dropItemob.transform.SetParent(this.transform.parent);
+        dropItemob.gameObject.SetActive(false);
+    }
+
+    protected void DropITEM()
+    {
+        if (dropItemob == null)
+            return;
+
+        dropItemob.transform.position = this.transform.position;
+        dropItemob.gameObject.SetActive(true);
+        dropItemob.GetComponent<Rigidbody2D>().AddForce(Vector2.up * 25f, ForceMode2D.Impulse);
+    }
+
 
     ///// <summary>
     ///// Note : Attack 체크
@@ -453,4 +473,5 @@ public class Monster : MonoBehaviour
     //        isPossibleRangeCheck = false;
     //}
     #endregion
+        
 }

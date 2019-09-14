@@ -6,7 +6,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: AttackEffectAnimator
+  m_Name: DogAttackEffectAnimator 1
   serializedVersion: 5
   m_AnimatorParameters: []
   m_AnimatorLayers:
@@ -42,7 +42,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 5835df5edf8c164448fcbd2bff3d98ee, type: 2}
+  m_Motion: {fileID: 7400000, guid: 204e721d6029a9a4f9677683d7c80261, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 

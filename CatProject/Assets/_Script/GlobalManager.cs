@@ -23,11 +23,13 @@ public class GlobalManager : MonoBehaviour
     
     [HideInInspector]
     public PLAYER_TYPE pType;
+    public int stageLevel = -1;
 
 
     private void Awake()
     {
         _instance = this;
+        DontDestroyOnLoad(this);
     }
     
     public void LoadScene(Scene_Name _sname)

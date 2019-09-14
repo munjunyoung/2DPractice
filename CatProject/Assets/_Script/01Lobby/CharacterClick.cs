@@ -4,9 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class CatClick : InputButton
+public class CharacterClick : InputButton
 {
-    private PLAYER_TYPE pType = PLAYER_TYPE.Cat1;
+    public PLAYER_TYPE pType;
     private Animator anim;
 
     protected override void Start()

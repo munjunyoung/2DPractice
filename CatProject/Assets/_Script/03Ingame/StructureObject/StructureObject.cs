@@ -14,6 +14,4 @@ public class StructureObject : MonoBehaviour
     {
         sR = GetComponent<SpriteRenderer>();
     }
-    
-   
 }

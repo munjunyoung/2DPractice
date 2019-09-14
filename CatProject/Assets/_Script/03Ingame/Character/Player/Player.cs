@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public enum ANIMATION_STATE { Idle = 0, Walk, Jump, Fall, Attack, TakeDamage, Die }
-public enum PLAYER_TYPE { Cat1 = 0};
+public enum PLAYER_TYPE { Cat1 = 0, Dog};
 /// <summary>
 /// NOTE : 플레이어캐릭터 공격 점프 이동
 /// </summary>
@@ -136,9 +136,11 @@ public class Player : MonoBehaviour
         characterSprite = GetComponent<SpriteRenderer>();
     }
 
-    protected virtual void Start()
+    protected void Start()
     {
         SetAttackDamage(pDATA.attackDamage);
+        CurrentHP = pDATA.maxHP;
+        CurrentTP = pDATA.maxTP;
     }
 
     private void FixedUpdate()
@@ -281,7 +283,7 @@ public class Player : MonoBehaviour
     public IEnumerator AttackCoroutine()
     {
         isRunningAttackCoroutine = true;
-        attackCooltimeState = true;
+        //attackCooltimeState = true;
         yield return new WaitForSeconds(pDATA.attackCoolTime);
         attackCooltimeState = false;
         isRunningAttackCoroutine = false;

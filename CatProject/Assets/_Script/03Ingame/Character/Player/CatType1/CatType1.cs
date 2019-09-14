@@ -7,18 +7,11 @@ using System.Collections.Generic;
 /// </summary>
 public class CatType1 : Player
 {
-    
     protected override void Awake()
     {
         base.Awake();
         CSVDataReader.instance.SetData(pDATA, PLAYER_TYPE.Cat1.ToString());
-        mySkill = gameObject.AddComponent<SkillAttackUP>();
-    }
-
-    protected override void Start()
-    {
-        CurrentHP = pDATA.maxHP;
-        CurrentTP = pDATA.maxTP;
+        mySkill = gameObject.AddComponent<SkillSpeedUP>();
     }
 }
 

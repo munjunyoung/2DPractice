@@ -36,8 +36,7 @@ public class BoardManager : MonoBehaviour
     public void CreateRooms()
     {  //Grid 오브젝트 생성
         loadData = LoadDataManager.instance;
-
-        CreateParentGridObject();
+        
         //DungeonRoom 클래스 생성
         for (int i = 0; i < numberOfRoom; i++)
             roomList.Add(new DungeonRoom(i, (int)Room_TileType.Type2, widthMinSize, widthMaxSize, heightMinSize, heightMaxSize));
@@ -65,20 +64,8 @@ public class BoardManager : MonoBehaviour
         SetConnectedEntrance();
         //적생성
         DrawPrefabByClearType();
-    }
-
-    /// <summary>
-    /// NOTE : 오브젝트를 생성할때 방들의 상위 오브젝트가 될 부모 설정 함수
-    /// TODO : 씬하나에 끝날 경우에는 미리 생성하는 것으로 해당 함수 제거 요망 씬이 넘어갈때마다 필요할 거라고 생각되었기 때문 (방을 남겨두기에는 하위오브젝트들을 destroy함으로써 gc가 돌꺼같나..?)
-    /// </summary>
-    private void CreateParentGridObject()
-    {
-        parentModelOfRooms = new GameObject();
-        parentModelOfRooms.AddComponent<Grid>().cellGap = new Vector3(-0.001f, -0.001f, 0);
-        parentModelOfRooms.transform.position = Vector3.zero;
-        parentModelOfRooms.transform.rotation = Quaternion.identity;
-        parentModelOfRooms.transform.localScale = Vector3.one;
-        parentModelOfRooms.name = "Rooms";
+        //열쇠를 가지고있는 몬스터 생성
+        SetKeyInRoom();
     }
 
     /// <summary>
@@ -151,29 +138,6 @@ public class BoardManager : MonoBehaviour
 
     }
 
-    private void SetPuzzleTypeRoom(DungeonRoom _tmproom)
-    {
-        GeneratedTerrainData puzzleTerrain = loadData.terrainDataDic["Puzzle"][0];//Random.Range(0,loadData.terrainDataDic["Puzzle"].Count)-1];
-        int sizex = puzzleTerrain.size.xMax;
-        int sizey = puzzleTerrain.size.yMax;
-        _tmproom.roomRect = new Rect(0, 0,sizex, sizey+ 30);
-
-        _tmproom.roomTileArray = new TileInfo[sizex, sizey+ 30];
-        for(int x =0; x<sizex; x++)
-        {
-            for(int y=0; y<sizey; y++)
-            {
-                if (puzzleTerrain.tileArray[x, y] != null)
-                    _tmproom.roomTileArray[x, y] = puzzleTerrain.tileArray[x, y];
-            }
-        }
-    }
-
-    private void SetKeyInRoom()
-    {
-
-    }
-
     #endregion
 
     #region ConnectRoom
@@ -198,7 +162,7 @@ public class BoardManager : MonoBehaviour
         for (int i = 1; i < roomList.Count - 1; i++)
         {
             roomList[i].level = levelCount;
-            roomList[i].roomClearType = (Room_ClearType)(Random.Range(0, 100) <0 ? 1 : 2);
+            roomList[i].roomClearType = (Room_ClearType)(Random.Range(0, 100)<70 ? 1 : 2);
             LevelRoomDic[levelCount].Add(roomList[i]);
 
             if (Random.Range(0, 100) > setSameLevelPer)
@@ -439,6 +403,46 @@ public class BoardManager : MonoBehaviour
             iteminfo.itemModel = tmpitem;
         }
     }
+
+    private void SetPuzzleTypeRoom(DungeonRoom _tmproom)
+    {
+        GeneratedTerrainData puzzleTerrain = loadData.terrainDataDic["Puzzle"][0];//Random.Range(0,loadData.terrainDataDic["Puzzle"].Count)-1];
+        int sizex = puzzleTerrain.size.xMax;
+        int sizey = puzzleTerrain.size.yMax;
+        _tmproom.roomRect = new Rect(0, 0, sizex, sizey + 30);
+
+        _tmproom.roomTileArray = new TileInfo[sizex, sizey + 30];
+        for (int x = 0; x < sizex; x++)
+        {
+            for (int y = 0; y < sizey; y++)
+            {
+                if (puzzleTerrain.tileArray[x, y] != null)
+                    _tmproom.roomTileArray[x, y] = puzzleTerrain.tileArray[x, y];
+            }
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private void SetKeyInRoom()
+    {
+        List<Monster> tmpmon = new List<Monster>();
+        foreach (var room in roomList)
+        {
+            if (room.monsterInfoList.Count > 0)
+            {
+                foreach (var monster in room.monsterInfoList)
+                {
+                    tmpmon.Add(monster.monsterModel);
+                }
+            }
+        }
+
+        int randomValue = Random.Range(0, tmpmon.Count - 2);
+        tmpmon[randomValue].SetItem(Item_TYPE.Key);
+    }
+
     #endregion
 }
 

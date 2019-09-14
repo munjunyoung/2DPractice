@@ -4,7 +4,6 @@ using UnityEngine.Tilemaps;
 
 class TestSettingWindow : EditorWindow
 {
-    
     static Vector2 mousepos = Vector2.zero;
     static int buttonSelectionValue = 0;
 
@@ -17,7 +16,7 @@ class TestSettingWindow : EditorWindow
     private static bool backgroundOn = true;
 
     private static GameObject playerOb;
-    private enum PLAYER_TYPE { Cat1 };
+    private enum PLAYER_TYPE { Cat1, Dog };
     private string playerPath = "Assets/resources/Prefab/Character/Player/";
     private Vector2 characterpos;
     private int selectedTypePlayer;
@@ -133,7 +132,7 @@ class TestSettingWindow : EditorWindow
         GUILayout.Space(10);
         GUILayout.BeginVertical("Box");
         GUILayout.Label("CAT TYPE", MapToolWindow.titleFont);
-        selectedTypePlayer = GUILayout.Toolbar(selectedTypePlayer, new string[] { PLAYER_TYPE.Cat1.ToString() });
+        selectedTypePlayer = GUILayout.Toolbar(selectedTypePlayer, new string[] { PLAYER_TYPE.Cat1.ToString(), PLAYER_TYPE.Dog.ToString()});
         GUILayout.Label("추후 추가예정..");
         GUILayout.EndVertical();
 

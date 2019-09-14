@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Dog : Monster
+public class Dog : Player
 {
-   private Dog()
+    protected override void Awake()
     {
-        mType = MONSTER_TYPE.Dog;
+        base.Awake();
+        CSVDataReader.instance.SetData(pDATA, PLAYER_TYPE.Dog.ToString());
+        mySkill = gameObject.AddComponent<SkillAttackUP>();
     }
 }
