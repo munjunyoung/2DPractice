@@ -50,7 +50,7 @@ public class FlyingMonster : Monster
             resetPathfinding = false;
             pointCount = points.Length > 1 ? points.Length - 2 : 0;
         }
-        if (Vector2.Distance(transform.position, points[pointCount]) < 0.05f)
+        if (Vector2.Distance(transform.position, points[pointCount]) < 0.03f)
         {
             if (pointCount <= 1)
             {

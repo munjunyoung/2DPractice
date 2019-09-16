@@ -22,7 +22,7 @@ public class GlobalManager : MonoBehaviour
     }
     
     [HideInInspector]
-    public PLAYER_TYPE pType;
+    public PLAYER_TYPE pType = PLAYER_TYPE.Cat1;
     public int stageLevel = -1;
 
 

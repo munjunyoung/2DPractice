@@ -47,8 +47,8 @@ public class InGameManager : MonoBehaviour
         currentRoom = roomList[0];
         currentRoom.CheckLockRoom();
         //시작할땐 0번 방이므로 체크
-
-        CreatePlayer(PLAYER_TYPE.Cat1, playerPath);
+        
+        CreatePlayer(GlobalManager.instance.pType, playerPath);
     }
     
     /// <summary>

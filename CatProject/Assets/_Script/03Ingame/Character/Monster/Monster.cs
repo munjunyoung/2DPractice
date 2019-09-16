@@ -185,10 +185,11 @@ public class Monster : MonoBehaviour
     {
         characterDir = sR.flipX.Equals(true) ? -Vector2.right : Vector2.right;
         //벽 Raycast
+        Debug.DrawRay(transform.position, characterDir * (transform.localScale.x + 0.5f), Color.red, 0.1f, false);
         RaycastHit2D wallCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -((transform.localScale.y - 1) + 0.5f), 0), characterDir, transform.localScale.x + 0.5f);
         if (wallCheckInfo.collider != null)
         {
-            if (wallCheckInfo.collider.CompareTag("Ground") || wallCheckInfo.collider.CompareTag("Floor") || wallCheckInfo.collider.CompareTag("Garbage") || wallCheckInfo.collider.CompareTag("Box"))
+            if (wallCheckInfo.collider.CompareTag("Ground"))
                 sR.flipX = sR.flipX.Equals(true) ? false : true;
         }
     }
@@ -207,7 +208,6 @@ public class Monster : MonoBehaviour
     }
 
     #region Attack
-    
     /// <summary>
     /// NOTE : Attack
     /// </summary>
@@ -248,7 +248,7 @@ public class Monster : MonoBehaviour
         rayDirToPlayer = rayDirToPlayer.normalized;
 
         targetCheckRay = Physics2D.Raycast(transform.position, rayDirToPlayer, mDATA.attackRange);
-        Debug.DrawRay(transform.position, rayDirToPlayer * mDATA.attackRange, Color.red, 0.1f, false);
+        //Debug.DrawRay(transform.position, rayDirToPlayer * mDATA.attackRange, Color.red, 0.1f, false);
         if (targetCheckRay.collider != null)
         {
             if (targetCheckRay.collider.CompareTag("Player"))
@@ -269,7 +269,7 @@ public class Monster : MonoBehaviour
     private void DetectTarget()
     {
         Vector2 dir = sR.flipX.Equals(true) ? -Vector2.right : Vector2.right;
-        Debug.DrawRay(transform.position, dir * traceOnDistance, Color.green, 0.1f, false);
+        //Debug.DrawRay(transform.position, dir * traceOnDistance, Color.green, 0.1f, false);
         RaycastHit2D checkRay = Physics2D.Raycast(transform.position, dir, traceOnDistance);
 
         if (checkRay.collider != null)
