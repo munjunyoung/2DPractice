@@ -75,7 +75,7 @@ class PathFinding
         //이웃노드 리스트 생성
         List<PathNode> neighborNodes = new List<PathNode>();
         int count = 0;
-        while (count<300)
+        while (count<500)
         {
             count++;
             //열린노드에 데이터가 없을 경우 break

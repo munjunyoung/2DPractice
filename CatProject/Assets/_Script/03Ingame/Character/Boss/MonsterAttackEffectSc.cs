@@ -21,14 +21,24 @@ public class MonsterAttackEffectSc : MonoBehaviour
         StartCoroutine(SetActiveOffByCount(0.5f));
     }
 
-
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.transform.CompareTag("Player"))
-            collision.transform.GetComponent<Player>().TakeDamage(damage, transform);
-
-        PlayPoolingHitEffect(collision.contacts[0].point);
+        if (collision.CompareTag("Player"))
+        {
+            var point = new Vector2((transform.position.x + collision.transform.position.x) * 0.5f, (transform.position.y + collision.transform.position.y) * 0.5f);
+            collision.transform.GetComponent<Player>().TakeDamage(damage, point);
+            PlayPoolingHitEffect(point);
+        }
+        
     }
+    
+    //private void OnCollisionEnter2D(Collision2D collision)
+    //{
+    //    if (collision.transform.CompareTag("Player"))
+    //        //collision.transform.GetComponent<Player>().TakeDamage(damage, transform);
+
+    //    PlayPoolingHitEffect(collision.contacts[0].point);
+    //}
 
     private void PlayPoolingHitEffect(Vector3 _hitpos)
     {

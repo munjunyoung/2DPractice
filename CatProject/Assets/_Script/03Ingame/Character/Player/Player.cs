@@ -370,7 +370,7 @@ public class Player : MonoBehaviour
     /// NOTE : 데미지
     /// </summary>
     /// <param name="damage"></param>
-    public void TakeDamage(int damage, Transform targetpos)
+    public void TakeDamage(int damage, Vector3 targetpos)
     {
         if (!isAlive)
             return;
@@ -386,8 +386,8 @@ public class Player : MonoBehaviour
         //Knockback Action
         currentMoveSpeed = 0;
         rb2D.velocity = Vector2.zero;
-        float xdir = Mathf.Sign(transform.position.x - targetpos.position.x);
-        float ydir = Mathf.Sign(transform.position.y - targetpos.position.y).Equals(1) ? 1f : -1f;
+        float xdir = Mathf.Sign(transform.position.x - targetpos.x);
+        float ydir = Mathf.Sign(transform.position.y - targetpos.y).Equals(1) ? 1f : -1f;
         Vector2 dir = new Vector2(xdir, ydir);
         rb2D.AddForce(dir * pDATA.knockBackPower, ForceMode2D.Impulse);
         //무적상태 시작

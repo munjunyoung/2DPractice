@@ -8,23 +8,24 @@ public class FlyingMonster : Monster
     //PathFinding
     private PathFinding testPathfinding;
     private List<PathNode> tracePath = new List<PathNode>();
-    private LineRenderer testline;
+   
     private Vector3[] points;
     private bool resetPathfinding = false;
     private int pointCount = 1;
     private bool isRunningPathfindingCoroutine = false;
     private Vector2Int prevTargetPos = Vector2Int.zero;
-    private bool TargetOn = false;
     
     //Up Down
     private float deltaValue = 1f;
     private float ySpeed = 2f;
     private float yValue = 0f;
+
+    private LineRenderer testline;
     protected override void Start()
     {
         base.Start();
         testPathfinding = new PathFinding(ownRoom.roomModel.GetComponent<Tilemap>());
-        //testline = GameObject.Find("TestTraceLine").GetComponent<LineRenderer>();
+        testline = GameObject.Find("TestTraceLine").GetComponent<LineRenderer>();
     }
 
     /// <summary>
@@ -50,7 +51,7 @@ public class FlyingMonster : Monster
             resetPathfinding = false;
             pointCount = points.Length > 1 ? points.Length - 2 : 0;
         }
-        if (Vector2.Distance(transform.position, points[pointCount]) < 0.03f)
+        if (Vector2.Distance(transform.position, points[pointCount]) < 0.05f)
         {
             if (pointCount <= 1)
             {
@@ -84,7 +85,6 @@ public class FlyingMonster : Monster
     public override void AttackAction()
     {
         base.AttackAction();
-        rb2D.velocity = Vector2Int.zero;
     }
     /// <summary>
     /// NOTE : 중력 SCALE값 변경
@@ -112,8 +112,12 @@ public class FlyingMonster : Monster
 
         for (int i = 0; i < tracePath.Count; i++)
             points[i] = new Vector3(tracePath[i].pos.x + 0.5f, tracePath[i].pos.y + 0.5f, 0);
-
-       
+        //TestLine check
+        if (testline != null)
+        {
+            testline.positionCount = tracePath.Count;
+            testline.SetPositions(points);
+        }
         resetPathfinding = true;
     }
 
@@ -132,7 +136,7 @@ public class FlyingMonster : Monster
                 PathFindingFunc(targetpos);
                 prevTargetPos = targetpos;
             }
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(0.5f);
         }
     }
 

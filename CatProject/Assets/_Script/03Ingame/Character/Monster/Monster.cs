@@ -95,6 +95,9 @@ public class Monster : MonoBehaviour
     protected bool attackCooltimeState = false;
     protected bool attackOn = false;
     protected bool isRunningAttackAnimation = false;
+    
+    [SerializeField]
+    private MonsterAttackEffectSc attackEffectOb;
     //KnockBack
     private bool isRunningKnockbackCoroutine = false;
     private bool isKnockbackState = false;
@@ -219,7 +222,18 @@ public class Monster : MonoBehaviour
     /// <summary>
     /// NOTE : ATTACK EFFECT 기능 함수
     /// </summary>
+    /// 
     public virtual void AttackEffect() { }
+
+    public virtual void AttackEffectActiveON()
+    {
+        attackEffectOb.gameObject.SetActive(true);
+    }
+
+    public virtual void AttackEffectActiveOFF()
+    {
+        attackEffectOb.gameObject.SetActive(false);
+    }
 
     /// <summary>
     /// NOTE : Animation ADD EVENT FUNCTION
@@ -427,7 +441,7 @@ public class Monster : MonoBehaviour
         {
             if (isAlive)
             {
-                collision.transform.GetComponent<Player>().TakeDamage(mDATA.bodyAttacktDamage, transform);
+                collision.transform.GetComponent<Player>().TakeDamage(mDATA.bodyAttacktDamage, transform.position);
                 AggroON(collision.transform);
                 KnockBack(collision.contacts[0].point);
             }

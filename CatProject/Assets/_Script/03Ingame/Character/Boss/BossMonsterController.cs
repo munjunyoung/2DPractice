@@ -260,7 +260,7 @@ public class BossMonsterController : MonoBehaviour
         if (collision.collider.CompareTag("Player"))
         {
             if (isAlive)
-                collision.transform.GetComponent<Player>().TakeDamage(bData.bodyAttackDamage, transform);
+                collision.transform.GetComponent<Player>().TakeDamage(bData.bodyAttackDamage, transform.position);
         }
     }
 

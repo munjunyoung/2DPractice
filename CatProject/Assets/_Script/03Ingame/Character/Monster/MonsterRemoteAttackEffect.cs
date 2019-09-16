@@ -36,7 +36,7 @@ public class MonsterRemoteAttackEffect : MonoBehaviour
     private void OnCollisionStay2D(Collision2D collision)
     {
         if(collision.transform.CompareTag("Player"))
-            collision.transform.GetComponent<Player>().TakeDamage(damage, transform);
+            collision.transform.GetComponent<Player>().TakeDamage(damage, transform.position);
 
         InvisibleObject();
     }
