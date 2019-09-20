@@ -15,8 +15,8 @@ public class BoardManager : MonoBehaviour
 
     //시작방 + 랜덤방 + 보스방 포함해서 최소 방 3개 이상 필요 (예외처리 안함)
     [Header("ROOM OPTION")]
-    [SerializeField, Range(3, 100)]
-    private int numberOfRoom;
+    //[SerializeField, Range(3, 100)]
+    //private int numberOfRoom;
     [SerializeField, Range(30, 60)]
     private int widthMinSize;
     [SerializeField, Range(60, 100)]
@@ -28,18 +28,20 @@ public class BoardManager : MonoBehaviour
 
     public GameObject gridOb;
 
+    
+
     #region Create Room
     /// <summary>
     /// NOTE : 파라미터 숫자만큼 DungeonRoomByTile 클래스 객체 생성 함수
     /// </summary>
     /// <param name="_numberOfroom"></param>
-    public void CreateRooms()
+    public void CreateRooms(Room_TileType level, int numberOfRoom)
     {  //Grid 오브젝트 생성
         loadData = LoadDataManager.instance;
         
         //DungeonRoom 클래스 생성
         for (int i = 0; i < numberOfRoom; i++)
-            roomList.Add(new DungeonRoom(i, (int)Room_TileType.Type2, widthMinSize, widthMaxSize, heightMinSize, heightMaxSize));
+            roomList.Add(new DungeonRoom(i, (int)level, widthMinSize, widthMaxSize, heightMinSize, heightMaxSize));
         //RoomLevel설정
         SetRoomLevel();
         //0레벨을 제외한 나머지 랜덤 Terrain 설정

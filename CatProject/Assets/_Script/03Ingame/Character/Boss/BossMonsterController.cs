@@ -28,7 +28,7 @@ public class BossMonsterController : MonoBehaviour
     protected Color                 frenzyColor;
     protected Animator              anim;
     protected BT_BossPersonAI       aiSc;
-    protected MonsterAttackEffectSc attackEffect;
+    protected BossAttackEffectSc attackEffect;
     [SerializeField]
     protected MonsterHPSliderSc     hpSlider;
 
@@ -85,7 +85,7 @@ public class BossMonsterController : MonoBehaviour
         CurrentHP = bData.HP;
         hpSlider.SetSliderStartValue(bData.HP, CurrentHP);
 
-        attackEffect = transform.Find("AttackEffect").GetComponent<MonsterAttackEffectSc>();
+        attackEffect = transform.Find("AttackEffect").GetComponent<BossAttackEffectSc>();
         attackEffect.SetActiveOff();
         attackEffect.damage = bData.attackDamage;
 

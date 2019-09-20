@@ -18,11 +18,31 @@ public class InGameManager : MonoBehaviour
     //Stop
     private float changeRoomStopCount = 2f;
 
+    private Room_TileType roomLevel = 0;
+    private int numberofRoom = 0;
+    
     private void Awake()
     {
         //Singletone
         instance = this;
         //캐릭터 생성
+        roomLevel = (Room_TileType)GlobalManager.instance.stageLevel;
+        Debug.Log(roomLevel);
+        switch((int)roomLevel)
+        {
+            case 0:
+                numberofRoom = 5;
+                break;
+            case 1:
+                numberofRoom = 8;
+                break;
+            case 2:
+                break;
+            default:
+                numberofRoom = 5;
+                break;
+        }
+
         StartSettingInGM();
     }
     
@@ -41,7 +61,7 @@ public class InGameManager : MonoBehaviour
     /// </summary>
     private void StartSettingInGM()
     {
-        boardmanagerSc.CreateRooms();
+        boardmanagerSc.CreateRooms(roomLevel, numberofRoom);
         roomList = boardmanagerSc.roomList;
         roomList[0].roomModel.SetActive(true);
         currentRoom = roomList[0];
@@ -115,5 +135,10 @@ public class InGameManager : MonoBehaviour
     public void DiePlayer()
     {
         PlayerUIManager.instance.ShowAlaramPanel(Alarm_State.DIE);
+    }
+
+    public void SetLevelOption()
+    {
+        
     }
 }

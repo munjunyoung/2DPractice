@@ -4,13 +4,12 @@ using UnityEngine;
 using UnityEngine.UI;
 public class StageClick : InputButton
 {
-    
+    public int level;
     protected override void ButtonClickDown()
     {
         base.ButtonClickDown();
-       
-        StageSelectSceneManager.instance.ShowSelectStageAlarmPanel(1);
-
+        Debug.Log(level);
+        StageSelectSceneManager.instance.ShowSelectStageAlarmPanel(level);
     }
 
 

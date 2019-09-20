@@ -141,7 +141,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1599b6a2909996d4fbb8213e86ec969a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  selectStageLevel: -1
+  selectStageLevel: 0
   selectStageAlarmPanel: {fileID: 1845814926}
   selectStageAlarmText: {fileID: 2141458761}
   doors:
@@ -413,8 +413,9 @@ GameObject:
   - component: {fileID: 478060472}
   - component: {fileID: 478060475}
   - component: {fileID: 478060474}
+  - component: {fileID: 478060476}
   m_Layer: 5
-  m_Name: Level2Door
+  m_Name: Level1Door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -452,7 +453,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.3764706}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -506,6 +507,20 @@ MonoBehaviour:
   m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
   m_EffectDistance: {x: 10, y: -10}
   m_UseGraphicAlpha: 1
+--- !u!114 &478060476
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 478060470}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7df59c935e463074fab886f10207ef74, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  modelObjectImage: {fileID: 478060472}
+  level: 1
 --- !u!1 &596410745
 GameObject:
   m_ObjectHideFlags: 0
@@ -677,7 +692,7 @@ GameObject:
   - component: {fileID: 714268939}
   - component: {fileID: 714268938}
   m_Layer: 5
-  m_Name: Level4Door
+  m_Name: Level3Door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -859,11 +874,11 @@ GameObject:
   - component: {fileID: 1021449953}
   - component: {fileID: 1021449955}
   - component: {fileID: 1021449954}
-  - component: {fileID: 1021449956}
   - component: {fileID: 1021449958}
   - component: {fileID: 1021449957}
+  - component: {fileID: 1021449956}
   m_Layer: 5
-  m_Name: Level1Door
+  m_Name: Level0Door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -938,6 +953,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   modelObjectImage: {fileID: 1021449954}
+  level: 0
 --- !u!114 &1021449957
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1335,7 +1351,7 @@ GameObject:
   - component: {fileID: 1393994495}
   - component: {fileID: 1393994496}
   m_Layer: 5
-  m_Name: Level3Door
+  m_Name: Level2Door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1552,7 +1568,7 @@ GameObject:
   - component: {fileID: 1422898577}
   - component: {fileID: 1422898576}
   m_Layer: 5
-  m_Name: Level5Door
+  m_Name: Level4Door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

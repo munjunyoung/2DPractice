@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MonsterAttackEffectSc : MonoBehaviour
+public class BossAttackEffectSc : MonoBehaviour
 {
     [SerializeField]
     private     GameObject[]    hitEffectPullingArray;
@@ -29,7 +29,6 @@ public class MonsterAttackEffectSc : MonoBehaviour
             collision.transform.GetComponent<Player>().TakeDamage(damage, point);
             PlayPoolingHitEffect(point);
         }
-        
     }
     
     //private void OnCollisionEnter2D(Collision2D collision)

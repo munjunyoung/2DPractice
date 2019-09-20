@@ -52,7 +52,7 @@ public class DrawMap : MonoBehaviour
 
         foreach (var tm in tilemaps)
         {
-            DungeonRoom tmproom = new DungeonRoom(1, tm.size.x, tm.size.y);
+            DungeonRoom tmproom = new DungeonRoom(0, tm.size.x, tm.size.y);
             tmproom.roomTileArray = loadData.AnalyzeTileMap(tm);
             roomlist.Add(tmproom);
         }
@@ -106,7 +106,6 @@ public class DrawMap : MonoBehaviour
                                 if(room.roomClearType==Room_ClearType.Boss)
                                 {
                                     tmpen.sR.sprite = loadData.tileDataArray[room.roomSpriteType].entranceSprite[0];
-                                    
                                 }
 
                                 tmpen.sR.sprite = loadData.tileDataArray[room.roomSpriteType].entranceSprite[0];

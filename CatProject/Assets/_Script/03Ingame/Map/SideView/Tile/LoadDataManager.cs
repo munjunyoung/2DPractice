@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-enum Room_TileType { Type1 = 0, Type2 }
+public enum Room_TileType { City = 0, Jungle }
 public enum TileType {Terrain, Structure , Monster, Item, Boss}
 public enum STRUCTURE_TYPE { Entrance ,Box, Switch, Garbage }
 public enum Box_Type { Normal }

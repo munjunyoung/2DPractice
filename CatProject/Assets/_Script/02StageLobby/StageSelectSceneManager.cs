@@ -30,6 +30,7 @@ public class StageSelectSceneManager : MonoBehaviour
         selectStageAlarmPanel.SetActive(true);
         selectStageAlarmText.text = "LEVEL " + level +" START?";
         selectStageLevel = level;
+        Debug.Log(selectStageLevel);
     }
 
     #region UI
@@ -39,15 +40,19 @@ public class StageSelectSceneManager : MonoBehaviour
     /// </summary>
     public void YesButtonInSelectStagePanel()
     {
-        switch(selectStageLevel)
-        {
-            case 1:
-                GlobalManager.instance.LoadScene(Scene_Name.S_03Ingame);
-                break;
-            default:
-                break;
-        }
-        
+        GlobalManager.instance.stageLevel = selectStageLevel;
+        Debug.Log(GlobalManager.instance.stageLevel);
+        GlobalManager.instance.LoadScene(Scene_Name.S_03Ingame);
+        //switch (selectStageLevel)
+        //{
+        //    case 1:
+                
+        //        break;
+        //    case 2:
+        //        GlobalManager.instance.LoadScene(Scene_Name.S_03Ingame);
+        //    default:
+        //        break;
+        //}
     }
 
     /// <summary>

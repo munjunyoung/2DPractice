@@ -69,7 +69,8 @@ public class Monster : MonoBehaviour
     //Component
     protected Rigidbody2D rb2D;
     private Animator anim;
-    protected SpriteRenderer sR;
+    public SpriteRenderer sR;
+    public CircleCollider2D col2d;
 
     protected Transform targetOb = null;
     //HP
@@ -96,8 +97,8 @@ public class Monster : MonoBehaviour
     protected bool attackOn = false;
     protected bool isRunningAttackAnimation = false;
     
-    [SerializeField]
-    private MonsterAttackEffectSc attackEffectOb;
+    [HideInInspector]
+    public MonsterAttackEffectSc attackEffectOb;
     //KnockBack
     private bool isRunningKnockbackCoroutine = false;
     private bool isKnockbackState = false;
@@ -122,9 +123,9 @@ public class Monster : MonoBehaviour
         rb2D = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         sR = GetComponent<SpriteRenderer>();
+        col2d = GetComponent<CircleCollider2D>();
         
         CSVDataReader.instance.SetData(mDATA, mType.ToString());
-        
     }
 
     protected virtual void Start()
@@ -189,9 +190,10 @@ public class Monster : MonoBehaviour
         characterDir = sR.flipX.Equals(true) ? -Vector2.right : Vector2.right;
         //벽 Raycast
         Debug.DrawRay(transform.position, characterDir * (transform.localScale.x + 0.5f), Color.red, 0.1f, false);
-        RaycastHit2D wallCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -((transform.localScale.y - 1) + 0.5f), 0), characterDir, transform.localScale.x + 0.5f);
+        RaycastHit2D wallCheckInfo = Physics2D.Raycast(transform.position + new Vector3(0, -((transform.localScale.y - 1) + 0.5f), 0), characterDir, transform.localScale.x + 0.5f, LayerMask.GetMask("Tile"));
         if (wallCheckInfo.collider != null)
         {
+            Debug.Log(wallCheckInfo.collider.tag);
             if (wallCheckInfo.collider.CompareTag("Ground"))
                 sR.flipX = sR.flipX.Equals(true) ? false : true;
         }
@@ -224,15 +226,10 @@ public class Monster : MonoBehaviour
     /// </summary>
     /// 
     public virtual void AttackEffect() { }
-
-    public virtual void AttackEffectActiveON()
+    
+    public void SetActiveAttackEffect()
     {
-        attackEffectOb.gameObject.SetActive(true);
-    }
-
-    public virtual void AttackEffectActiveOFF()
-    {
-        attackEffectOb.gameObject.SetActive(false);
+        attackEffectOb.SetActiveOn();
     }
 
     /// <summary>
@@ -250,7 +247,6 @@ public class Monster : MonoBehaviour
         isRunningAttackCoroutine = false;
     }
 
-
     RaycastHit2D targetCheckRay;
     private Vector3 rayDirToPlayer = Vector2.zero;
     /// <summary>
@@ -260,6 +256,7 @@ public class Monster : MonoBehaviour
     {
         rayDirToPlayer = targetOb.transform.position - transform.position;
         rayDirToPlayer = rayDirToPlayer.normalized;
+
 
         targetCheckRay = Physics2D.Raycast(transform.position, rayDirToPlayer, mDATA.attackRange);
         //Debug.DrawRay(transform.position, rayDirToPlayer * mDATA.attackRange, Color.red, 0.1f, false);
@@ -285,7 +282,7 @@ public class Monster : MonoBehaviour
         Vector2 dir = sR.flipX.Equals(true) ? -Vector2.right : Vector2.right;
         //Debug.DrawRay(transform.position, dir * traceOnDistance, Color.green, 0.1f, false);
         RaycastHit2D checkRay = Physics2D.Raycast(transform.position, dir, traceOnDistance);
-
+        
         if (checkRay.collider != null)
         {
             if (checkRay.collider.CompareTag("Player"))

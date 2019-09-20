@@ -23,7 +23,9 @@ public class GlobalManager : MonoBehaviour
     
     [HideInInspector]
     public PLAYER_TYPE pType = PLAYER_TYPE.Cat1;
-    public int stageLevel = -1;
+    [HideInInspector]
+    public int stageLevel;
+    
 
 
     private void Awake()
