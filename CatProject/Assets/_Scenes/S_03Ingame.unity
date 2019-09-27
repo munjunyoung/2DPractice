@@ -271,7 +271,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0a111057ed294445b86ca5d0f096927, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numberOfRoom: 5
   widthMinSize: 30
   widthMaxSize: 60
   heightMinSize: 30
@@ -488,5 +487,10 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 1432288388}
+    - target: {fileID: 5628538280766744636, guid: b131654d3fa069e4eacd87a9fe670de3,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b131654d3fa069e4eacd87a9fe670de3, type: 3}
